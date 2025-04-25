@@ -7,7 +7,7 @@
         <button class="auth-btn" @click="showRegister = true">Регистрация</button>
       </template>
       <template v-else>
-        <span class="welcome">Привет, {{ auth.user.name }}</span>
+        <!-- <span class="welcome">Привет, {{ auth.user.name }}</span> -->
         <button class="auth-btn" @click="auth.logout()">Выйти</button>
       </template>
     </div>
@@ -22,7 +22,7 @@
 
     <!-- Навигация -->
     <nav :class="['main-nav', { open: isNavOpen }]">
-      <router-link to="/">ПРИРОДНЫЕ АКВАРИУМЫ</router-link>
+      <router-link to="/">ГЛАВНАЯ</router-link>
       <router-link to="/intro">АКВА-ЖУРНАЛ</router-link>
       <router-link to="/contact">ПОДДЕРЖКА</router-link>
       <router-link to="/news">НОВОСТИ</router-link>
@@ -48,7 +48,7 @@ const showRegister = ref(false)
 const toggleNav = () => (isNavOpen.value = !isNavOpen.value)
 
 const auth = useAuthStore()
-onMounted(() => auth.loadFromStorage())
+// onMounted(() => auth.loadFromStorage())
 </script>
 
 <style scoped>
