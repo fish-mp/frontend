@@ -2,7 +2,7 @@
   <section class="page">
     <h1 class="page__title">Курсы по аквариумистике</h1>
     <div class="page__grid">
-      <CourseCard v-for="course in visibleCourses" :key="course.id" :course="course" />
+      <CourseCard v-for="course in visibleCourses" :key="course.id" :course="course" base="courses" />
     </div>
     <button v-if="visibleCount < courses.length" @click="showMore" class="load-more">
       Показать ещё
@@ -23,16 +23,16 @@ interface Course {
 }
 
 const courses = ref<Course[]>([
-  { id: 1, title: 'Основы аквариумистики', shortDescription: 'Базовые принципы создания пресноводного аквариума.', fullDescription: '', image: 'https://picsum.photos/seed/freshwater/400/300' },
-  { id: 2, title: 'Морской аквариум', shortDescription: 'Запуск и уход за солёным рифовым аквариумом.', fullDescription: '', image: 'https://picsum.photos/seed/reef/400/300' },
-  { id: 3, title: 'Растения и удобрения', shortDescription: 'Выбор растений и поддержка их роста.', fullDescription: '', image: 'https://picsum.photos/seed/plants/400/300' },
-  { id: 4, title: 'Системы фильтрации', shortDescription: 'Типы фильтров и их настройка.', fullDescription: '', image: 'https://picsum.photos/seed/filtration/400/300' },
-  { id: 5, title: 'Освещение и фотопериод', shortDescription: 'Подбор ламп и режим работы.', fullDescription: '', image: 'https://picsum.photos/seed/lighting/400/300' },
-  { id: 6, title: 'Химия воды', shortDescription: 'Контроль pH, GH, KH и удобрений.', fullDescription: '', image: 'https://picsum.photos/seed/chemistry/400/300' },
-  { id: 7, title: 'Уход за рыбами', shortDescription: 'Кормление и профилактика болезней.', fullDescription: '', image: 'https://picsum.photos/seed/fishcare/400/300' },
-  { id: 8, title: 'Акваскейпинг', shortDescription: 'Гармоничные композиции из камней и растений.', fullDescription: '', image: 'https://picsum.photos/seed/aquascape/400/300' },
-  { id: 9, title: 'Разведение рыб', shortDescription: 'Методы разведения популярных видов.', fullDescription: '', image: 'https://picsum.photos/seed/breeding/400/300' },
-  { id: 10, title: 'Ежедневное обслуживание', shortDescription: 'Чистка, подмены воды и проверка оборудования.', fullDescription: '', image: 'https://picsum.photos/seed/maintenance/400/300' }
+  { id: 1, title: 'Основы аквариумистики', shortDescription: 'Базовые принципы создания пресноводного аквариума.', fullDescription: '', image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg' },
+  { id: 2, title: 'Морской аквариум', shortDescription: 'Запуск и уход за солёным рифовым аквариумом.', fullDescription: '', image: 'https://astrakhan.angstrem-mebel.ru/upload/medialibrary/962/f8fmq4yp9cqsmrvax4p4rt4gny4f6eia.png' },
+  { id: 3, title: 'Растения и удобрения', shortDescription: 'Выбор растений и поддержка их роста.', fullDescription: '', image: 'https://akvatoria.ru/upload/resize_cache/iblock/8f2/1230_758_13df4/8f2757d9a7166db58992d8e94811968b.JPG' },
+  { id: 4, title: 'Системы фильтрации', shortDescription: 'Типы фильтров и их настройка.', fullDescription: '', image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg' },
+  { id: 5, title: 'Освещение и фотопериод', shortDescription: 'Подбор ламп и режим работы.', fullDescription: '', image: 'https://astrakhan.angstrem-mebel.ru/upload/medialibrary/962/f8fmq4yp9cqsmrvax4p4rt4gny4f6eia.png' },
+  { id: 6, title: 'Химия воды', shortDescription: 'Контроль pH, GH, KH и удобрений.', fullDescription: '', image: 'https://akvatoria.ru/upload/resize_cache/iblock/8f2/1230_758_13df4/8f2757d9a7166db58992d8e94811968b.JPG' },
+  { id: 7, title: 'Уход за рыбами', shortDescription: 'Кормление и профилактика болезней.', fullDescription: '', image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg' },
+  { id: 8, title: 'Акваскейпинг', shortDescription: 'Гармоничные композиции из камней и растений.', fullDescription: '', image: 'https://astrakhan.angstrem-mebel.ru/upload/medialibrary/962/f8fmq4yp9cqsmrvax4p4rt4gny4f6eia.png' },
+  { id: 9, title: 'Разведение рыб', shortDescription: 'Методы разведения популярных видов.', fullDescription: '', image: 'https://akvatoria.ru/upload/resize_cache/iblock/8f2/1230_758_13df4/8f2757d9a7166db58992d8e94811968b.JPG' },
+  { id: 10, title: 'Ежедневное обслуживание', shortDescription: 'Чистка, подмены воды и проверка оборудования.', fullDescription: '', image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg' }
 ])
 
 const visibleCount = ref(4)

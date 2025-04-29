@@ -4,7 +4,9 @@
         <div class="card__body">
             <h3 class="card__title">{{ course.title }}</h3>
             <p class="card__desc">{{ course.shortDescription }}</p>
-            <router-link :to="`/courses/${course.id}`" class="card__button">Подробнее</router-link>
+            <router-link :to="`/${base}/${course.id}`" class="card__button">
+                Подробнее
+            </router-link>
         </div>
     </div>
 </template>
@@ -19,7 +21,12 @@ interface Course {
     image: string
 }
 
-defineProps<{ course: Course }>()
+const props = defineProps<{
+    course: Course
+    base?: 'courses' | 'news'
+}>()
+
+const base = props.base ?? 'courses'
 </script>
 
 <style scoped>
@@ -30,7 +37,9 @@ defineProps<{ course: Course }>()
     border: 1px solid #e0e0e0;
     border-radius: 12px;
     overflow: hidden;
+    text-align: center;
     width: 450px;
+    height: 350px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -70,6 +79,7 @@ defineProps<{ course: Course }>()
     font-size: 0.9rem;
     text-decoration: none;
     color: #fff;
+    text-align: center;
     background-color: #000;
     border-radius: 6px;
     border: 1px solid black;
