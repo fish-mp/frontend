@@ -117,7 +117,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('https://picsum.photos/seed/underwater/1920/1080');
+  background-image: url('https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg');
   background-size: cover;
   background-repeat: repeat-x;
   background-position: 0 50%;
