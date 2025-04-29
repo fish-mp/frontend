@@ -22,7 +22,6 @@
   .main-content {
     flex: 1;
     padding: 2rem;
-    max-width: 800px;
     margin: 0 auto;
   }
   </style>

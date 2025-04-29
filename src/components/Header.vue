@@ -24,9 +24,9 @@
     <nav :class="['main-nav', { open: isNavOpen }]">
       <router-link to="/">ГЛАВНАЯ</router-link>
       <router-link to="/intro">АКВА-ЖУРНАЛ</router-link>
-      <router-link to="/contact">ПОДДЕРЖКА</router-link>
       <router-link to="/news">НОВОСТИ</router-link>
       <router-link to="/courses">КУРСЫ</router-link>
+      <router-link to="/contact">ПОДДЕРЖКА</router-link>
     </nav>
 
     <!-- Модалки -->
@@ -179,14 +179,14 @@ const auth = useAuthStore()
 .auth-panel {
   position: absolute;
   top: 1rem;
-  left: 1rem;
+  right: 1rem;
   display: flex;
   gap: 0.5rem;
   z-index: 10;
 }
 
 .auth-btn {
-  background: transparent;
+  background: black;
   border: 1px solid #444;
   color: #ccc;
   padding: 0.4rem 0.9rem;
@@ -206,5 +206,4 @@ const auth = useAuthStore()
   margin-right: 0.5rem;
   font-size: 0.8rem;
 }
-
 </style>
