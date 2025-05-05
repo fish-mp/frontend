@@ -3,7 +3,7 @@
     <div class="footer__wrapper">
       <ul class="footer__list">
         <li class="footer__item">
-          <router-link to="/" class="footer__logo-link"><img src="../assets/image/logo.svg" alt="Логотип"
+          <router-link to="/" class="footer__logo-link"><img src="../assets/image/logo.png" alt="Логотип"
               class="footer__logo" /></router-link>
           <ul class="footer__contact-list">
             <li class="footer__contact-item"><img src="../assets/image/clock-front-gradient.svg" alt="Часы"

@@ -1,18 +1,18 @@
 <template>
+  <img class="style" src="../assets/image/wave.png" alt="">
   <header class="header">
     <div class="header__wrapper">
       <router-link to="/" class="header__logo-link">
-        <img src="../assets/image/logo.svg" alt="Логотип" class="header__logo" />
+        <img src="../assets/image/logo.png" alt="Логотип" class="header__logo" />
       </router-link>
       <nav class="header__nav">
         <router-link to="/" class="header__nav-link" active-class="header__nav-link--active">Главная</router-link>
-        <router-link to="/department" class="header__nav-link">О кафедре</router-link>
+        <router-link to="/department" class="header__nav-link">Аквариумистика</router-link>
         <button @click="showStudents = !showStudents" class="header__nav-link header__nav-link--dropdown">
-          Студентам
+          Новости
         </button>
-        <router-link to="/news" class="header__nav-link">Новости</router-link>
         <button @click="showOlympic = !showOlympic" class="header__nav-link header__nav-link--dropdown">
-          Олимпиада
+          Курсы
         </button>
         <div v-show="showStudents" class="header__subnav">
           <router-link to="/test-work" class="header__subnav-link">Контрольные работы</router-link>

@@ -1,3 +1,12 @@
+:root {
+  --color-white: #FFFFFF;
+  --color-turquoise: #00BFA6;
+  --color-turquoise-dark: #009688;
+  --color-turquoise-light: #E0F7F5;
+  --color-text: #004F4B;
+  --overlay-bg: rgba(0, 191, 166, 0.05);
+}
+
 @font-face {
   font-family: "Gotham Pro";
   src: url("../fonts/GothamPro-BoldItalic.eot");
@@ -159,13 +168,13 @@ h3 {
   margin: 0;
   padding: 0;
   font-family: Gotham Pro;
-  color: #FEFEFE;
+  color: var(--color-text);
   position: relative;
   box-sizing: border-box;
 }
 
 body {
-  background-color: #030303;
+  background-color: var(--color-white);
   z-index: 10;
   overflow-x: hidden;
 }
@@ -207,7 +216,7 @@ section {
 }
 
 .header {
-  background-color: rgba(254, 254, 254, 0.0509803922);
+  background-color: var(--overlay-bg);
   -webkit-backdrop-filter: blur(30px);
           backdrop-filter: blur(30px);
   padding: 16px;
@@ -221,7 +230,7 @@ section {
   display: flex;
 }
 .header__logo {
-  width: 185px;
+  width: 80px;
 }
 @media (max-width: 767px) {
   .header__logo {
@@ -358,6 +367,19 @@ section {
     display: none;
   }
 }
+
+.header__nav-link {
+  color: var(--color-text);
+  transition: color 0.3s;
+}
+.header__nav-link:hover {
+  color: var(--color-turquoise);
+}
+.header__subnav-link:hover {
+  background-color: var(--overlay-bg);
+}
+
+
 .sidebar {
   position: fixed;
   top: 0;
@@ -462,6 +484,23 @@ section {
   background-color: #6B4EFF;
 }
 
+.sidebar {
+  background-color: var(--color-white);
+}
+.sidebar__close {
+  color: var(--color-turquoise);
+}
+.sidebar__nav-link {
+  color: var(--color-text);
+}
+.sidebar__subnav {
+  background-color: var(--overlay-bg);
+}
+.sidebar__subnav-link:hover {
+  background-color: var(--color-turquoise-light);
+}
+
+
 .footer {
   background-color: #030303;
 }
@@ -508,8 +547,9 @@ section {
 .footer__contact-method {
   display: flex;
 }
-.footer__logo-link {
+.footer__logo-link img{
   margin-bottom: 20px;
+  width: 80px;
 }
 .footer__contact-list {
   margin-top: 20px;
@@ -567,6 +607,15 @@ section {
   .footer__contact-text {
     font-size: calc(12px + 0.25vw);
   }
+}
+
+.footer {
+  background-color: var(--color-white);
+}
+.footer__title,
+.footer__text,
+.footer__contact-text {
+  color: var(--color-text);
 }
 
 html {
@@ -671,6 +720,29 @@ html {
   }
 }
 
+#bg-circle-1,
+#bg-circle-2,
+#bg-circle-3,
+#bg-circle-4,
+#bg-circle-5 {
+  filter: blur(10vw);
+  background: linear-gradient(180deg, var(--color-turquoise-light) 0%, var(--color-turquoise) 85.67%);
+  opacity: 0.5;
+}
+#bg-circle-3 { filter: blur(130px); width: 450px; height: 450px; }
+@media (max-width: 767px) {
+  #bg-circle-1,
+  #bg-circle-2,
+  #bg-circle-4,
+  #bg-circle-5 {
+    filter: blur(20vw);
+    width: 100vw;
+    height: 100vw;
+    opacity: 1;
+  }
+}
+
+
 .department {
   padding: 10px;
 }
@@ -772,13 +844,14 @@ html {
 .about__link {
   display: flex;
   align-items: center;
-  background-color: #490EBA;
+  background-color: var(--color-turquoise);
+  color: white;
   margin-top: 51px;
   padding: 16px 74px;
   font-family: Gotham Pro;
   font-weight: 400;
   line-height: 140%;
-  transition: font-size 0.5s ease;
+  transition: all 0.3s ease;
   border: none;
   justify-content: center;
 }
@@ -793,7 +866,7 @@ html {
   }
 }
 .about__link:hover {
-  background-color: #6731F5;
+  background-color: var(--color-turquoise-dark);
 }
 .about__link-icon {
   margin-left: 14px;
@@ -954,6 +1027,7 @@ html {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  transition: all 0.2s ease;
 }
 @media (max-width: 1100px) {
   .news__item {
@@ -1210,6 +1284,8 @@ html {
 }
 .staff__item:hover {
   background: linear-gradient(90deg, rgba(70, 70, 251, 0.5) 0%, rgba(190, 77, 255, 0.5) 100%);
+  transform: scale(1.03);
+  cursor: pointer;
 }
 .staff__container {
   display: flex;
@@ -1274,3 +1350,29 @@ html {
   opacity: 0.7;
   margin-top: auto;
 }/*# sourceMappingURL=index.css.map */
+
+.features__item,
+.news__item,
+.staff__item {
+  background-color: var(--color-white);
+  border: 2px solid var(--color-turquoise);
+  transition: all 0.3s ease;
+}
+.features__item:hover,
+.news__item:hover,
+.staff__item:hover {
+  background: linear-gradient(90deg, var(--color-turquoise) 0%, var(--color-turquoise-light) 100%);
+}
+
+.features__link,
+.news__more-link,
+.staff__more-link {
+  background-color: var(--color-turquoise);
+  color: var(--color-white);
+  transition: all 0.3s ease;
+}
+.features__link:hover,
+.news__more-link:hover,
+.staff__more-link:hover {
+  background-color: var(--color-turquoise-dark);
+}

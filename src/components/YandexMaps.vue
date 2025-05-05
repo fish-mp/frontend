@@ -37,8 +37,8 @@ onMounted(() => {
 
         const HintLayout = ymaps.templateLayoutFactory.createClass(
             `<div style="color: #e60000; font-size: 16px; font-weight: bold;">
-         $[properties.hintContent]
-       </div>`
+                $[properties.hintContent]
+            </div>`
         );
 
         mapContainer.value!.classList.add('yandex-map')
@@ -51,6 +51,7 @@ onMounted(() => {
                     balloonContent: `
             <div style="max-width:200px; color: black;">
               <h3 style="color: black; font-size: 16px;">${fish.name}</h3>
+              <p style="margin: 12px 0; font-size:14px; color: black;">${fish.description}</p>
               <button id="btn-${fish.id}" style="
                 margin-top:8px;
                 padding:6px 12px;
