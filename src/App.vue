@@ -4,6 +4,8 @@
   </Layout>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import Layout from './components/Layout.vue'
 </script>
+
+<style src="./assets/css//index.css"></style>

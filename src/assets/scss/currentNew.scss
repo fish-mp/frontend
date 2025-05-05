@@ -1,0 +1,126 @@
+@use './fonts.scss' as *;
+@use './normalize.scss' as *;
+
+#bg-circle-1 {
+    position: absolute;
+    border-radius: 50%;
+    top: -10vw;
+    filter: blur(10vw);
+    right: -10vw;
+    width: 50vw;
+    height: 50vw;
+    background: linear-gradient(180deg, #000887 0%, #740A89 85.67%);
+    transform: rotate(-102.78deg);
+    background-size: cover; 
+    background-position: center;
+    opacity: 0.5;
+    @media (max-width: 767px) {
+        filter: blur(20vw);
+    }
+}
+
+#bg-circle-2 {
+    position: absolute;
+    filter: blur(10vw);
+    background: linear-gradient(180deg, #000887 0%, #740A89 85.67%);
+    transform: rotate(-102.78deg);
+    background-size: cover; 
+    background-position: center;
+    opacity: 0.5;
+    width: 50vw;
+    height: 50vw;
+    top: 20vw;
+    left: -20vw;
+    @media (max-width: 767px) {
+        filter: blur(20vw);
+        width: 100vw;
+        height: 100vw;
+    }
+}
+
+#bg-circle-3 {
+    position: absolute;
+    filter: blur(10vw);
+    background: linear-gradient(180deg, #000887 0%, #740A89 85.67%);
+    transform: rotate(-102.78deg);
+    background-size: cover; 
+    background-position: center;
+    opacity: 0.5;
+    width: 50vw;
+    height: 50vw;
+    bottom: -28vw;
+    left: -90px;
+    @media (max-width: 767px) {
+        filter: blur(20vw);
+        opacity: 1;
+        width: 100vw;
+        height: 100vw;
+    }
+}
+
+.department {
+    &__wrapper {
+        max-width: 1375px;
+        margin: 0 auto;
+        position: relative;
+        margin-top: 180px;
+        @media (max-width: 767px) {
+            margin-top: 100px;
+        }
+    }
+    &__image{
+        @media (max-width: 767px) {
+            display: none;
+        }
+    }
+    &__image-img{
+        position: absolute;
+        left: 76%;
+        @media (max-width: 800px) {
+            left: 70%;
+        }
+    }
+    &__title{
+        font-size: calc(80px + 1.5vw);
+        @media (max-width: 767px) {
+            font-size: calc(30px + 1.5vw);
+        }
+        @media (min-width: 768px) and  (max-width: 1023px){
+            font-size: calc(50px + 1.5vw);
+        }
+    }
+}
+
+.article{
+    @media (max-width: 767px) {
+        bottom: 15px;
+    }
+    @media (min-width: 768px) and  (max-width: 1023px){
+        top: 100px;
+    }
+    &__wrapper {
+        display: flex;
+        max-width: 1375px;
+        margin: 0 auto;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    &__text{
+        @include p16;
+        max-width: 689px;
+    }
+    &__img{
+        width: 50%;
+        @media (min-width: 768px) and  (max-width: 1023px){
+            width: 92%;
+        }
+        @media (max-width: 767px) {
+            width: 100%;
+        }
+        @media (min-width: 1024px) and  (max-width: 1439px){
+            width: 68%;
+        }
+    }
+    
+}

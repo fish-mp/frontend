@@ -1,0 +1,367 @@
+@use './fonts.scss' as *;
+
+html {
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+}
+
+ul {
+    list-style: none;
+}
+
+h1, h2, h3 {
+    text-transform: uppercase;
+}
+
+h1 {
+    @include h1;
+}
+
+h2 {
+    @include h2;
+}
+
+h3 {
+    @include h3;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Gotham Pro;
+    color: #FEFEFE;
+    position: relative;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #030303;
+    z-index: 10;
+    overflow-x: hidden;
+}
+
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
+
+
+.style {
+    position: absolute;
+    top: -20vw;
+    left: -20vw;
+    display: block;
+    width: 100vw;
+    height: 60vw;
+    transform: rotate(-31.48deg);
+    box-sizing: inherit;
+    @media (max-width: 800px) {
+        top: 0;
+    }
+}
+
+section {
+    margin-bottom: 150px;
+    @media (max-width: 1400px) {
+        padding: 10px;
+        margin-bottom: 140px;
+    }
+    @media (max-width: 900px) {
+        padding: 10px;
+        margin-bottom: 80px;
+    }
+}
+
+.header {
+    background-color: #FEFEFE0D;
+    backdrop-filter: blur(30px);
+    padding: 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+
+    &__block{
+        display: flex;
+        
+    }
+    &__logo {
+        width: 185px;
+        @media (max-width: 767px) {
+            width: 115px;
+            height: 33px;
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        max-width: 1375px;
+        margin: 0 auto;
+        justify-content: space-between;
+
+        @media (min-width: 768px) and (max-width: 1024px) {
+            display: flex;
+            max-width: 1310px;
+            margin: 0 auto;
+        }
+    }
+    
+    &__subnav {
+        display: none; 
+        position: absolute;
+        background-color: #030303;
+        border-radius: 4px;
+        z-index: 1000;
+        top: 128%;
+        left: 42%;
+
+        &--second {
+            display: none;
+            position: absolute;
+            background-color: #030303;
+            border-radius: 4px;
+            z-index: 1000;
+            top: 128%;
+            left: 82%;
+            width: 40%;
+        }
+    }
+    
+    &__burger{
+        display: none;
+        justify-content: center;
+
+        @media (max-width: 1024px) {
+            display: flex;
+            width: 30px;            
+        }
+        
+        @media (max-width: 767px) {
+            display: flex;
+            width: 50px;   
+        }
+    }
+
+    &__nav {
+        display: flex;
+        gap: 57px;
+        align-items: center;
+        margin-right: 110px;
+
+        @media (max-width: 1024px) {
+            display: none;
+        }
+
+        &-link {
+            color: #FEFEFE;
+            @include p16;
+
+            &--active {
+                font-weight: 700;
+            }
+
+            &:hover {
+                color: #A684FF;
+            }
+        }
+
+        &-link--dropdown {
+            cursor: pointer;
+            position: relative; 
+            background: none;
+            border: none;
+        }
+    }
+    
+    &__subnav-link {
+        display: block;
+        padding: 16px 24px;
+        text-decoration: none;
+        @include p16;
+
+        &:hover {
+            background-color: #490EBA; 
+        }
+    }
+
+    &__menu {
+        width: 50px;
+        @media (max-width: 1024px) {
+            width: 30px;
+        }
+        @media (max-width: 767px) {
+            width: 20px;
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .header__nav {
+        display: none;
+    }
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    transition: right 0.3s ease;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    overflow-y: auto;
+
+    &.open {
+        right: 0;
+    }
+
+    &__close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 30px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    &__nav {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: flex-start;
+
+        &-link {
+            color: #fff;
+            text-decoration: none;
+            background: none;
+            border: none;
+            @include p36;
+            padding: 15px 20px;
+            width: 100%;
+
+            &--dropdown {
+                cursor: pointer;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .arrow {
+                    margin-left: 8px;
+                    transition: transform 0.3s;
+                }
+
+                &.active .arrow {
+                    transform: rotate(180deg);
+                }
+            }
+
+            &--dropdown:hover + .sidebar__subnav {
+                display: flex;
+            }
+        }
+    }
+
+    &__subnav {
+        display: none;
+        flex-direction: column;
+        background-color: #490EBA;
+        width: 100%;
+        @include p36;
+
+        &-link {
+            color: #fff;
+            text-decoration: none;
+            padding: 20px 20px;
+
+            &:hover {
+                background-color: #6B4EFF;
+            }
+        }
+    }
+}
+
+
+
+
+.footer {
+    background-color: #030303;
+
+    @media (max-width: 1100px) {
+        padding: 10px;
+    }
+
+    &__wrapper {
+        max-width: 1375px;
+        margin: 0 auto;
+        padding: 60px 0 100px 0;
+        @media (max-width: 1100px) {
+            padding: 10px;
+        }
+    }
+
+    &__list {
+        display: flex;
+        gap: 200px;
+        @media (max-width: 500px) {
+            flex-direction: column;
+            gap: 40px;
+        }
+    }
+
+    &__item-second {
+        display: flex;
+        gap: 200px;
+        @media (max-width: 1100px) {
+            flex-direction: column;
+            gap: 20px;
+        }
+    }
+
+    &__contact-item, &__contact-method {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &__contact-method {
+        display: flex;
+    }
+
+    &__logo-link {
+        margin-bottom: 20px;
+    }
+
+    &__contact-list {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    &__title {
+        @include p24;
+        margin-bottom: 20px;
+    }
+
+    &__text {
+        margin-bottom: 10px;
+        @include p16;
+    }
+
+    &__contact-text {
+        @include p16;
+    }
+}

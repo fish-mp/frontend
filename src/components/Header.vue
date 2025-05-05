@@ -1,209 +1,41 @@
 <template>
   <header class="header">
-    <!-- 👇 Кнопки входа/регистрации отдельно -->
-    <div class="auth-panel">
-      <template v-if="!auth.user">
-        <button class="auth-btn" @click="showLogin = true">Войти</button>
-        <button class="auth-btn" @click="showRegister = true">Регистрация</button>
-      </template>
-      <template v-else>
-        <!-- <span class="welcome">Привет, {{ auth.user.name }}</span> -->
-        <button class="auth-btn" @click="auth.logout()">Выйти</button>
-      </template>
-    </div>
-
-    <!-- Логотип -->
-    <div class="logo-container">
-      <router-link to="/">
-        <img src="/logo.png" alt="ADA Logo" class="logo" />
+    <div class="header__wrapper">
+      <router-link to="/" class="header__logo-link">
+        <img src="../assets/image/logo.svg" alt="Логотип" class="header__logo" />
       </router-link>
-      <button class="burger" @click="toggleNav">☰</button>
+      <nav class="header__nav">
+        <router-link to="/" class="header__nav-link" active-class="header__nav-link--active">Главная</router-link>
+        <router-link to="/department" class="header__nav-link">О кафедре</router-link>
+        <button @click="showStudents = !showStudents" class="header__nav-link header__nav-link--dropdown">
+          Студентам
+        </button>
+        <router-link to="/news" class="header__nav-link">Новости</router-link>
+        <button @click="showOlympic = !showOlympic" class="header__nav-link header__nav-link--dropdown">
+          Олимпиада
+        </button>
+        <div v-show="showStudents" class="header__subnav">
+          <router-link to="/test-work" class="header__subnav-link">Контрольные работы</router-link>
+          <router-link to="/materials" class="header__subnav-link">Учебные материалы</router-link>
+          <router-link to="/video" class="header__subnav-link">Видеолекции</router-link>
+        </div>
+        <div v-show="showOlympic" class="header__subnav header__subnav--second">
+          <router-link to="/olimpic" class="header__subnav-link">Текущая олимпиада</router-link>
+          <router-link to="/archive" class="header__subnav-link">Архив</router-link>
+          <router-link to="/regulations" class="header__subnav-link">Регламенты</router-link>
+          <router-link to="/result" class="header__subnav-link">Результаты</router-link>
+          <a href="https://online.mospolytech.ru/" class="header__subnav-link" target="_blank">Курс для подготовки</a>
+        </div>
+      </nav>
+      <button class="header__burger" @click="$emit('toggle-sidebar')">
+        <img class="header__menu" src="../assets/image/burgerMenu.svg" alt="Меню" />
+      </button>
     </div>
-
-    <!-- Навигация -->
-    <nav :class="['main-nav', { open: isNavOpen }]">
-      <router-link to="/">ГЛАВНАЯ</router-link>
-      <router-link to="/intro">АКВА-ЖУРНАЛ</router-link>
-      <router-link to="/news">НОВОСТИ</router-link>
-      <router-link to="/courses">КУРСЫ</router-link>
-      <router-link to="/contact">ПОДДЕРЖКА</router-link>
-    </nav>
-
-    <!-- Модалки -->
-    <LoginModal v-if="showLogin" @close="showLogin = false" />
-    <RegisterModal v-if="showRegister" @close="showRegister = false" />
   </header>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useAuthStore } from '../stores/auth'
-import LoginModal from './LoginModal.vue'
-import RegisterModal from './RegisterModal.vue'
-
-const isNavOpen = ref(false)
-const showLogin = ref(false)
-const showRegister = ref(false)
-
-const toggleNav = () => (isNavOpen.value = !isNavOpen.value)
-
-const auth = useAuthStore()
-// onMounted(() => auth.loadFromStorage())
+<script setup>
+import { ref } from 'vue';
+const showStudents = ref(false);
+const showOlympic = ref(false);
 </script>
-
-<style scoped>
-.header {
-  background-color: #000;
-  color: white;
-  text-align: center;
-  padding-bottom: 1rem;
-}
-
-.top-bar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.right-links {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.right-links a {
-  color: #aaa;
-  text-decoration: none;
-}
-
-.right-links span {
-  color: #555;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  color: #aaa;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin: 1rem 0 0.5rem 0;
-}
-
-.logo {
-  max-width: 150px;
-  height: auto;
-}
-
-.sub-logo {
-  position: absolute;
-  bottom: -1rem;
-  font-size: 0.7rem;
-  color: #777;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  width: 100%;
-}
-
-.burger {
-  display: none;
-  position: absolute;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.6rem;
-  cursor: pointer;
-}
-
-/* Navigation */
-.main-nav {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  font-size: 0.9rem;
-  font-weight: bold;
-  transition: all 0.3s ease-in-out;
-}
-
-.main-nav a {
-  color: white;
-  text-decoration: none;
-  letter-spacing: 1px;
-}
-
-.main-nav a.router-link-exact-active {
-  border-bottom: 2px solid white;
-}
-
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .burger {
-    display: block;
-  }
-
-  .main-nav {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .main-nav.open {
-    max-height: 300px;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .top-bar {
-    justify-content: center;
-    font-size: 0.75rem;
-  }
-}
-
-.auth-panel {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  gap: 0.5rem;
-  z-index: 10;
-}
-
-.auth-btn {
-  background: black;
-  border: 1px solid #444;
-  color: #ccc;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.8rem;
-  border-radius: 4px;
-  transition: 0.3s ease all;
-}
-
-.auth-btn:hover {
-  background: #111;
-  color: white;
-  border-color: white;
-}
-
-.welcome {
-  color: #aaa;
-  margin-right: 0.5rem;
-  font-size: 0.8rem;
-}
-</style>
