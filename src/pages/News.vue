@@ -1,12 +1,20 @@
 <template>
+    <section class="department">
+        <div class="department__wrapper">
+            <span id="bg-circle-1"></span>
+            <span id="bg-circle-2"></span>
+            <h1 class="department__title">Новости и рыбки</h1>
+            <p class="department__description">
+                Здесь вы сможете более подробно познакомиться с последними новостями. У вас появится возможность
+                пополнить свой багаж знаний.
+            </p>
+        </div>
+    </section>
+
     <section class="news">
         <span id="bg-circle-5"></span>
         <div class="news__wrapper">
-            <div class="news__header">
-                <h2 class="news__title">НОВОСТИ</h2>
-                <router-link to="/news" class="news__more-link">ВСЕ НОВОСТИ</router-link>
-            </div>
-            <ul class="news__list">
+            <ul class="section__list">
                 <li class="news__item" v-for="post in news" :key="post.date">
                     <router-link :to="{ name: 'CardDetail', params: { id: post.id } }" class="news__link">
                         <div class="news__image"><img :src="post.image" alt="" class="news__icon" /></div>
@@ -100,3 +108,23 @@ const news = ref<NewsItem[]>([
     }
 ])
 </script>
+
+<style scoped>
+.section__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.news__item {
+    list-style: none;
+}
+
+@media (max-width: 768px) {
+    .news__list {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

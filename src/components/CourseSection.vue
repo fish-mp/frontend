@@ -7,15 +7,17 @@
                 <router-link to="/department" class="staff__more-link">ВСЕ КУРСЫ</router-link>
             </div>
             <ul class="staff__list">
-                <li class="staff__item" v-for="course in courses" :key="course.id">
-                    <span id="bg-circle-3"></span>
-                    <div class="staff__image">
-                        <img :src="course.image" alt="Фото курса" />
-                    </div>
-                    <div class="staff__details">
-                        <h3 class="staff__name">{{ course.title }}</h3>
-                        <p class="staff__position">{{ course.shortDescription }}</p>
-                    </div>
+                <li v-for="course in courses" :key="course.id">
+                    <router-link :to="{ name: 'CardDetail', params: { id: course.id } }" class="staff__item">
+                        <span id="bg-circle-3"></span>
+                        <div class="staff__image">
+                            <img :src="course.image" alt="Фото курса" />
+                        </div>
+                        <div class="staff__details">
+                            <h3 class="staff__name">{{ course.title }}</h3>
+                            <p class="staff__position">{{ course.shortDescription }}</p>
+                        </div>
+                    </router-link>
                 </li>
             </ul>
             <router-link to="/department" class="staff__more-link staff__more-link--second">ВСЕ КУРСЫ</router-link>

@@ -8,9 +8,7 @@
       <nav class="header__nav">
         <router-link to="/" class="header__nav-link" active-class="header__nav-link--active">Главная</router-link>
         <router-link to="/department" class="header__nav-link">Аквариумистика</router-link>
-        <button @click="showStudents = !showStudents" class="header__nav-link header__nav-link--dropdown">
-          Новости
-        </button>
+        <router-link to="/news" class="header__nav-link">Новости</router-link>
         <button @click="showOlympic = !showOlympic" class="header__nav-link header__nav-link--dropdown">
           Курсы
         </button>
