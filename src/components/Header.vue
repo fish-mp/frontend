@@ -33,7 +33,7 @@
         </template>
         <template v-else>
           <span class="user__name">{{ user?.first_name || user?.email }}</span>
-          <button class="btn btn--logout" @click="auth.logout()">Выйти</button>
+          <button class="btn btn--login" @click="auth.logout()">Выйти</button>
         </template>
       </div>
       <button class="header__burger" @click="$emit('toggle-sidebar')">
