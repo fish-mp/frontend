@@ -12,6 +12,7 @@
         <button @click="showOlympic = !showOlympic" class="header__nav-link header__nav-link--dropdown">
           Курсы
         </button>
+        <router-link to="/news" class="header__nav-link">Мероприятия</router-link>
         <div v-show="showStudents" class="header__subnav">
           <router-link to="/test-work" class="header__subnav-link">Контрольные работы</router-link>
           <router-link to="/materials" class="header__subnav-link">Учебные материалы</router-link>
@@ -25,15 +26,35 @@
           <a href="https://online.mospolytech.ru/" class="header__subnav-link" target="_blank">Курс для подготовки</a>
         </div>
       </nav>
+      <div class="header__actions">
+        <template v-if="!isAuth">
+          <button class="btn btn--login" @click="showLogin = true">Войти</button>
+          <button class="btn btn--register" @click="showRegister = true">Зарегистрироваться</button>
+        </template>
+        <template v-else>
+          <span class="user__name">{{ user?.first_name || user?.email }}</span>
+          <button class="btn btn--logout" @click="auth.logout()">Выйти</button>
+        </template>
+      </div>
       <button class="header__burger" @click="$emit('toggle-sidebar')">
         <img class="header__menu" src="../assets/image/burgerMenu.svg" alt="Меню" />
       </button>
     </div>
   </header>
+  <LoginPopup v-model="showLogin" />
+  <RegisterPopup v-model="showRegister" />
 </template>
 
 <script setup>
-import { ref } from 'vue';
-const showStudents = ref(false);
-const showOlympic = ref(false);
+import { ref, computed } from 'vue';
+import { useAuthStore } from '../stores/auth';
+import LoginPopup from '../components/LoginPopup.vue';
+import RegisterPopup from '../components/RegisterPopup.vue';
+
+const showLogin = ref(false);
+const showRegister = ref(false);
+
+const auth = useAuthStore();
+const isAuth = computed(() => auth.isAuthenticated);
+const user = computed(() => auth.user);
 </script>

@@ -2,19 +2,19 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 interface User {
-  id: number;
   email: string;
-  username: string;
-  is_staff: boolean;
+  first_name: string;
+  city: string;
+  age: number;
 }
 
 export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = ref(false);
   const user = ref<User | null>(null);
-  const accessToken = ref<string | null>(null);
-  const refreshToken = ref<string | null>(null);
+  const accessToken = ref<string | null>(localStorage.getItem("accessToken"));
+  const refreshToken = ref<string | null>(localStorage.getItem("refreshToken"));
 
-  const login = async (credentials: { username: string; password: string }) => {
+  const login = async (credentials: { email: string; password: string }) => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/token/", {
         method: "POST",
@@ -34,6 +34,13 @@ export const useAuthStore = defineStore("auth", () => {
 
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
+
+      user.value = {
+        email: credentials.email,
+        first_name: "",
+        city: "",
+        age: 0,
+      };
 
       return data;
     } catch (error) {
@@ -78,11 +85,63 @@ export const useAuthStore = defineStore("auth", () => {
     return false;
   };
 
+  const register = async (payload: {
+    email: string;
+    password: string;
+    first_name: string;
+    city: string;
+    age: number;
+  }) => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/users/register/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Registration failed");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    }
+  };
+
+  const refresh = async () => {
+    try {
+      if (!refreshToken.value) throw new Error("No refresh token");
+      const response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh: refreshToken.value }),
+      });
+      if (!response.ok) throw new Error("Token refresh failed");
+      const data = await response.json();
+      accessToken.value = data.access;
+      localStorage.setItem("accessToken", data.access);
+    } catch (error) {
+      console.error("Token refresh error:", error);
+      logout();
+    }
+  };
+
   return {
     isAuthenticated,
     user,
     login,
     logout,
     checkAuth,
+    register,
+    refresh,
   };
 });

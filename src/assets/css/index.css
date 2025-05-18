@@ -288,9 +288,8 @@ section {
 }
 .header__nav {
   display: flex;
-  gap: 57px;
+  gap: 50px;
   align-items: center;
-  margin-right: 110px;
 }
 @media (max-width: 1024px) {
   .header__nav {
@@ -379,6 +378,43 @@ section {
   background-color: var(--overlay-bg);
 }
 
+.header__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn--login {
+  background: linear-gradient(135deg, #009688 0%, #00BFA6 100%);
+  color: #FFFFFF;
+  border: none;
+}
+.btn--login:hover {
+  background: linear-gradient(135deg, #009688 0%, #00BFA6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn--register {
+  background: transparent;
+  color: #009688;
+  border: 2px solid #009688;
+}
+.btn--register:hover {
+  background: #009688;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 
 .sidebar {
   position: fixed;
