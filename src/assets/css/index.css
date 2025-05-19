@@ -1047,6 +1047,8 @@ html {
 .news__list {
   display: flex;
   gap: 20px;
+  overflow: scroll;
+  padding: 15px 0;
 }
 @media (max-width: 1400px) {
   .news__list {
