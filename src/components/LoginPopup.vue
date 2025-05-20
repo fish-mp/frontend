@@ -99,7 +99,7 @@ const handleLogin = async () => {
 
 @media (max-width: 500px) {
     .popup {
-        padding: 20px 5px;
+        padding: 20px;
         max-width: 98vw;
     }
 }
