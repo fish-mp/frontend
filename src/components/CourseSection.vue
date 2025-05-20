@@ -4,7 +4,7 @@
         <div class="staff__wrapper">
             <div class="staff__header">
                 <h2 class="staff__title">Курсы по аквариумистике</h2>
-                <router-link to="/department" class="staff__more-link">ВСЕ КУРСЫ</router-link>
+                <router-link to="/courses" class="staff__more-link">ВСЕ КУРСЫ</router-link>
             </div>
             <ul class="staff__list">
                 <li v-for="course in courses" :key="course.id">
@@ -20,7 +20,7 @@
                     </router-link>
                 </li>
             </ul>
-            <router-link to="/department" class="staff__more-link staff__more-link--second">ВСЕ КУРСЫ</router-link>
+            <router-link to="/courses" class="staff__more-link staff__more-link--second">ВСЕ КУРСЫ</router-link>
         </div>
     </section>
 </template>

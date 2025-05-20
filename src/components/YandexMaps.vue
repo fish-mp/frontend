@@ -4,7 +4,6 @@
         <div class="staff__wrapper">
             <div class="staff__header">
                 <h2 class="staff__title">Где живут наши герои</h2>
-                <router-link to="/department" class="staff__more-link">ПОДРОБНЕЕ</router-link>
             </div>
             <section class="map-section">
                 <div ref="mapContainer" class="map"></div>

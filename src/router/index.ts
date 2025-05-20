@@ -4,6 +4,7 @@ import CardDetail from "../pages/CardDetail.vue";
 import News from "../pages/News.vue";
 import Courses from "../pages/Courses.vue";
 import CourseDetail from "../pages/CourseDetail.vue";
+import FishDetail from "../pages/FishDetail.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -36,10 +37,27 @@ export const router = createRouter({
       name: "Aquaristics",
       component: () => import("../pages/Aquaristics.vue"),
     },
-        {
+    {
       path: "/department",
       name: "Department",
       component: () => import("../pages/Department.vue"),
     },
+    {
+      path: "/events",
+      name: "Events",
+      component: () => import("../pages/Events.vue"),
+    },
+    {
+      path: "/fish/:id",
+      name: "FishDetail",
+      component: FishDetail,
+      props: (route) => ({ id: Number(route.params.id) }),
+    },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return { left: 0, top: 0 };
+  },
 });

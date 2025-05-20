@@ -23,18 +23,18 @@
         <li class="footer__item footer__item-second">
           <div>
             <p class="footer__title">Контакты Администратора</p>
-            <p class="footer__text">Администратор:<br>Иванов Иван Иванович</p>
+            <p class="footer__text">Администратор:<br>Бритвина Валентина Валентиновна</p>
             <div class="footer__contact-method"><img src="../assets/image/mail-front-gradient.svg" alt="Почта"
                 class="footer__contact-icon" />
-              <p class="footer__contact-text">km@mospolytech.ru</p>
+              <p class="footer__contact-text">*@mail.ru</p>
             </div>
           </div>
           <div>
             <p class="footer__title">Контакты Преподавателя</p>
-            <p class="footer__text">Преподаватель:<br>Иванов Иван Иванович</p>
+            <p class="footer__text">Преподаватель:<br>Бритвина Валентина Валентиновна</p>
             <div class="footer__contact-method"><img src="../assets/image/mail-front-gradient.svg" alt="Почта"
                 class="footer__contact-icon" />
-              <p class="footer__contact-text">km@mospolytech.ru</p>
+              <p class="footer__contact-text">*@mail.ru</p>
             </div>
           </div>
         </li>

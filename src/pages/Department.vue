@@ -38,7 +38,7 @@ const staff: StaffPerson[] = [
     name: "Кузнецов Павел Андреевич",
     position: "доцент, кандидат физико-математических наук",
     experience: "Стаж 18 лет",
-    photo: "",
+    photo: '../../src/assets/image/staff1.png',
     noIcon: true,
   },
   {
@@ -46,7 +46,7 @@ const staff: StaffPerson[] = [
     name: "Смирнова Мария Викторовна",
     position: "старший преподаватель",
     experience: "Стаж 9 лет",
-    photo: "",
+    photo: '../../src/assets/image/staff.png',
     noIcon: true,
   },
   {
@@ -54,7 +54,7 @@ const staff: StaffPerson[] = [
     name: "Иванов Сергей Петрович",
     position: "ассистент",
     experience: "Стаж 3 года",
-    photo: "",
+    photo: '../../src/assets/image/staff1.png',
     noIcon: true,
   },
   {
@@ -62,7 +62,7 @@ const staff: StaffPerson[] = [
     name: "Попова Елена Дмитриевна",
     position: "доцент, кандидат наук",
     experience: "Стаж 21 год",
-    photo: "",
+    photo: '../../src/assets/image/staff.png',
     noIcon: true,
   }
 ];
@@ -71,15 +71,16 @@ const staff: StaffPerson[] = [
 <style scoped>
 .staff__list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   margin-top: 40px;
   list-style: none;
   padding: 0 50px;
 }
+
 @media (max-width: 900px) {
   .staff__list {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
 }
 </style>

@@ -29,7 +29,7 @@
             </li>
           </ul>
         </div>
-        <router-link to="/news" class="header__nav-link"
+        <router-link to="/events" class="header__nav-link"
           active-class="header__nav-link--active">Мероприятия</router-link>
       </nav>
 

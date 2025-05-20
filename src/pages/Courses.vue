@@ -64,8 +64,12 @@ const courses = ref<Course[]>([
 
 <style scoped>
 .department__title {
-    font-size: calc(60px + 1.5vw);
+    font-size: calc(70px + 1.5vw);
 }
+.department__description {
+    top: 0;
+}
+
 .section__list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

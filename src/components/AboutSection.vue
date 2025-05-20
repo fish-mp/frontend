@@ -8,7 +8,7 @@
                         исследований...</p>
                     <p class="about__text">Наша миссия — развитие математических знаний и навыков...</p>
                 </div>
-                <router-link class="about__link" to="/department">ПОДРОБНЕЕ</router-link>
+                <router-link class="about__link" to="/aquaristics">ПОДРОБНЕЕ</router-link>
             </div>
             <div class="about__content about__content--second">
                 <p class="about__text">

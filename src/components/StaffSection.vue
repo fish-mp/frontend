@@ -4,7 +4,7 @@
     <div class="staff__wrapper">
       <div class="staff__header">
         <h2 class="staff__title">
-          Состав кафедры
+          Состав преподавателей
         </h2>
         <router-link to="/department" class="staff__more-link">
           ВЕСЬ СОСТАВ
@@ -14,18 +14,9 @@
         </router-link>
       </div>
       <ul class="staff__list">
-        <li
-          v-for="person in staff"
-          :key="person.id"
-          class="staff__item"
-        >
+        <li v-for="person in staff" :key="person.id" class="staff__item">
           <span id="bg-circle-3"></span>
-          <div
-            :class="[
-              'staff__image',
-              { 'staff__image--no-icon': person.noIcon }
-            ]"
-          >
+          <div class="staff__image">
             <img :src="person.photo" alt="Фото преподавателя" />
           </div>
           <div class="staff__details">
@@ -61,19 +52,33 @@ const staff: StaffPerson[] = [
     name: "Бритвина Валентина Валентиновна",
     position: "доцент",
     experience: "Стаж 32 лет",
-    photo: "/image/Department/logo1.svg",
+    photo: '../../src/assets/image/staff.png',
   },
   {
     id: 2,
     name: "Иванов Иван Иванович",
     position: "доцент",
     experience: "Стаж 32 лет",
-    photo: "/image/Department/logo2.svg",
+    photo: '../../src/assets/image/staff1.png',
     noIcon: true,
   },
 ]
 </script>
 
 <style scoped>
+.staff__image {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  align-items: flex-end;
+}
 
+.staff__image img {
+  width: 200px;
+  height: 200px;
+}
 </style>

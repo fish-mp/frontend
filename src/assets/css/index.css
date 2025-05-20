@@ -200,7 +200,7 @@ body {
 }
 
 section {
-  margin-bottom: 150px;
+  margin-bottom: 120px;
 }
 @media (max-width: 1400px) {
   section {
@@ -817,7 +817,7 @@ html {
 }
 .department__description {
   position: absolute;
-  top: 20px;
+  top: 150px;
   right: 130px;
   font-family: Gotham Pro;
   font-weight: 400;
