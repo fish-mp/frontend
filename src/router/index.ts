@@ -54,10 +54,15 @@ export const router = createRouter({
       props: (route) => ({ id: Number(route.params.id) }),
     },
     {
-      path: '/event/:id',
-      name: 'EventDetail',
-      component: () => import('../pages/EventDetail.vue')
-    }
+      path: "/event/:id",
+      name: "EventDetail",
+      component: () => import("../pages/EventDetail.vue"),
+    },
+    {
+      path: "/news/:id",
+      name: "NewsDetail",
+      component: () => import("../pages/NewsDetail.vue"),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

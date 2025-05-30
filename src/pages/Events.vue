@@ -117,6 +117,11 @@ const filteredEvents = computed(() => {
     list-style: none;
 }
 
+.news__icon {
+    width: 100%;
+    object-fit: cover;
+}
+
 .news__filter {
     margin: 20px;
     font-size: 1.1rem;
