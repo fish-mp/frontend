@@ -22,15 +22,33 @@
             </div>
 
             <ul class="section__list">
-                <li class="news__item" v-for="event in filteredEvents" :key="event.id">
+                <li class="news__item" v-for="event in filteredEvents" :key="event.id"
+                    :class="{ 'news__item--finished': event.status === 'finished' }">
                     <router-link :to="{ name: 'CardDetail', params: { id: event.id } }" class="news__link">
                         <div class="news__image">
-                            <img :src="event.image" alt="" class="news__icon" />
+                            <template v-if="event.status === 'upcoming'">
+                                <div class="news__image--soon">
+                                    Мероприятие еще не началось
+                                </div>
+                            </template>
+                            <template v-else>
+                                <img v-if="event.photos && event.photos.length > 0"
+                                    :src="getPhotoUrl(event.photos[0].image)" alt="" class="news__icon" />
+                                <div v-else class="news__image--no-photo">
+                                    Нет фото
+                                </div>
+                            </template>
+                            <span class="news__status" :class="event.status">
+                                {{ event.status === 'finished' ? 'ПРОШЕДШЕЕ' : 'СКОРО' }}
+                            </span>
                         </div>
+
                         <div class="news__container">
-                            <p class="news__date">{{ event.date }}</p>
+                            <p class="news__date">
+                                {{ event.date.slice(0, 10).split('-').reverse().join('.') }} - {{ event.location }}
+                            </p>
                             <h3 class="news__subtitle">{{ event.title }}</h3>
-                            <p class="news__description">{{ event.shortDescription }}</p>
+                            <p class="news__description">{{ getShortDescription(event) }}</p>
                         </div>
                     </router-link>
                 </li>
@@ -44,57 +62,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { onMounted, ref, computed } from "vue";
+import { useEventStore } from "../stores/event";
+import { EventItem } from "../types/Event";
 
-interface EventItem {
-    id: number
-    title: string
-    shortDescription: string
-    date: string
-    image: string
+const eventStore = useEventStore();
+const selectedDate = ref<string>("");
+
+onMounted(() => {
+    eventStore.fetchEvents();
+});
+
+function getShortDescription(event: EventItem): string {
+    return event.description.length > 80
+        ? event.description.slice(0, 80) + "..."
+        : event.description;
 }
 
-const events = ref<EventItem[]>([
-    {
-        id: 1,
-        title: 'Выставка редких кораллов',
-        shortDescription: 'Увидьте коллекцию редких кораллов со всего мира.',
-        date: '05.06.2025',
-        image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg'
-    },
-    {
-        id: 2,
-        title: 'Мастер-класс по акваскейпингу',
-        shortDescription: 'Научитесь создавать потрясающие подводные ландшафты.',
-        date: '10.06.2025',
-        image: 'https://akvatoria.ru/upload/resize_cache/iblock/8f2/1230_758_13df4/8f2757d9a7166db58992d8e94811968b.JPG'
-    },
-    {
-        id: 3,
-        title: 'Демонстрация кормления морских рыб',
-        shortDescription: 'Смотрите захватывающее кормление акул и тропических рыб.',
-        date: '12.06.2025',
-        image: 'https://astrakhan.angstrem-mebel.ru/upload/medialibrary/962/f8fmq4yp9cqsmrvax4p4rt4gny4f6eia.png'
-    },
-    {
-        id: 4,
-        title: 'Ночь открытых дверей в океанариуме',
-        shortDescription: 'Экскурсии, лекции и фотосессии после закрытия.',
-        date: '15.06.2025',
-        image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg'
-    },
-])
-
-const selectedDate = ref<string>('')
+function getPhotoUrl(photoPath: string): string {
+    if (!photoPath) return "";
+    if (photoPath.startsWith("http://localhost/media")) {
+        return photoPath.replace("http://localhost", "http://127.0.0.1:8000");
+    }
+    if (photoPath.startsWith("http://127.0.0.1/media")) {
+        return photoPath.replace("http://127.0.0.1", "http://127.0.0.1:8000");
+    }
+    if (photoPath.startsWith("http://127.0.0.1:8000")) {
+        return photoPath;
+    }
+    if (photoPath.startsWith("/media")) {
+        return "http://127.0.0.1:8000" + photoPath;
+    }
+    return photoPath;
+}
 
 const filteredEvents = computed(() => {
-    if (!selectedDate.value) return events.value
-    return events.value.filter(event => {
-        const [day, month, year] = event.date.split('.')
-        const iso = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-        return iso === selectedDate.value
-    })
-})
+    if (!selectedDate.value) return eventStore.events;
+    return eventStore.events.filter((event: EventItem) => {
+        return event.date.slice(0, 10) === selectedDate.value;
+    });
+});
 </script>
 
 <style scoped>
@@ -138,5 +145,56 @@ const filteredEvents = computed(() => {
     .section__list {
         grid-template-columns: 1fr;
     }
+}
+
+.news__item--finished {
+    filter: grayscale(0.5) brightness(0.85);
+    background: #f4f4f6;
+}
+
+.news__status {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    color: #fff;
+    background: #17a2b8;
+    opacity: 0.95;
+    z-index: 2;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 4px #111;
+}
+
+.news__status.finished {
+    background: #757575;
+}
+
+.news__status.upcoming {
+    background: #009688;
+}
+
+.news__image {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.news__image--soon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1ad3c1 0%, #00BFA6 100%);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
 }
 </style>
