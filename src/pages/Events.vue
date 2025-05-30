@@ -24,7 +24,7 @@
             <ul class="section__list">
                 <li class="news__item" v-for="event in filteredEvents" :key="event.id"
                     :class="{ 'news__item--finished': event.status === 'finished' }">
-                    <router-link :to="{ name: 'CardDetail', params: { id: event.id } }" class="news__link">
+                    <router-link :to="{ name: 'EventDetail', params: { id: event.id } }" class="news__link">
                         <div class="news__image">
                             <template v-if="event.status === 'upcoming'">
                                 <div class="news__image--soon">

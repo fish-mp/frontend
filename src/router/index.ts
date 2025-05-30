@@ -53,6 +53,11 @@ export const router = createRouter({
       component: FishDetail,
       props: (route) => ({ id: Number(route.params.id) }),
     },
+    {
+      path: '/event/:id',
+      name: 'EventDetail',
+      component: () => import('../pages/EventDetail.vue')
+    }
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
