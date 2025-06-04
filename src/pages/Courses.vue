@@ -43,8 +43,8 @@ interface Course {
 const courses = ref<Course[]>([
     {
         id: 1,
-        title: 'Морской аквариум',
-        shortDescription: 'Пошаговый запуск морской экосистемы с кораллами.',
+        title: 'МК 1: СОЗДАНИЕ АКВАРИУМА',
+        shortDescription: 'Пошаговый инструкция создания морского аквариума «с нуля».',
         image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg'
     },
     {

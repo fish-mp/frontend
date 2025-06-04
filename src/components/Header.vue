@@ -19,7 +19,7 @@
           </router-link>
           <ul v-if="dropdownOpen" class="header__dropdown-list">
             <li>
-              <router-link to="/courses/1" class="header__dropdown-link">Морской аквариум</router-link>
+              <router-link to="/courses/1" class="header__dropdown-link">МК 1: СОЗДАНИЕ АКВАРИУМА</router-link>
             </li>
             <li>
               <router-link to="/courses/2" class="header__dropdown-link">Пресноводный аквариум</router-link>
