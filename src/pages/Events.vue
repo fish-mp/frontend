@@ -53,10 +53,6 @@
                     </router-link>
                 </li>
             </ul>
-
-            <router-link to="/news" class="news__more-link news__more-link--second">
-                ВСЕ НОВОСТИ
-            </router-link>
         </div>
     </section>
 </template>
@@ -149,6 +145,16 @@ const filteredEvents = computed(() => {
 @media (max-width: 768px) {
     .section__list {
         grid-template-columns: 1fr;
+    }
+
+    .news__filter {
+        margin: 10px;
+        font-size: 1rem;
+    }
+
+    .news__date-input {
+        padding: 10px 12px;
+        font-size: 1rem;
     }
 }
 

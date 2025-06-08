@@ -8,9 +8,6 @@
         </h2>
         <router-link to="/department" class="staff__more-link">
           ВЕСЬ СОСТАВ
-          <svg class="staff__more-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
-            <path d="M14 15V1M14 1H0M14 1L1 14" stroke="#FEFEFE" />
-          </svg>
         </router-link>
       </div>
       <ul class="staff__list">
@@ -28,9 +25,6 @@
       </ul>
       <router-link to="/department" class="staff__more-link staff__more-link--second">
         ВЕСЬ СОСТАВ
-        <svg class="staff__more-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
-          <path d="M14 15V1M14 1H0M14 1L1 14" stroke="#FEFEFE" />
-        </svg>
       </router-link>
     </div>
   </section>
@@ -80,5 +74,17 @@ const staff: StaffPerson[] = [
 .staff__image img {
   width: 200px;
   height: 200px;
+  border-radius: 50%;
+}
+
+@media (max-width: 500px) {
+  .staff__image img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .staff__details {
+    min-height: auto;
+  }
 }
 </style>

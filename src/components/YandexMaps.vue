@@ -8,7 +8,6 @@
             <section class="map-section">
                 <div ref="mapContainer" class="map"></div>
             </section>
-            <router-link to="/department" class="staff__more-link staff__more-link--second">ВСЕ КУРСЫ</router-link>
         </div>
     </section>
 </template>

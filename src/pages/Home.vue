@@ -28,6 +28,20 @@ import StaffSection from "../components/StaffSection.vue";
 
 <style scoped>
 .department__title {
-    font-size: calc(65px + 1.5vw);
+      font-size: calc(65px + 1.5vw);
+}
+
+@media (max-width: 768px) {
+      .department__title {
+            font-size: calc(22px + 1.5vw);
+      }
+
+      .department__info {
+            font-size: 1rem;
+      }
+
+      .staff__header {
+            margin-bottom: 10px;
+      }
 }
 </style>

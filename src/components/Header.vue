@@ -2,16 +2,31 @@
   <img class="style" src="../assets/image/wave.png" alt="" />
   <header class="header">
     <div class="header__wrapper">
+      <!-- Логотип -->
       <router-link to="/" class="header__logo-link">
-        <img src="../assets/image/logo.png" alt="Логотип" class="header__logo" />
+        <img src="../assets/image/logo.svg" alt="Логотип" class="header__logo" />
       </router-link>
-      <nav class="header__nav">
-        <router-link to="/" class="header__nav-link" active-class="header__nav-link--active">Главная</router-link>
-        <router-link to="/aquaristics" class="header__nav-link"
-          active-class="header__nav-link--active">Аквариумистика</router-link>
-        <router-link active-class="header__nav-link--active" to="/news" class="header__nav-link">Новости</router-link>
+
+      <!-- Навигация -->
+      <!-- Добавили ref="mobileNav" -->
+      <nav ref="mobileNav" :class="['header__nav', { 'header__nav--open': isMobileNavOpen }]">
+        <!-- Закрываем меню при клике на ссылку -->
+        <router-link to="/" class="header__nav-link" active-class="header__nav-link--active" @click="closeMobileNav">
+          Главная
+        </router-link>
+        <router-link to="/aquaristics" class="header__nav-link" active-class="header__nav-link--active"
+          @click="closeMobileNav">
+          Аквариумистика
+        </router-link>
+        <router-link to="/news" class="header__nav-link" active-class="header__nav-link--active"
+          @click="closeMobileNav">
+          Новости
+        </router-link>
+
         <div class="header__nav-dropdown" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
-          <router-link to="/courses" class="header__nav-link" active-class="header__nav-link--active">Курсы
+          <router-link to="/courses" class="header__nav-link" active-class="header__nav-link--active"
+            @click="closeMobileNav">
+            Курсы
             <svg width="13" height="8" style="margin-left: 4px; vertical-align: middle" viewBox="0 0 13 8" fill="none">
               <path d="M1 1L6.5 7L12 1" stroke="#19b2b2" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" />
@@ -19,21 +34,45 @@
           </router-link>
           <ul v-if="dropdownOpen" class="header__dropdown-list">
             <li>
-              <router-link to="/courses/1" class="header__dropdown-link">МК 1: СОЗДАНИЕ АКВАРИУМА</router-link>
+              <router-link to="/courses/1" class="header__dropdown-link" @click="closeMobileNav">
+                МК 1: СОЗДАНИЕ АКВАРИУМА
+              </router-link>
             </li>
             <li>
-              <router-link to="/courses/2" class="header__dropdown-link">Пресноводный аквариум</router-link>
+              <router-link to="/courses/2" class="header__dropdown-link" @click="closeMobileNav">
+                Пресноводный аквариум
+              </router-link>
             </li>
             <li>
-              <router-link to="/courses/3" class="header__dropdown-link">Рифовый аквариум</router-link>
+              <router-link to="/courses/3" class="header__dropdown-link" @click="closeMobileNav">
+                Рифовый аквариум
+              </router-link>
             </li>
           </ul>
         </div>
-        <router-link to="/events" class="header__nav-link"
-          active-class="header__nav-link--active">Мероприятия</router-link>
+
+        <router-link to="/events" class="header__nav-link" active-class="header__nav-link--active"
+          @click="closeMobileNav">
+          Мероприятия
+        </router-link>
+
+        <!-- Мобильные кнопки внутри меню -->
+        <div class="header__actions header__actions--mobile">
+          <template v-if="!isAuth">
+            <button class="btn btn--login" @click="showLogin = true">Войти</button>
+            <button class="btn btn--register" @click="showRegister = true">
+              Зарегистрироваться
+            </button>
+          </template>
+          <template v-else>
+            <span class="user__name">{{ user?.first_name || user?.email }}</span>
+            <button class="btn btn--login" @click="auth.logout()">Выйти</button>
+          </template>
+        </div>
       </nav>
 
-      <div class="header__actions">
+      <!-- Десктопные кнопки -->
+      <div class="header__actions header__actions--desktop">
         <template v-if="!isAuth">
           <button class="btn btn--login" @click="showLogin = true">Войти</button>
           <button class="btn btn--register" @click="showRegister = true">
@@ -45,36 +84,161 @@
           <button class="btn btn--login" @click="auth.logout()">Выйти</button>
         </template>
       </div>
-      <button class="header__burger" @click="$emit('toggle-sidebar')">
+
+      <!-- Бургер -->
+      <!-- Добавили ref="burger" -->
+      <button class="header__burger" ref="burger" @click="toggleMobileNav">
         <img class="header__menu" src="../assets/image/burgerMenu.svg" alt="Меню" />
       </button>
     </div>
   </header>
+
   <LoginPopup v-model="showLogin" />
   <RegisterPopup v-model="showRegister" />
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useAuthStore } from "../stores/auth";
+import { useRoute } from "vue-router";
 import LoginPopup from "../components/LoginPopup.vue";
 import RegisterPopup from "../components/RegisterPopup.vue";
-import { useRoute } from "vue-router";
 
 const showLogin = ref(false);
 const showRegister = ref(false);
-
 const dropdownOpen = ref(false);
+const isMobileNavOpen = ref(false);
+
+// Новые ссылки на DOM
+const mobileNav = ref(null);
+const burger = ref(null);
 
 const auth = useAuthStore();
 const isAuth = computed(() => auth.isAuthenticated);
 const user = computed(() => auth.user);
 
 const route = useRoute();
-const isCoursesActive = computed(() => route.path.startsWith("/courses"));
+
+// Функция закрытия меню
+function closeMobileNav() {
+  isMobileNavOpen.value = false;
+}
+
+function toggleMobileNav() {
+  isMobileNavOpen.value = !isMobileNavOpen.value;
+}
+
+// Обработчик кликов вне меню/бургера
+function onClickOutside(event) {
+  if (
+    isMobileNavOpen.value &&
+    mobileNav.value &&
+    burger.value &&
+    !mobileNav.value.contains(event.target) &&
+    !burger.value.contains(event.target)
+  ) {
+    isMobileNavOpen.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("click", onClickOutside);
+});
+
+// Убираем слушатель при уничтожении компонента
+onBeforeUnmount(() => {
+  document.removeEventListener("click", onClickOutside);
+});
+
+// При каждом переходе по маршруту закрываем мобильное меню
+watch(
+  () => route.fullPath,
+  () => {
+    isMobileNavOpen.value = false;
+  }
+);
 </script>
 
 <style scoped>
+.header {
+  background-color: var(--overlay-bg);
+  backdrop-filter: blur(30px);
+  padding: 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.header__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1375px;
+  margin: 0 auto;
+}
+
+/* Логотип */
+.header__logo {
+  width: 80px;
+  height: auto;
+}
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 8px;
+  }
+
+  .header__logo {
+    width: 70px;
+  }
+}
+
+@media (max-width: 767px) {
+  .header__logo {
+    width: 60px;
+  }
+}
+
+/* Навигация */
+.header__nav {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.header__nav-link {
+  color: var(--color-text);
+  font-family: "Gotham Pro", sans-serif;
+  font-weight: 400;
+  line-height: 140%;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+@media (min-width: 320px) {
+  .header__nav-link {
+    font-size: calc(10px + 0.5vw);
+  }
+}
+
+@media (min-width: 900px) {
+  .header__nav-link {
+    font-size: calc(12px + 0.25vw);
+  }
+}
+
+.header__nav-link--active {
+  font-weight: 700;
+}
+
+.header__nav-link:hover {
+  color: var(--color-turquoise);
+}
+
+/* Дропдаун */
 .header__nav-dropdown {
   position: relative;
   display: inline-block;
@@ -90,9 +254,6 @@ const isCoursesActive = computed(() => route.path.startsWith("/courses"));
   min-width: 190px;
   padding: 8px 0;
   z-index: 15;
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
   transition: opacity 0.2s, transform 0.2s;
 }
 
@@ -114,9 +275,85 @@ const isCoursesActive = computed(() => route.path.startsWith("/courses"));
   .header__dropdown-list {
     position: static;
     box-shadow: none;
-    min-width: unset;
     background: transparent;
     padding: 0;
+    transform: none;
+  }
+}
+
+/* Кнопки */
+.header__actions {
+  gap: 12px;
+  align-items: center;
+}
+
+/* Десктоп */
+.header__actions--desktop {
+  display: flex;
+}
+
+@media (max-width: 1024px) {
+  .header__actions--desktop {
+    display: none;
+  }
+}
+
+/* Мобайл */
+.header__actions--mobile {
+  display: none;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+@media (max-width: 1024px) {
+  .header__actions--mobile {
+    display: flex;
+  }
+}
+
+/* Бургер и меню */
+.header__burger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.header__menu {
+  width: 40px;
+  height: auto;
+}
+
+@media (max-width: 1024px) {
+  .header__burger {
+    display: flex;
+  }
+
+  /* Скрываем базовую навигацию */
+  .header__nav {
+    display: none;
+  }
+
+  /* Показываем, когда open-класс */
+  .header__nav.header__nav--open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 150%;
+    left: 0;
+    width: 100%;
+    padding: 20px 0;
+    background-color: var(--overlay-bg);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    background-color: white;
+  }
+
+  .header__nav.header__nav--open .header__nav-link {
+    display: block;
+    padding: 10px 20px;
+    font-size: 1.1rem;
   }
 }
 </style>

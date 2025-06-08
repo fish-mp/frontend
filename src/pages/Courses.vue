@@ -5,7 +5,8 @@
             <span id="bg-circle-2"></span>
             <h1 class="department__title">Курсы по аквариумистике</h1>
             <p class="department__description">
-                Здесь собраны курсы по морским, пресноводным и рифовым аквариумам. Изучайте и совершенствуйте свои знания!
+                Здесь собраны курсы по морским, пресноводным и рифовым аквариумам. Изучайте и совершенствуйте свои
+                знания!
             </p>
         </div>
     </section>
@@ -66,6 +67,7 @@ const courses = ref<Course[]>([
 .department__title {
     font-size: calc(70px + 1.5vw);
 }
+
 .department__description {
     top: 0;
 }
@@ -83,8 +85,12 @@ const courses = ref<Course[]>([
 }
 
 @media (max-width: 768px) {
-    .news__list {
+    .section__list {
         grid-template-columns: 1fr;
+    }
+
+    .department__title {
+        font-size: calc(22px + 1.5vw);
     }
 }
 </style>

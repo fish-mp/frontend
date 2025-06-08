@@ -269,4 +269,11 @@ if (!event.value && !eventStore.loading) {
     color: #999;
     font-size: 1.2rem;
 }
+
+@media (max-width: 768px) {
+    .news-detail {
+        padding: 10px;
+        margin: 80px auto 20px;
+    }
+}
 </style>

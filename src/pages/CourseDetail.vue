@@ -109,7 +109,7 @@ if (!course.value) {
 
 @media (max-width: 768px) {
   .course-detail {
-    margin: 20px auto;
+    margin: 80px auto 20px;
     padding: 1rem;
   }
   .course-detail__title {

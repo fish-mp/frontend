@@ -202,4 +202,17 @@ if (!post.value && !newsStore.loading) {
     color: #999;
     font-size: 1.2rem;
 }
+
+@media (max-width: 768px) {
+    .news-detail {
+        padding: 10px;
+        margin: 80px auto 20px;
+    }
+
+    .slider__image {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+}
 </style>

@@ -56,4 +56,14 @@
 .department__title {
   font-size: calc(60px + 1.5vw);
 }
+
+@media (max-width: 768px) {
+  .department__title {
+    font-size: calc(22px + 1.5vw);
+  }
+  
+  .department__info {
+    font-size: 1rem;
+  }
+}
 </style>
