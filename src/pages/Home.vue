@@ -13,7 +13,6 @@
 
       <AboutSection />
       <NewsSection />
-      <CourseSection />
       <StaffSection />
       <YandexMaps />
 </template>
