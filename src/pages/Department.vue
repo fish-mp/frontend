@@ -24,21 +24,25 @@
 </template>
 
 <script setup lang="ts">
+import staffImg from '../../src/assets/image/staff.png'
+import staff1Img from '../../src/assets/image/staff1.png'
+
 interface StaffPerson {
-  id: number;
-  name: string;
-  position: string;
-  experience: string;
-  photo: string;
-  noIcon?: boolean;
+  id: number
+  name: string
+  position: string
+  experience: string
+  photo: string
+  noIcon?: boolean
 }
+
 const staff: StaffPerson[] = [
   {
     id: 1,
     name: "Кузнецов Павел Андреевич",
     position: "доцент, кандидат физико-математических наук",
     experience: "Стаж 18 лет",
-    photo: '../../src/assets/image/staff1.png',
+    photo: staff1Img,
     noIcon: true,
   },
   {
@@ -46,7 +50,7 @@ const staff: StaffPerson[] = [
     name: "Смирнова Мария Викторовна",
     position: "старший преподаватель",
     experience: "Стаж 9 лет",
-    photo: '../../src/assets/image/staff.png',
+    photo: staffImg,
     noIcon: true,
   },
   {
@@ -54,7 +58,7 @@ const staff: StaffPerson[] = [
     name: "Иванов Сергей Петрович",
     position: "ассистент",
     experience: "Стаж 3 года",
-    photo: '../../src/assets/image/staff1.png',
+    photo: staff1Img,
     noIcon: true,
   },
   {
@@ -62,7 +66,7 @@ const staff: StaffPerson[] = [
     name: "Попова Елена Дмитриевна",
     position: "доцент, кандидат наук",
     experience: "Стаж 21 год",
-    photo: '../../src/assets/image/staff.png',
+    photo: staffImg,
     noIcon: true,
   }
 ];
