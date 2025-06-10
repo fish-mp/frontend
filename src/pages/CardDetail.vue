@@ -1,5 +1,5 @@
 <template>
-    <section class="news-detail">
+    <section v-if="post" class="news-detail">
         <div class="news-detail__wrapper">
             <router-link to="/" class="news-detail__back">&larr; Главная</router-link>
             <h1 class="news-detail__title">{{ post.title }}</h1>

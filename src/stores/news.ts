@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { NewsItem } from "../types/News";
+import type { NewsItem } from "../types/News";
 
 export const useNewsStore = defineStore("news", () => {
   const news = ref<NewsItem[]>([]);

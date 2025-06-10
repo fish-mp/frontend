@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
 import { useEventStore } from "../stores/event";
-import { EventItem } from "../types/Event";
+import type { EventItem } from "../types/Event";
 
 const eventStore = useEventStore();
 const selectedDate = ref<string>("");

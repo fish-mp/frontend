@@ -51,12 +51,13 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCourseStore } from '../stores/course'
 import { useAuthStore } from '../stores/auth'
+import type { Course } from '../types/Course'
 
 const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
 
-const course = ref(null)
+const course = ref<Course | null>(null)
 const isLoading = ref(false)
 
 const fetchCourse = async () => {
@@ -124,7 +125,7 @@ onMounted(() => {
 }
 
 .course-detail__desc {
-    font-size: 1.13rem;
+  font-size: 1.13rem;
 }
 
 .course-detail__header {

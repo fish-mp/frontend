@@ -11,9 +11,11 @@
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
+
+    /* Важное: для конфига Vite тоже не эмитим */
     "noEmit": true,
 
-    /* Linting */
+    /* Линтинг */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

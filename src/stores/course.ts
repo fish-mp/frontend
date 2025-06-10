@@ -1,21 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useAuthStore } from "./auth";
-
-interface CourseFile {
-  id: number;
-  file: string;
-  title: string;
-}
-
-interface Course {
-  id: number;
-  files: CourseFile[];
-  enrollment_state: string | null;
-  title: string;
-  description: string;
-  short_description: string;
-}
+import type { Course } from "../types/Course";
 
 export const useCourseStore = defineStore("course", () => {
   const courses = ref<Course[]>([]);
@@ -42,7 +28,7 @@ export const useCourseStore = defineStore("course", () => {
       }
 
       courses.value = await response.json();
-    } catch (err) {
+    } catch (err: any) {
       error.value = err.message;
     } finally {
       isLoading.value = false;
@@ -72,7 +58,7 @@ export const useCourseStore = defineStore("course", () => {
       courses.value = updatedCourses;
 
       return true;
-    } catch (err) {
+    } catch (err: any) {
       error.value = err.message;
       return false;
     }

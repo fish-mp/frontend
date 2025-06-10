@@ -1,16 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node", // искать модули по Node-алгоритму
-    "esModuleInterop": true, // включить поддержку default-imports для CommonJS
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "strict": true,
-    "types": ["node"], // подключить декларации Node.js
-    "lib": ["DOM", "ESNext"]
-  },
-  "include": ["src", "vite.config.ts"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

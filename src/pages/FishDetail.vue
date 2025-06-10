@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { fishData, Fish } from "../data/fishData";
+import { fishData, type Fish } from "../data/fishData";
 
 const route = useRoute();
 const idParam = Number(route.params.id);
