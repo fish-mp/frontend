@@ -12,7 +12,7 @@
                         <div class="news__image" v-if="post.photos"><img :src="post.photos[0].image" alt=""
                                 class="news__icon" /></div>
                         <div class="news__container">
-                            <p class="news__date">{{ post.created_at }}</p>
+                            <p class="news__date">{{ formatDate(post.created_at) }}</p>
                             <h3 class="news__subtitle">{{ post.title }}</h3>
                             <p class="news__description">{{ post.text }}</p>
                         </div>
@@ -33,4 +33,9 @@ const newsStore = useNewsStore();
 onMounted(() => {
     newsStore.fetchNews();
 });
+
+function formatDate(date: string): string {
+    const [yyyy, mm, dd] = date.slice(0, 10).split('-');
+    return `${dd}.${mm}.${yyyy}`;
+}
 </script>
