@@ -1,45 +1,46 @@
 <template>
   <section class="course-detail">
     <div class="course-detail__wrapper" v-if="course">
-      <router-link to="/courses" class="course-detail__back">&larr; Курсы</router-link>
-      <h1 class="course-detail__title">{{ course.title }}</h1>
-
-      <div v-if="course.enrollment_state === null" class="section__course course-access-message">
-        <p>Для доступа к курсу необходимо записаться</p>
-        <button class="btn btn--login" @click="fetchNewCourse(course.id)">
+      <router-link to="/courses" class="course-detail__back">&larr; Все курсы</router-link>
+      <div class="course-detail__content">
+        <h1 class="course-detail__title">{{ course.title }}</h1>
+        <p class="course-detail__desc">{{ course.description }}</p>
+        <button v-if="course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
+          @click="fetchNewCourse(course.id)">
           Записаться на курс
         </button>
       </div>
 
-      <div v-else-if="course.enrollment_state === 'applied'" class="course-access-message">
-        <p>Ваша заявка на курс находится на рассмотрении</p>
+      <div class="course-access">
+        <p v-if="course.enrollment_state === 'applied'" class="course-access__msg">
+          🕒 Ваша заявка на курс находится на рассмотрении
+        </p>
+        <p v-else-if="course.enrollment_state === 'rejected'" class="course-access__msg course-access__msg--error">
+          ❌ Ваша заявка отклонена
+        </p>
       </div>
 
-      <div v-else-if="course.enrollment_state === 'rejected'" class="course-access-message">
-        <p>Ваша заявка на курс была отклонена</p>
-      </div>
-
-      <div v-else-if="course.enrollment_state === 'enrolled'">
-        <div class="course-detail__content">
+      <transition name="fade">
+        <div v-if="course.enrollment_state === 'enrolled'" class="course-detail__content">
           <p class="course-detail__text">{{ course.description }}</p>
+          <div class="course-detail__download" v-if="course.files.length">
+            <h3 class="course-detail__download-title">Материалы курса: </h3>
+            <ul class="course-detail__files">
+              <li v-for="file in course.files" :key="file.id" class="course-detail__file">
+                <a :href="file.file" download class="btn btn--login">
+                  Просмотреть файлы
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="course-detail__download" v-if="course.files.length">
-          <h3>Материалы курса:</h3>
-          <ul>
-            <li v-for="file in course.files" :key="file.id">
-              <a :href="file.file" download class="course-detail__download-button">
-                Скачать {{ file.title || 'файл' }}
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
+      </transition>
     </div>
 
-    <div v-else-if="isLoading">
-      <p>Загрузка курса...</p>
+    <div v-else-if="isLoading" class="course-detail__loading">
+      <p>Загрузка курса…</p>
     </div>
-    <div v-else>
+    <div v-else class="course-detail__not-found">
       <p>Курс не найден.</p>
     </div>
   </section>
@@ -89,7 +90,7 @@ const fetchNewCourse = async (id: number) => {
   try {
     const ok = await courseStore.enrollToCourse(id)
     if (ok) {
-      setTimeout(fetchCourse, 1000)
+      setTimeout(fetchCourse, 100)
     }
   } catch (error) {
     console.error(error)
@@ -103,74 +104,161 @@ onMounted(() => {
 
 <style scoped>
 .course-detail {
-  padding: 2rem;
-  max-width: 800px;
+  padding: 3rem 1rem;
+  max-width: 900px;
   margin: 100px auto;
+  font-family: Inter, sans-serif;
 }
 
 .course-detail__back {
+  color: #4f9da6;
+  text-decoration: none;
+  font-weight: 500;
   display: inline-block;
   margin-bottom: 1rem;
-  color: var(--color-turquoise);
-  text-decoration: none;
+  transition: color .3s;
+}
+
+.course-detail__back:hover {
+  color: #31727a;
+}
+
+.course-detail__desc {
+    font-size: 1.13rem;
+}
+
+.course-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 }
 
 .course-detail__title {
-  font-size: 2rem;
-  margin: 0.5rem 0;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #2c3e50;
 }
 
-.course-access-message {
-  background: #fff8e1;
-  padding: 1rem;
-  border-radius: 8px;
-  margin: 1rem 0;
-  color: #ff8f00;
+.course-detail__enroll {
+  margin-top: .5rem;
+}
+
+.course-access {
+  margin-bottom: 2rem;
+}
+
+.course-access__msg {
+  background: #e8f6ff;
+  padding: .75rem 1rem;
+  border-radius: .5rem;
+  color: #31727a;
+  font-size: 1rem;
+}
+
+.course-access__msg--error {
+  background: #ffe8e8;
+  color: #a12b2b;
 }
 
 .course-detail__content {
-  margin: 2rem 0;
-}
-
-.course-detail__text {
-  margin-bottom: 1rem;
-  line-height: 1.6;
-}
-
-.course-detail__download {
-  margin-top: 2rem;
-}
-
-.course-detail__download-button {
-  display: inline-block;
-  background-color: var(--color-turquoise);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.course-detail__download-button:hover {
-  background-color: var(--color-turquoise-dark);
-}
-
-@media (max-width: 768px) {
-  .course-detail {
-    margin: 80px auto 20px;
-    padding: 1rem;
-  }
-
-  .course-detail__title {
-    font-size: 1.75rem;
-  }
-}
-
-.section__course {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.course-detail__text {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #444;
+  margin: 0;
+}
+
+.course-detail__download-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.course-detail__files {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.course-detail__file .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.btn {
+  padding: .75rem 1.25rem;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .3s, transform .2s;
+}
+
+.btn--primary {
+  background: #4f9da6;
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: #31727a;
+  transform: translateY(-2px);
+}
+
+.btn--secondary {
+  background: #f0f0f0;
+  color: #444;
+}
+
+.btn--secondary:hover {
+  background: #d9d9d9;
+  transform: translateY(-2px);
+}
+
+.course-detail__loading,
+.course-detail__not-found {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .course-detail__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .course-detail__title {
+    font-size: 2rem;
+  }
+
+  .course-detail {
+    margin: 60px auto 20px;
+  }
 }
 </style>
