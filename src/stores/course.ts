@@ -13,7 +13,7 @@ export const useCourseStore = defineStore("course", () => {
     try {
       isLoading.value = true;
       const response = await fetch(
-        "http://fish-mp.miv-dev.ru:8000/api/courses/",
+        "https://fish-mp.miv-dev.ru/api/courses/",
         {
           headers: {
             Authorization: `Bearer ${auth.accessToken}`,
@@ -38,7 +38,7 @@ export const useCourseStore = defineStore("course", () => {
   const enrollToCourse = async (courseId: number) => {
     try {
       const response = await fetch(
-        `http://fish-mp.miv-dev.ru:8000/api/courses/${courseId}/enroll/`,
+        `https://fish-mp.miv-dev.ru/api/courses/${courseId}/enroll/`,
         {
           method: "POST",
           headers: {

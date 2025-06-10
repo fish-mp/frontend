@@ -70,7 +70,7 @@ const fetchCourse = async () => {
     if (storedCourse) {
       course.value = storedCourse
     } else {
-      const response = await fetch(`http://fish-mp.miv-dev.ru:8000/api/courses/${courseId}/`, {
+      const response = await fetch(`https://fish-mp.miv-dev.ru/api/courses/${courseId}/`, {
         headers: {
           'Authorization': `Bearer ${useAuthStore().accessToken}`
         }

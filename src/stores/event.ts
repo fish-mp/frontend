@@ -11,7 +11,7 @@ export const useEventStore = defineStore("event", () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch("http://fish-mp.miv-dev.ru:8000/api/events/");
+      const response = await fetch("https://fish-mp.miv-dev.ru/api/events/");
       if (!response.ok) throw new Error("Не удалось загрузить события");
       const data = await response.json();
       events.value = data;

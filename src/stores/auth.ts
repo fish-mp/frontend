@@ -45,7 +45,7 @@ export const useAuthStore = defineStore("auth", () => {
   const login = async (credentials: { email: string; password: string }) => {
     try {
       const response = await fetch(
-        "http://fish-mp.miv-dev.ru:8000/api/token/",
+        "https://fish-mp.miv-dev.ru/api/token/",
         {
           method: "POST",
           headers: {
@@ -102,7 +102,7 @@ export const useAuthStore = defineStore("auth", () => {
     if (token) {
       try {
         const verifyResponse = await fetch(
-          "http://fish-mp.miv-dev.ru:8000/api/token/verify/",
+          "https://fish-mp.miv-dev.ru/api/token/verify/",
           {
             method: "POST",
             headers: {
@@ -133,7 +133,7 @@ export const useAuthStore = defineStore("auth", () => {
   }) => {
     try {
       const response = await fetch(
-        "http://fish-mp.miv-dev.ru:8000/api/users/register/",
+        "https://fish-mp.miv-dev.ru/api/users/register/",
         {
           method: "POST",
           headers: {
@@ -158,7 +158,7 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       if (!refreshToken.value) throw new Error("No refresh token");
       const response = await fetch(
-        "http://fish-mp.miv-dev.ru:8000/api/token/refresh/",
+        "https://fish-mp.miv-dev.ru/api/token/refresh/",
         {
           method: "POST",
           headers: {
