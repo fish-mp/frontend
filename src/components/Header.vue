@@ -104,6 +104,8 @@ import { useRoute } from "vue-router";
 import LoginPopup from "../components/LoginPopup.vue";
 import RegisterPopup from "../components/RegisterPopup.vue";
 
+const emit = defineEmits(['toggle-sidebar'])
+
 const showLogin = ref(false);
 const showRegister = ref(false);
 const dropdownOpen = ref(false);
@@ -126,6 +128,7 @@ function closeMobileNav() {
 
 function toggleMobileNav() {
   isMobileNavOpen.value = !isMobileNavOpen.value;
+  emit('toggle-sidebar')
 }
 
 // Обработчик кликов вне меню/бургера

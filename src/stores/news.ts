@@ -11,7 +11,7 @@ export const useNewsStore = defineStore("news", () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/news/", {
+      const response = await fetch("http://fish-mp.miv-dev.ru:8000/api/news/", {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         method: "GET",
