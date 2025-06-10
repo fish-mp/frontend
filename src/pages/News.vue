@@ -13,7 +13,7 @@
 
     <section class="news">
         <span id="bg-circle-5"></span>
-        <div class="news__wrapper">
+        <div v-if="newsStore.news.length" class="news__wrapper">
             <ul class="section__list">
                 <li class="news__item" v-for="post in newsStore.news" :key="post.id">
                     <router-link :to="{ name: 'NewsDetail', params: { id: post.id } }" class="news__link">
@@ -33,6 +33,7 @@
                 </li>
             </ul>
         </div>
+        <h2 v-else class="active__title">Новостей пока нет, но они скоро появятся</h2>
     </section>
 </template>
 
@@ -105,5 +106,9 @@ function getShortText(text: string): string {
     .section__list {
         grid-template-columns: 1fr;
     }
+}
+
+.active__title {
+    text-align: center;
 }
 </style>

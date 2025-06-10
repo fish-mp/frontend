@@ -21,7 +21,7 @@
                 </label>
             </div>
 
-            <ul class="section__list">
+            <ul v-if="filteredEvents.length" class="section__list">
                 <li class="news__item" v-for="event in filteredEvents" :key="event.id"
                     :class="{ 'news__item--finished': event.status === 'finished' }">
                     <router-link :to="{ name: 'EventDetail', params: { id: event.id } }" class="news__link">
@@ -53,6 +53,7 @@
                     </router-link>
                 </li>
             </ul>
+            <h2 v-else class="active__title">На выбранную дату событий нет</h2>
         </div>
     </section>
 </template>
@@ -206,6 +207,11 @@ const filteredEvents = computed(() => {
     color: #fff;
     font-size: 1.2rem;
     font-weight: 600;
+    text-align: center;
+}
+
+.active__title {
+    margin-top: 50px;
     text-align: center;
 }
 </style>

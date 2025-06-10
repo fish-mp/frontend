@@ -15,14 +15,14 @@
         <span id="bg-circle-5"></span>
         <div class="news__wrapper">
             <ul class="section__list">
-                <li class="news__item" v-for="course in courses" :key="course.id">
+                <li class="news__item" v-for="course in courseStore.courses" :key="course.id">
                     <router-link :to="{ name: 'CourseDetail', params: { id: course.id } }" class="news__link">
                         <div class="news__image">
                             <img :src="course.image" alt="" class="news__icon" />
                         </div>
                         <div class="news__container">
                             <h3 class="news__subtitle">{{ course.title }}</h3>
-                            <p class="news__description">{{ course.shortDescription }}</p>
+                            <p class="news__description">{{ course.short_description }}</p>
                         </div>
                     </router-link>
                 </li>
@@ -32,35 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted } from "vue";
+import { useCourseStore } from "../stores/course";
 
-interface Course {
-    id: number
-    title: string
-    shortDescription: string
-    image: string
-}
+const courseStore = useCourseStore();
 
-const courses = ref<Course[]>([
-    {
-        id: 1,
-        title: 'МК 1: СОЗДАНИЕ АКВАРИУМА',
-        shortDescription: 'Пошаговый инструкция создания морского аквариума «с нуля».',
-        image: 'https://www.petshop.ru/upload/medialibrary/83d/83d4980402475fe776e5063f56b47514.jpg'
-    },
-    {
-        id: 2,
-        title: 'Пресноводный аквариум',
-        shortDescription: ' ',
-        image: 'https://astrakhan.angstrem-mebel.ru/upload/medialibrary/962/f8fmq4yp9cqsmrvax4p4rt4gny4f6eia.png'
-    },
-    {
-        id: 3,
-        title: 'Рифовый аквариум',
-        shortDescription: 'Уход за коралловыми рифами и совместимость видов.',
-        image: 'https://akvatoria.ru/upload/resize_cache/iblock/8f2/1230_758_13df4/8f2757d9a7166db58992d8e94811968b.JPG'
-    }
-])
+onMounted(() => {
+    courseStore.fetchCourses();
+});
 </script>
 
 <style scoped>

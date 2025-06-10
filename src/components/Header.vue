@@ -36,17 +36,17 @@
           <ul v-if="dropdownOpen" class="header__dropdown-list">
             <li>
               <router-link to="/courses/1" class="header__dropdown-link" @click="closeMobileNav">
-                МК 1: СОЗДАНИЕ АКВАРИУМА
+                Мастер класс 1
               </router-link>
             </li>
             <li>
               <router-link to="/courses/2" class="header__dropdown-link" @click="closeMobileNav">
-                Пресноводный аквариум
+                Мастер класс 2
               </router-link>
             </li>
             <li>
               <router-link to="/courses/3" class="header__dropdown-link" @click="closeMobileNav">
-                Рифовый аквариум
+                Мастер класс 3
               </router-link>
             </li>
           </ul>
