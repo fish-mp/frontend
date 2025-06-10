@@ -31,6 +31,9 @@
 </template>
 
 <script setup lang="ts">
+import staffImg from '../../src/assets/image/staff.png'
+import staff1Img from '../../src/assets/image/staff1.png'
+
 interface StaffPerson {
   id: number
   name: string
@@ -46,14 +49,14 @@ const staff: StaffPerson[] = [
     name: "Бритвина Валентина Валентиновна",
     position: "доцент",
     experience: "Стаж 32 лет",
-    photo: '../../src/assets/image/staff.png',
+    photo: staffImg,
   },
   {
     id: 2,
     name: "Иванов Иван Иванович",
     position: "доцент",
     experience: "Стаж 32 лет",
-    photo: '../../src/assets/image/staff1.png',
+    photo: staff1Img,
     noIcon: true,
   },
 ]
