@@ -5,6 +5,7 @@ import News from "../pages/News.vue";
 import Courses from "../pages/Courses.vue";
 import CourseDetail from "../pages/CourseDetail.vue";
 import FishDetail from "../pages/FishDetail.vue";
+import NotFound from "../pages/NotFound.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -62,6 +63,11 @@ export const router = createRouter({
       path: "/news/:id",
       name: "NewsDetail",
       component: () => import("../pages/NewsDetail.vue"),
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: NotFound,
     },
   ],
   scrollBehavior(to, from, savedPosition) {
