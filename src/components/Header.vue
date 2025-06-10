@@ -23,7 +23,8 @@
           Новости
         </router-link>
 
-        <div class="header__nav-dropdown" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+        <div v-if="isAuth" class="header__nav-dropdown" @mouseenter="dropdownOpen = true"
+          @mouseleave="dropdownOpen = false">
           <router-link to="/courses" class="header__nav-link" active-class="header__nav-link--active"
             @click="closeMobileNav">
             Курсы
