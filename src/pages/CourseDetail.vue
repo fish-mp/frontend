@@ -28,7 +28,7 @@
             <ul class="course-detail__files">
               <li v-for="file in course.files" :key="file.id" class="course-detail__file">
                 <a :href="file.file" download class="btn btn--login">
-                  Просмотреть файлы
+                  {{ file.title }}
                 </a>
               </li>
             </ul>
