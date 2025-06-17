@@ -4,7 +4,7 @@
       <router-link to="/courses" class="course-detail__back">&larr; Все курсы</router-link>
       <div class="course-detail__content">
         <h1 class="course-detail__title">{{ course.title }}</h1>
-        <p class="course-detail__desc">{{ course.description }}</p>
+        <p class="course-detail__desc">{{ course.short_description }}</p>
         <button v-if="course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
           @click="fetchNewCourse(course.id)">
           Записаться на курс
@@ -111,6 +111,12 @@ onMounted(() => {
   font-family: Inter, sans-serif;
 }
 
+.course-detail__download {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .course-detail__back {
   color: #4f9da6;
   text-decoration: none;
@@ -126,6 +132,7 @@ onMounted(() => {
 
 .course-detail__desc {
   font-size: 1.13rem;
+  line-height: 1.6;
 }
 
 .course-detail__header {
