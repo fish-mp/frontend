@@ -47,19 +47,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useCourseStore } from "../stores/course";
+import { useDifficultyLevels } from "../composables/useDifficultyLevels";
 
+const route = useRoute();
 const courseStore = useCourseStore();
 const selectedDifficulty = ref<string>("");
 
-const difficultyLevels = computed(() => {
-  return Array.from(
-    new Set(
-      courseStore.courses.map((c) => c.tag?.name).filter((name): name is string => !!name)
-    )
-  ).map((name) => ({ value: name, label: name }));
+watch(() => route.query.difficulty, (newDifficulty) => {
+  if (newDifficulty) {
+    selectedDifficulty.value = newDifficulty as string;
+  } else {
+    selectedDifficulty.value = "";
+  }
 });
+
+const difficultyLevels = useDifficultyLevels();
 
 const filteredCourses = computed(() => {
   if (!selectedDifficulty.value) {
@@ -72,6 +77,9 @@ const filteredCourses = computed(() => {
 
 onMounted(() => {
   courseStore.fetchCourses();
+  if (route.query.difficulty) {
+    selectedDifficulty.value = route.query.difficulty as string;
+  }
 });
 </script>
 

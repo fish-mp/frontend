@@ -34,20 +34,14 @@
             </svg>
           </router-link>
           <ul v-if="dropdownOpen" class="header__dropdown-list">
-            <li>
-              <router-link to="/courses/1" class="header__dropdown-link" @click="closeMobileNav">
-                Мастер класс 1
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/courses/2" class="header__dropdown-link" @click="closeMobileNav">
-                Мастер класс 2
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/courses/3" class="header__dropdown-link" @click="closeMobileNav">
-                Мастер класс 3
-              </router-link>
+            <li v-for="level in difficultyLevels" :key="level.value">
+              <a 
+                href="#" 
+                class="header__dropdown-link" 
+                @click.prevent="navigateToCoursesWithFilter(level.value)"
+              >
+                {{ level.label }}
+              </a>
             </li>
           </ul>
         </div>
@@ -101,16 +95,23 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useAuthStore } from "../stores/auth";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useCourseStore } from "../stores/course";
+import { useDifficultyLevels } from "../composables/useDifficultyLevels";
 import LoginPopup from "../components/LoginPopup.vue";
 import RegisterPopup from "../components/RegisterPopup.vue";
 
 const emit = defineEmits(['toggle-sidebar'])
+const router = useRouter();
+const courseStore = useCourseStore();
 
 const showLogin = ref(false);
 const showRegister = ref(false);
 const dropdownOpen = ref(false);
 const isMobileNavOpen = ref(false);
+
+// Получаем уровни сложности
+const difficultyLevels = useDifficultyLevels();
 
 // Новые ссылки на DOM
 const mobileNav = ref(null);
@@ -161,6 +162,16 @@ watch(
     isMobileNavOpen.value = false;
   }
 );
+
+// Функция для перехода на курсы с фильтром
+const navigateToCoursesWithFilter = (difficulty) => {
+  router.push({
+    path: '/courses',
+    query: { difficulty }
+  });
+  closeMobileNav();
+  dropdownOpen.value = false;
+};
 </script>
 
 <style scoped>
