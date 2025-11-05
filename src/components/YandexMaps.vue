@@ -34,7 +34,7 @@ onMounted(() => {
         })
 
         const HintLayout = ymaps.templateLayoutFactory.createClass(
-            `<div style="color: #e60000; font-size: 16px; font-weight: bold;">
+            `<div class="custom-hint">
                 $[properties.hintContent]
             </div>`
         );
@@ -47,18 +47,10 @@ onMounted(() => {
                 {
                     hintContent: fish.name,
                     balloonContent: `
-            <div style="max-width:200px; color: black;">
-              <h3 style="color: black; font-size: 16px;">${fish.name}</h3>
-              <p style="margin: 12px 0; font-size:14px; color: black;">${fish.description}</p>
-              <button id="btn-${fish.id}" style="
-                margin-top:8px;
-                padding:6px 12px;
-                background:#0077aa;
-                color:#fff;
-                border:none;
-                border-radius:4px;
-                cursor:pointer;
-              ">Подробнее</button>
+            <div class="balloon-content">
+              <h3>${fish.name}</h3>
+              <p>${fish.description}</p>
+              <button id="btn-${fish.id}" class="balloon-button">Подробнее</button>
             </div>
           `,
                 },
@@ -82,30 +74,6 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.map-section {
-    padding: 2rem 1rem;
-}
-
-.map-title {
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.map {
-    width: 100%;
-    height: 500px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.yandex-map,
-.yandex-map>ymaps>div {
-    filter: grayscale(60%);
-}
-
-.yandex-map [class*="hint__content"] {
-    color: #e60000 !important;
-}
+<style lang="scss" scoped>
+@import '../assets/scss/map.scss';
 </style>

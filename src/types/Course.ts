@@ -1,8 +1,3 @@
-interface File {
-  id: number;
-  file: string;
-  title: string;
-}
 
 export interface Course {
   id: number;

@@ -1,8 +1,12 @@
 <template>
     <section class="about">
+        <div class="about__floating-elements">
+            <div></div>
+            <div></div>
+        </div>
         <div class="about__wrapper">
             <div class="about__header">
-                <h2 class="about__title">Больше об аквариумистикике</h2>
+                <h2 class="about__title">Больше об аквариумистике</h2>
                 <div class="about__content about__content--first">
                     <p class="about__text">Кафедра Математики - это центр математического образования и научных
                         исследований...</p>
@@ -26,3 +30,15 @@
         </div>
     </section>
 </template>
+
+<script>
+export default {
+    name: 'AboutSection'
+}
+</script>
+
+<style lang="scss" scoped>
+
+@import '../assets/scss/about.scss';
+
+</style>

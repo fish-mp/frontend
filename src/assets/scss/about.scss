@@ -1,0 +1,424 @@
+// Переменные цветов для светлой темы
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+
+// Продвинутые миксины
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin gradient-border-animated {
+  position: relative;
+  border-radius: 24px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 26px;
+    padding: 2px;
+    background: linear-gradient(45deg, #173DED, #4d7cfe, #8ba9ff, #173DED);
+    background-size: 300% 300%;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+@mixin text-gradient {
+  background: linear-gradient(135deg, #1a1a1a 0%, #173DED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin particle-effect {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(23, 61, 237, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+// Основные стили с улучшениями
+.about {
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(23, 61, 237, 0.02) 0%, transparent 50%),
+    linear-gradient(135deg, $pure-white 0%, $soft-white 100%);
+  color: $text-dark;
+  padding: 120px 0;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+
+  // Статичный фон с частицами
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23173DED' fill-opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+}
+
+.about__wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 60px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 100px;
+  align-items: start;
+  position: relative;
+  z-index: 2;
+}
+
+.about__header {
+  @include glass-effect;
+  @include gradient-border-animated;
+  padding: 60px;
+  border-radius: 24px;
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  // Однократная анимация при загрузке
+  animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
+
+  &:hover {
+    transform: translateY(-10px) scale(1.01);
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.15),
+      0 15px 35px $accent-glow,
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+}
+
+.about__title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  @include text-gradient;
+  margin-bottom: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 0;
+    width: 80px;
+    height: 4px;
+    background: $blue-gradient;
+    border-radius: 2px;
+  }
+}
+
+.about__content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  &--first {
+    margin-bottom: 45px;
+  }
+
+  &--second {
+    @include glass-effect;
+    @include gradient-border-animated;
+    @include particle-effect;
+    padding: 45px;
+    border-radius: 24px;
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    // Однократная анимация при загрузке
+    animation: slideInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both;
+
+    &:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+  }
+}
+
+.about__text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: $text-medium;
+  font-weight: 450;
+  position: relative;
+  padding-left: 20px;
+  transition: all 0.4s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 6px;
+    height: 6px;
+    background: $blue-gradient;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    color: $text-dark;
+    transform: translateX(8px);
+    
+    &::before {
+      width: 8px;
+      height: 8px;
+      background: $primary-blue;
+    }
+  }
+}
+
+.about__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 40px;
+  background: $blue-gradient;
+  color: $pure-white;
+  text-decoration: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  @include particle-effect;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.6s ease;
+  }
+
+  &:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 
+      0 20px 40px rgba(23, 61, 237, 0.3),
+      0 10px 25px rgba(23, 61, 237, 0.2),
+      0 0 0 4px rgba(23, 61, 237, 0.1);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &::after {
+    content: '⟶';
+    font-size: 1.4rem;
+    font-weight: 300;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  &:hover::after {
+    transform: translateX(8px) rotate(90deg);
+  }
+}
+
+// Дополнительные декоративные элементы (статичные)
+.about__floating-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  
+  div {
+    position: absolute;
+    border-radius: 50%;
+    background: $blue-gradient;
+    opacity: 0.1;
+    filter: blur(40px);
+    
+    &:nth-child(1) {
+      width: 300px;
+      height: 300px;
+      top: 10%;
+      left: 5%;
+      // Однократная анимация
+      animation: floatUp 1.5s ease-out 0.2s both;
+    }
+    
+    &:nth-child(2) {
+      width: 200px;
+      height: 200px;
+      bottom: 20%;
+      right: 10%;
+      // Однократная анимация
+      animation: floatUp 1.5s ease-out 0.4s both;
+    }
+  }
+}
+
+// Анимации для однократного проигрывания
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+  }
+  to {
+    opacity: 0.1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Адаптивность с улучшениями
+@media (max-width: 1200px) {
+  .about__wrapper {
+    gap: 70px;
+    padding: 0 40px;
+  }
+  
+  .about__title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .about {
+    padding: 80px 0;
+    
+    &__wrapper {
+      grid-template-columns: 1fr;
+      gap: 60px;
+    }
+    
+    &__title {
+      font-size: 2.7rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .about {
+    padding: 60px 0;
+    
+    &__wrapper {
+      padding: 0 30px;
+      gap: 50px;
+    }
+    
+    &__header,
+    &__content--second {
+      padding: 40px 30px;
+    }
+    
+    &__title {
+      font-size: 2.3rem;
+    }
+    
+    &__text {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .about {
+    &__wrapper {
+      padding: 0 20px;
+    }
+    
+    &__header,
+    &__content--second {
+      padding: 30px 25px;
+    }
+    
+    &__title {
+      font-size: 2rem;
+    }
+    
+    &__link {
+      padding: 18px 32px;
+      font-size: 1rem;
+    }
+  }
+}
+
+// Специальные эффекты при загрузке (однократные)
+.about {
+  opacity: 0;
+  animation: fadeInUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+}

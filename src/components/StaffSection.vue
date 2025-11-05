@@ -62,32 +62,6 @@ const staff: StaffPerson[] = [
 ]
 </script>
 
-<style scoped>
-.staff__image {
-  width: 200px;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-size: cover;
-  background-position: center;
-  align-items: flex-end;
-}
-
-.staff__image img {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-}
-
-@media (max-width: 500px) {
-  .staff__image img {
-    width: 120px;
-    height: 120px;
-  }
-
-  .staff__details {
-    min-height: auto;
-  }
-}
+<style lang="scss" scoped>
+@import '../assets/scss/Staff.scss';
 </style>

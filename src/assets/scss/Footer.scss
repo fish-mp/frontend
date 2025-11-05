@@ -1,0 +1,368 @@
+// Footer.scss
+// Цветовая схема как в других компонентах
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+
+// Миксины
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@mixin gradient-border {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: $blue-gradient;
+    border-radius: inherit;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Основные стили футера
+.footer {
+  @include glass-effect;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 60px 0 40px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(23, 61, 237, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.footer__wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.footer__list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+}
+
+.footer__item {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  
+  &-second {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+}
+
+.footer__logo-link {
+  display: inline-block;
+  @include smooth-transition;
+  
+  &:hover {
+    transform: scale(1.05) rotate(2deg);
+  }
+}
+
+.footer__logo {
+  width: 80px;
+  height: auto;
+  filter: brightness(0) invert(0);
+  
+  @media (max-width: 768px) {
+    width: 70px;
+  }
+}
+
+.footer__contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer__contact-item,
+.footer__contact-method {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  @include smooth-transition;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.footer__contact-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.footer__contact-text {
+  color: $text-dark;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.footer__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin-bottom: 20px;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: $blue-gradient;
+    border-radius: 2px;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+}
+
+.footer__text {
+  color: $text-medium;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+// Декоративные элементы
+.footer {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $primary-blue, transparent);
+    opacity: 0.3;
+  }
+}
+
+// Анимации
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer__item {
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  
+  &:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+}
+
+// Адаптивность
+@media (max-width: 1200px) {
+  .footer__wrapper {
+    padding: 0 40px;
+  }
+  
+  .footer__list {
+    gap: 60px;
+  }
+}
+
+@media (max-width: 968px) {
+  .footer {
+    padding: 50px 0 30px;
+  }
+  
+  .footer__wrapper {
+    padding: 0 30px;
+  }
+  
+  .footer__item {
+    gap: 30px;
+    
+    &-second {
+      gap: 40px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 40px 0 25px;
+  }
+  
+  .footer__wrapper {
+    padding: 0 25px;
+  }
+  
+  .footer__list {
+    gap: 40px;
+  }
+  
+  .footer__item {
+    gap: 25px;
+    
+    &-second {
+      gap: 35px;
+    }
+  }
+  
+  .footer__contact-item,
+  .footer__contact-method {
+    padding: 14px 18px;
+  }
+  
+  .footer__contact-text {
+    font-size: 0.95rem;
+  }
+  
+  .footer__title {
+    font-size: 1.1rem;
+  }
+  
+  .footer__text {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 30px 0 20px;
+  }
+  
+  .footer__wrapper {
+    padding: 0 20px;
+  }
+  
+  .footer__list {
+    gap: 35px;
+  }
+  
+  .footer__item {
+    gap: 20px;
+    
+    &-second {
+      gap: 30px;
+    }
+  }
+  
+  .footer__logo {
+    width: 60px;
+  }
+  
+  .footer__contact-item,
+  .footer__contact-method {
+    padding: 12px 16px;
+    gap: 14px;
+  }
+  
+  .footer__contact-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .footer__contact-text {
+    font-size: 0.9rem;
+  }
+  
+  .footer__title {
+    font-size: 1rem;
+  }
+  
+  .footer__text {
+    font-size: 0.9rem;
+  }
+}
+
+// Специальные эффекты
+.footer__contact-item:hover .footer__contact-icon,
+.footer__contact-method:hover .footer__contact-icon {
+  filter: brightness(0) saturate(100%) invert(26%) sepia(89%) saturate(2583%) hue-rotate(228deg) brightness(94%) contrast(101%);
+}
+
+.footer__logo-link:hover .footer__logo {
+  filter: brightness(0) saturate(100%) invert(26%) sepia(89%) saturate(2583%) hue-rotate(228deg) brightness(94%) contrast(101%);
+}

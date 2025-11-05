@@ -39,3 +39,7 @@ function formatDate(date: string): string {
     return `${dd}.${mm}.${yyyy}`;
 }
 </script>
+
+<style lang="scss" scoped>
+@import '../assets/scss/news.scss';
+</style>
