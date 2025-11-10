@@ -9,6 +9,7 @@
         </div>
         <div v-else class="fish-not-found">
             <p>Рыбка с таким ID не найдена.</p>
+            <router-link to="/" class="news-detail__back">&larr; Назад к карте</router-link>
         </div>
     </section>
 </template>
@@ -26,53 +27,6 @@ const fish = computed<Fish | undefined>(() =>
 );
 </script>
 
-<style scoped>
-.fish-detail {
-    padding: 2rem;
-    max-width: 800px;
-    margin: 100px auto;
-}
-
-.news-detail__back {
-    color: var(--color-turquoise);
-}
-
-.back-link {
-    display: inline-block;
-    margin-bottom: 1rem;
-    color: #0077aa;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-
-.back-link:hover {
-    text-decoration: underline;
-}
-
-.fish-card__title {
-    font-size: 2rem;
-    margin: 1rem;
-    color: var(--color-text);
-}
-
-.fish-card__image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.fish-card__description,
-.fish-card__location {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    margin-bottom: 0.5rem;
-}
-
-.fish-not-found {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #e53935;
-}
+<style lang="scss" scoped>
+@import '../assets/scss/FishDetail.scss';
 </style>

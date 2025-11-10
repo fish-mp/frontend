@@ -42,28 +42,10 @@
   </section>
 </template>
 
-<style scoped>
-.department__info {
-  margin-top: 24px;
-  font-size: 1.2rem;
-  line-height: 30px;
-  color: #143b3b;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+<script setup lang="ts">
+// Логика компонента, если потребуется
+</script>
 
-.department__title {
-  font-size: calc(60px + 1.5vw);
-}
-
-@media (max-width: 768px) {
-  .department__title {
-    font-size: calc(22px + 1.5vw);
-  }
-  
-  .department__info {
-    font-size: 1rem;
-  }
-}
+<style lang="scss" scoped>
+@import '../assets/scss/Aquaristics.scss';
 </style>

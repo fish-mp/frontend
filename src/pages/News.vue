@@ -68,47 +68,12 @@ function formatDate(date: string): string {
     const [yyyy, mm, dd] = date.slice(0, 10).split('-');
     return `${dd}.${mm}.${yyyy}`;
 }
+
 function getShortText(text: string): string {
     return text.length > 60 ? text.slice(0, 60) + "..." : text;
 }
 </script>
 
-<style scoped>
-.section__list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding: 0;
-    margin: 0;
-}
-
-.news__item {
-    list-style: none;
-}
-
-.news__icon {
-    width: 100%;
-    object-fit: cover;
-}
-
-.news__image--no-photo {
-    width: 100%;
-    height: 150px;
-    background: #e0e0e0;
-    color: #888;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-@media (max-width: 768px) {
-    .section__list {
-        grid-template-columns: 1fr;
-    }
-}
-
-.active__title {
-    text-align: center;
-}
+<style lang="scss" scoped>
+@import '../assets/scss/NewsPage.scss';
 </style>

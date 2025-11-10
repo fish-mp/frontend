@@ -1,0 +1,416 @@
+// Aquaristics.scss
+// Цветовая схема как в других компонентах
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+
+// Миксины
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@mixin gradient-border {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: $blue-gradient;
+    border-radius: inherit;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Основные стили с учетом хедера
+.department {
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(23, 61, 237, 0.02) 0%, transparent 50%),
+    linear-gradient(135deg, $pure-white 0%, $soft-white 100%);
+  color: $text-dark;
+  padding: 160px 0 100px; // Увеличен верхний padding для учета хедера
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23173DED' fill-opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+}
+
+.department__wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.department__title {
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, $text-dark 0%, $primary-blue 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+  text-align: center;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 15px;
+  }
+}
+
+.department__subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $primary-blue;
+  text-align: center;
+  margin-bottom: 60px;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+  }
+}
+
+.department__info {
+  @include glass-effect;
+  @include gradient-border;
+  border-radius: 24px;
+  padding: 50px;
+  margin-top: 40px;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
+  
+  p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: $text-medium;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 20px;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 6px;
+      height: 6px;
+      background: $blue-gradient;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    
+    &:hover {
+      color: $text-dark;
+      transform: translateX(5px);
+      
+      &::before {
+        width: 8px;
+        height: 8px;
+        background: $primary-blue;
+        box-shadow: 0 0 10px rgba(23, 61, 237, 0.3);
+      }
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 35px 30px;
+    margin-top: 30px;
+    
+    p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+  }
+}
+
+// Фоновые декоративные элементы
+#bg-circle-1 {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  background: $blue-gradient;
+  border-radius: 50%;
+  opacity: 0.05;
+  filter: blur(45px);
+  top: 15%;
+  left: 8%;
+  z-index: 1;
+  animation: float 8s ease-in-out infinite;
+}
+
+#bg-circle-2 {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  background: $blue-gradient;
+  border-radius: 50%;
+  opacity: 0.04;
+  filter: blur(40px);
+  bottom: 20%;
+  right: 6%;
+  z-index: 1;
+  animation: float 10s ease-in-out infinite reverse;
+}
+
+// Анимации
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-25px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(12px) rotate(240deg);
+  }
+}
+
+// Специальные эффекты для текста
+.department__title {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: $blue-gradient;
+    border-radius: 2px;
+    animation: widthGrow 1s ease-out 0.5s both;
+  }
+}
+
+@keyframes widthGrow {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 80px;
+    opacity: 1;
+  }
+}
+
+// Адаптивность с учетом хедера
+@media (max-width: 1200px) {
+  .department__wrapper {
+    padding: 0 40px;
+  }
+  
+  .department {
+    padding: 140px 0 80px;
+  }
+  
+  .department__info {
+    padding: 45px 40px;
+  }
+}
+
+@media (max-width: 968px) {
+  .department {
+    padding: 130px 0 70px;
+  }
+  
+  #bg-circle-1 {
+    width: 280px;
+    height: 280px;
+    top: 12%;
+    left: 5%;
+  }
+  
+  #bg-circle-2 {
+    width: 220px;
+    height: 220px;
+    bottom: 18%;
+    right: 4%;
+  }
+  
+  .department__info {
+    padding: 40px 35px;
+  }
+}
+
+@media (max-width: 768px) {
+  .department {
+    padding: 120px 0 60px;
+  }
+  
+  .department__wrapper {
+    padding: 0 30px;
+  }
+  
+  .department__title {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    margin-bottom: 15px;
+  }
+  
+  .department__subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 35px;
+  }
+  
+  .department__info {
+    padding: 35px 30px;
+    margin-top: 25px;
+    
+    p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      padding-left: 18px;
+    }
+  }
+  
+  #bg-circle-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: -5%;
+  }
+  
+  #bg-circle-2 {
+    width: 160px;
+    height: 160px;
+    bottom: 15%;
+    right: -5%;
+  }
+}
+
+@media (max-width: 480px) {
+  .department {
+    padding: 110px 0 50px;
+  }
+  
+  .department__wrapper {
+    padding: 0 20px;
+  }
+  
+  .department__title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 12px;
+  }
+  
+  .department__subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+  }
+  
+  .department__info {
+    padding: 30px 25px;
+    margin-top: 20px;
+    border-radius: 20px;
+    
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      padding-left: 16px;
+      margin-bottom: 1.2rem;
+      
+      &::before {
+        top: 10px;
+        width: 5px;
+        height: 5px;
+      }
+      
+      &:hover::before {
+        width: 6px;
+        height: 6px;
+      }
+    }
+  }
+  
+  #bg-circle-1 {
+    width: 150px;
+    height: 150px;
+    top: 8%;
+    left: -8%;
+  }
+  
+  #bg-circle-2 {
+    width: 120px;
+    height: 120px;
+    bottom: 12%;
+    right: -8%;
+  }
+}
+
+// Улучшенная читаемость для длинного текста
+.department__info {
+  p {
+    text-align: justify;
+    hyphens: auto;
+    
+    @media (max-width: 768px) {
+      text-align: left;
+    }
+  }
+}
+
+// Плавное появление параграфов
+.department__info p {
+  animation: fadeInUp 0.6s ease-out both;
+  
+  @for $i from 1 through 7 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{0.5 + $i * 0.1}s;
+    }
+  }
+}

@@ -1,0 +1,519 @@
+// EventDetail.scss
+// Цветовая схема как в других компонентах
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+$success-color: #00BFA6;
+$finished-color: #757575;
+
+// Миксины
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@mixin gradient-border {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: $blue-gradient;
+    border-radius: inherit;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Основные стили с учетом хедера
+.news-detail {
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(23, 61, 237, 0.02) 0%, transparent 50%),
+    linear-gradient(135deg, $pure-white 0%, $soft-white 100%);
+  color: $text-dark;
+  padding: 160px 0 80px;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23173DED' fill-opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+}
+
+.news-detail__wrapper {
+  @include glass-effect;
+  @include gradient-border;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 24px;
+  padding: 50px;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+  
+  @media (max-width: 768px) {
+    padding: 35px 30px;
+    border-radius: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 25px 20px;
+    border-radius: 16px;
+  }
+}
+
+.news-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 30px;
+  @include smooth-transition;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(23, 61, 237, 0.08);
+  
+  &:hover {
+    background: rgba(23, 61, 237, 0.15);
+    transform: translateX(-5px);
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+  }
+}
+
+.news-detail__title {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, $text-dark 0%, $primary-blue 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px 0;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 15px;
+  }
+}
+
+.news-detail__date {
+  color: $text-medium;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 25px;
+    gap: 12px;
+  }
+}
+
+// Бейджи статусов
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  @include smooth-transition;
+  
+  &--gray {
+    background: linear-gradient(135deg, $finished-color 0%, darken($finished-color, 10%) 100%);
+    color: $pure-white;
+    box-shadow: 0 4px 12px rgba($finished-color, 0.3);
+  }
+  
+  &--turquoise {
+    background: linear-gradient(135deg, $success-color 0%, darken($success-color, 10%) 100%);
+    color: $pure-white;
+    box-shadow: 0 4px 12px rgba($success-color, 0.3);
+  }
+}
+
+// Слайдер для фотографий
+.news-detail__slider {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+  border-radius: 20px;
+  overflow: hidden;
+  @include glass-effect;
+  
+  @media (max-width: 768px) {
+    border-radius: 16px;
+    margin-bottom: 25px;
+  }
+}
+
+.slider__image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+  @include smooth-transition;
+  
+  @media (max-width: 768px) {
+    height: 300px;
+  }
+  
+  @media (max-width: 480px) {
+    height: 250px;
+  }
+}
+
+.slider__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: none;
+  color: $primary-blue;
+  font-size: 1.8rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  @include smooth-transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  
+  &:hover {
+    background: $pure-white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  &--left {
+    left: 20px;
+  }
+  
+  &--right {
+    right: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    
+    &--left {
+      left: 15px;
+    }
+    
+    &--right {
+      right: 15px;
+    }
+  }
+}
+
+.slider__pagination {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 2;
+  
+  @media (max-width: 768px) {
+    bottom: 15px;
+  }
+}
+
+.slider__dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  margin: 0 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  @include smooth-transition;
+  
+  &.active {
+    background: $pure-white;
+    border-color: $primary-blue;
+    transform: scale(1.2);
+  }
+  
+  &:hover {
+    background: $pure-white;
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 768px) {
+    width: 10px;
+    height: 10px;
+    margin: 0 4px;
+  }
+}
+
+// Галерея для одного изображения
+.news-detail__gallery {
+  margin-bottom: 30px;
+  border-radius: 20px;
+  overflow: hidden;
+  @include glass-effect;
+  
+  @media (max-width: 768px) {
+    border-radius: 16px;
+    margin-bottom: 25px;
+  }
+}
+
+.news-detail__gallery-img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+  
+  @media (max-width: 768px) {
+    height: 300px;
+  }
+  
+  @media (max-width: 480px) {
+    height: 250px;
+  }
+}
+
+// Блок без фотографий
+.news-detail__no-photo {
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  color: $text-medium;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border: 2px dashed rgba(23, 61, 237, 0.2);
+  
+  @media (max-width: 768px) {
+    padding: 30px;
+    font-size: 1rem;
+    margin-bottom: 25px;
+  }
+}
+
+// Контент события
+.news-detail__content {
+  margin-top: 30px;
+}
+
+.news-detail__desc {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: $text-medium;
+  margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+}
+
+// Кнопка регистрации
+.news-detail__register {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px 24px;
+  background: $blue-gradient;
+  color: $pure-white;
+  text-decoration: none;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  @include smooth-transition;
+  position: relative;
+  overflow: hidden;
+  margin-top: 20px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 15px 30px rgba(23, 61, 237, 0.3),
+      0 8px 20px rgba(23, 61, 237, 0.2);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 16px 20px;
+    font-size: 1rem;
+    border-radius: 14px;
+  }
+}
+
+// Секция сертификатов
+.news-detail__content {
+  h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 30px 0 15px 0;
+    
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+      margin: 25px 0 12px 0;
+    }
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  li {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: $text-medium;
+    @include smooth-transition;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.8);
+      transform: translateX(8px);
+    }
+    
+    @media (max-width: 768px) {
+      padding: 10px 14px;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Страница не найдена
+.news-detail__notfound {
+  text-align: center;
+  margin: 160px auto;
+  max-width: 500px;
+  padding: 0 20px;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  
+  p {
+    font-size: 1.5rem;
+    color: $text-medium;
+    margin-bottom: 30px;
+    font-weight: 500;
+    
+    @media (max-width: 768px) {
+      font-size: 1.3rem;
+    }
+  }
+  
+  .news-detail__back {
+    display: inline-flex;
+  }
+}
+
+// Анимации
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Адаптивность с учетом хедера
+@media (max-width: 1200px) {
+  .news-detail {
+    padding: 140px 40px 60px;
+  }
+}
+
+@media (max-width: 968px) {
+  .news-detail {
+    padding: 130px 30px 50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .news-detail {
+    padding: 120px 20px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .news-detail {
+    padding: 110px 15px 30px;
+  }
+}

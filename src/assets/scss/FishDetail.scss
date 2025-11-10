@@ -1,0 +1,404 @@
+// FishDetail.scss
+// Цветовая схема как в других компонентах
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+$aqua-color: #00BFA6;
+
+// Миксины
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@mixin gradient-border {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: $blue-gradient;
+    border-radius: inherit;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Основные стили с учетом хедера
+.fish-detail {
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(23, 61, 237, 0.02) 0%, transparent 50%),
+    linear-gradient(135deg, $pure-white 0%, $soft-white 100%);
+  color: $text-dark;
+  padding: 160px 0 80px;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23173DED' fill-opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+}
+
+.news-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 30px;
+  @include smooth-transition;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(23, 61, 237, 0.08);
+  position: relative;
+  z-index: 2;
+  
+  &:hover {
+    background: rgba(23, 61, 237, 0.15);
+    transform: translateX(-5px);
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+  }
+}
+
+// Карточка рыбки
+.fish-card {
+  @include glass-effect;
+  @include gradient-border;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 24px;
+  padding: 50px;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+  
+  @media (max-width: 768px) {
+    padding: 35px 30px;
+    border-radius: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 25px 20px;
+    border-radius: 16px;
+  }
+}
+
+.fish-card__title {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, $text-dark 0%, $aqua-color 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 30px 0;
+  text-align: center;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, $primary-blue, $aqua-color);
+    border-radius: 2px;
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 25px;
+  }
+}
+
+.fish-card__image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  @include smooth-transition;
+  
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    max-height: 400px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+  }
+  
+  @media (max-width: 480px) {
+    max-height: 300px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+}
+
+.fish-card__description,
+.fish-card__location {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: $text-medium;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border-left: 4px solid $aqua-color;
+  @include smooth-transition;
+  
+  strong {
+    color: $text-dark;
+    font-weight: 700;
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateX(8px);
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+}
+
+// Сообщение когда рыбка не найдена
+.fish-not-found {
+  @include glass-effect;
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 20px;
+  padding: 60px 40px;
+  text-align: center;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  
+  p {
+    font-size: 1.3rem;
+    color: $text-medium;
+    margin-bottom: 30px;
+    font-weight: 500;
+  }
+  
+  .news-detail__back {
+    display: inline-flex;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 40px 30px;
+    
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 30px 20px;
+    
+    p {
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+// Декоративные элементы для тематики аквариума
+.fish-detail {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    width: 100px;
+    height: 100px;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50,20 C70,20 80,40 80,50 C80,60 70,80 50,80 C30,80 20,60 20,50 C20,40 30,20 50,20 Z' fill='%2300BFA6' fill-opacity='0.1'/%3E%3C/svg%3E") no-repeat;
+    animation: float 6s ease-in-out infinite;
+    z-index: 1;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    right: 8%;
+    width: 80px;
+    height: 80px;
+    background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40,15 C55,15 65,30 65,40 C65,50 55,65 40,65 C25,65 15,50 15,40 C15,30 25,15 40,15 Z' fill='%23173DED' fill-opacity='0.1'/%3E%3C/svg%3E") no-repeat;
+    animation: float 8s ease-in-out infinite reverse;
+    z-index: 1;
+  }
+}
+
+// Анимации
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-15px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(8px) rotate(240deg);
+  }
+}
+
+// Адаптивность с учетом хедера
+@media (max-width: 1200px) {
+  .fish-detail {
+    padding: 140px 40px 60px;
+  }
+}
+
+@media (max-width: 968px) {
+  .fish-detail {
+    padding: 130px 30px 50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .fish-detail {
+    padding: 120px 20px 40px;
+  }
+  
+  .fish-detail::after {
+    width: 80px;
+    height: 80px;
+    bottom: 8%;
+    left: 3%;
+  }
+  
+  .fish-detail::before {
+    width: 60px;
+    height: 60px;
+    top: 15%;
+    right: 5%;
+  }
+}
+
+@media (max-width: 480px) {
+  .fish-detail {
+    padding: 110px 15px 30px;
+  }
+  
+  .fish-detail::after {
+    width: 60px;
+    height: 60px;
+    bottom: 5%;
+    left: 2%;
+  }
+  
+  .fish-detail::before {
+    width: 50px;
+    height: 50px;
+    top: 12%;
+    right: 3%;
+  }
+}
+
+// Специальные эффекты для водной тематики
+.fish-card {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(135deg, rgba(23, 61, 237, 0.05), rgba(0, 191, 166, 0.05));
+    border-radius: 28px;
+    z-index: -1;
+    opacity: 0;
+    @include smooth-transition;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+.fish-card__image {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(transparent, rgba(0, 191, 166, 0.1));
+    border-radius: 0 0 20px 20px;
+    pointer-events: none;
+  }
+}
