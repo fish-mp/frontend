@@ -8,18 +8,16 @@ export const useCourseStore = defineStore("course", () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
   const auth = useAuthStore();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchCourses = async () => {
     try {
       isLoading.value = true;
-      const response = await fetch(
-        "https://fish-mp.miv-dev.ru/api/courses/",
-        {
-          headers: {
-            Authorization: `Bearer ${auth.accessToken}`,
-          },
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/courses/`, {
+        headers: {
+          Authorization: `Bearer ${auth.accessToken}`,
+        },
+      });
 
       if (!response.ok) {
         const body = await response.text();
@@ -38,7 +36,7 @@ export const useCourseStore = defineStore("course", () => {
   const enrollToCourse = async (courseId: number) => {
     try {
       const response = await fetch(
-        `https://fish-mp.miv-dev.ru/api/courses/${courseId}/enroll/`,
+        `${BACKEND_URL}/api/courses/${courseId}/enroll/`,
         {
           method: "POST",
           headers: {

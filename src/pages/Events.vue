@@ -102,5 +102,5 @@ const filteredEvents = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/EventsPage.scss';
+@use '../assets/scss/EventsPage.scss';
 </style>

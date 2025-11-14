@@ -103,5 +103,5 @@ if (!event.value && !eventStore.loading) {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/EventDetail.scss';
+@use '../assets/scss/EventDetail.scss';
 </style>

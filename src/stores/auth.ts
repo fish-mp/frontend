@@ -13,6 +13,7 @@ export const useAuthStore = defineStore("auth", () => {
   const user = ref<User | null>(null);
   const accessToken = ref<string | null>(null);
   const refreshToken = ref<string | null>(null);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const saveUserData = (userData: User) => {
     localStorage.setItem("userData", JSON.stringify(userData));
@@ -44,16 +45,13 @@ export const useAuthStore = defineStore("auth", () => {
 
   const login = async (credentials: { email: string; password: string }) => {
     try {
-      const response = await fetch(
-        "https://fish-mp.miv-dev.ru/api/token/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(credentials),
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
 
       if (!response.ok) throw new Error("Login failed");
 
@@ -101,16 +99,13 @@ export const useAuthStore = defineStore("auth", () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       try {
-        const verifyResponse = await fetch(
-          "https://fish-mp.miv-dev.ru/api/token/verify/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token }),
-          }
-        );
+        const verifyResponse = await fetch(`${BACKEND_URL}/api/token/verify/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
 
         if (verifyResponse.ok) {
           isAuthenticated.value = true;
@@ -132,16 +127,13 @@ export const useAuthStore = defineStore("auth", () => {
     age: number;
   }) => {
     try {
-      const response = await fetch(
-        "https://fish-mp.miv-dev.ru/api/users/register/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/users/register/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -157,16 +149,13 @@ export const useAuthStore = defineStore("auth", () => {
   const refresh = async () => {
     try {
       if (!refreshToken.value) throw new Error("No refresh token");
-      const response = await fetch(
-        "https://fish-mp.miv-dev.ru/api/token/refresh/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ refresh: refreshToken.value }),
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/token/refresh/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh: refreshToken.value }),
+      });
       if (!response.ok) throw new Error("Token refresh failed");
       const data = await response.json();
       accessToken.value = data.access;

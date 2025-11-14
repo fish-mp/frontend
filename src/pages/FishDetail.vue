@@ -28,5 +28,5 @@ const fish = computed<Fish | undefined>(() =>
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/FishDetail.scss';
+@use '../assets/scss/FishDetail.scss';
 </style>

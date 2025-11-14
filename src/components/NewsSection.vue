@@ -41,5 +41,5 @@ function formatDate(date: string): string {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/news.scss';
+@use '../assets/scss/news.scss';
 </style>

@@ -26,5 +26,5 @@ import StaffSection from "../components/StaffSection.vue";
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/Department.scss';
+@use '../assets/scss/Department.scss';
 </style>

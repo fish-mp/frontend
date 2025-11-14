@@ -6,12 +6,13 @@ export const useNewsStore = defineStore("news", () => {
   const news = ref<NewsItem[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchNews = async () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch("https://fish-mp.miv-dev.ru/api/news/", {
+      const response = await fetch(`${BACKEND_URL}/api/news/`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         method: "GET",

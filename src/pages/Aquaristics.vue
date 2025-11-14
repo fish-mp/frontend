@@ -47,5 +47,5 @@
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/Aquaristics.scss';
+@use '../assets/scss/Aquaristics.scss';
 </style>

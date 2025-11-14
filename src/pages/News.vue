@@ -75,5 +75,5 @@ function getShortText(text: string): string {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/NewsPage.scss';
+@use '../assets/scss/NewsPage.scss';
 </style>

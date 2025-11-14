@@ -63,5 +63,5 @@ const staff: StaffPerson[] = [
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/Staff.scss';
+@use '../assets/scss/Staff.scss';
 </style>

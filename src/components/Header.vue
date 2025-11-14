@@ -203,5 +203,5 @@ const navigateToCoursesWithFilter = (difficulty) => {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/scss/Header.scss';
+@use '../assets/scss/Header.scss';
 </style>

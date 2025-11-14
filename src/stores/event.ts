@@ -6,12 +6,13 @@ export const useEventStore = defineStore("event", () => {
   const events = ref<EventItem[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const fetchEvents = async () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch("https://fish-mp.miv-dev.ru/api/events/");
+      const response = await fetch(`${BACKEND_URL}/api/events/`);
       if (!response.ok) throw new Error("Не удалось загрузить события");
       const data = await response.json();
       events.value = data;
