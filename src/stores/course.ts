@@ -15,7 +15,7 @@ export const useCourseStore = defineStore("course", () => {
       isLoading.value = true;
       const response = await fetch(`${BACKEND_URL}/api/courses/`, {
         headers: {
-          Authorization: `Bearer ${auth.accessToken}`,
+          // Authorization: `Bearer ${auth.accessToken}`,
         },
       });
 

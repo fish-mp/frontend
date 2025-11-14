@@ -46,7 +46,7 @@
           <div class="nav-highlight"></div>
         </router-link>
 
-        <div v-if="isAuth" class="header__nav-dropdown" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+        <div class="header__nav-dropdown" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
           <div class="header__nav-link" :class="{ 'header__nav-link--active': $route.path === '/courses' }">
             <div class="nav-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
