@@ -1,0 +1,345 @@
+// Переменные (совместимые с хедером и логином)
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+// Стили модалки регистрации
+.popup__overlay {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.popup {
+  @include glass-effect;
+  max-width: 440px;
+  width: 100%;
+  padding: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  max-height: 85vh;
+  overflow-y: auto;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: $blue-gradient;
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.popup__header {
+  padding: 32px 32px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.popup__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-dark;
+  margin: 0;
+  background: $blue-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+}
+
+.popup__close {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: $soft-white;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-medium;
+  @include smooth-transition;
+  
+  &:hover {
+    background: $light-grey;
+    color: $text-dark;
+    transform: rotate(90deg);
+  }
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.popup__form {
+  padding: 0 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-medium;
+  margin-bottom: 2px;
+  font-family: 'Inter', sans-serif;
+}
+
+.form__input {
+        box-sizing: border-box;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid $light-grey;
+  font-size: 1rem;
+  background: $pure-white;
+  outline: none;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  @include smooth-transition;
+  
+  &:focus {
+    border-color: $primary-blue;
+    background: $soft-white;
+    box-shadow: 0 0 0 3px $accent-glow;
+  }
+  
+  &::placeholder {
+    color: $text-light;
+  }
+  
+  // Стили для number input
+  &[type="number"] {
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+// Кнопки в стиле хедера
+.btn {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  @include smooth-transition;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
+  
+  .btn-text {
+    position: relative;
+    z-index: 2;
+  }
+  
+  &--primary {
+    background: $blue-gradient;
+    color: $pure-white;
+    box-shadow: 0 4px 15px rgba(23, 61, 237, 0.3);
+    
+    .btn-shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(23, 61, 237, 0.4);
+      
+      .btn-shine {
+        left: 100%;
+      }
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+  
+  &--full {
+    width: 100%;
+  }
+}
+
+.loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  
+  &::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid $pure-white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.form__footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid $light-grey;
+}
+
+.form__link {
+  font-size: 0.875rem;
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 500;
+  @include smooth-transition;
+  
+  &:hover {
+    color: darken($primary-blue, 10%);
+    text-decoration: underline;
+  }
+}
+
+// Специфические стили для регистрации
+.registration-notice {
+  background: rgba(23, 61, 237, 0.05);
+  border: 1px solid rgba(23, 61, 237, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  
+  &__text {
+    font-size: 0.8rem;
+    color: $text-medium;
+    text-align: center;
+    margin: 0;
+  }
+}
+
+// Адаптивность
+@media (max-width: 500px) {
+  .popup__overlay {
+    padding: 16px;
+  }
+  
+  .popup {
+    max-height: 90vh;
+  }
+  
+  .popup__header {
+    padding: 24px 24px 0;
+  }
+  
+  .popup__form {
+    padding: 0 24px 24px;
+    gap: 14px;
+  }
+  
+  .popup__title {
+    font-size: 1.25rem;
+  }
+  
+  .form__input {
+    padding: 12px 14px;
+  }
+  
+  .btn {
+    padding: 12px 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .popup__overlay {
+    padding: 12px;
+  }
+  
+  .popup__header {
+    padding: 20px 20px 0;
+  }
+  
+  .popup__form {
+    padding: 0 20px 20px;
+    gap: 12px;
+  }
+  
+  .form__input {
+    padding: 11px 13px;
+    font-size: 0.95rem;
+  }
+}

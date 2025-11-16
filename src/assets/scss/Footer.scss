@@ -109,19 +109,12 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   }
 }
 
-.footer__logo-link {
-  display: inline-block;
-  @include smooth-transition;
-  
-  &:hover {
-    transform: scale(1.05) rotate(2deg);
-  }
-}
+
 
 .footer__logo {
   width: 80px;
   height: auto;
-  filter: brightness(0) invert(0);
+ 
   
   @media (max-width: 768px) {
     width: 70px;
@@ -363,6 +356,3 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   filter: brightness(0) saturate(100%) invert(26%) sepia(89%) saturate(2583%) hue-rotate(228deg) brightness(94%) contrast(101%);
 }
 
-.footer__logo-link:hover .footer__logo {
-  filter: brightness(0) saturate(100%) invert(26%) sepia(89%) saturate(2583%) hue-rotate(228deg) brightness(94%) contrast(101%);
-}
