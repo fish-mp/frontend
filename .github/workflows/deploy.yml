@@ -1,0 +1,20 @@
+name: Deploy
+on:
+  push:
+    branches: [ main ]  # ваша прод ветка
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          port: ${{ secrets.PROD_SSH_PORT }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            set -e
+            BRANCH=main FRONT_BRANCH=main /home/desai/deploy/deploy.sh
