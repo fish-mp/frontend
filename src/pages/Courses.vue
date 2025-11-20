@@ -10,12 +10,13 @@
       </p>
     </div>
   </section>
+  
   <section class="news">
     <span id="bg-circle-5"></span>
     <div class="news__wrapper">
       <div class="filters__wrapper">
         <label for="difficulty-select">Фильтр по сложности:</label>
-        <select id="difficulty-select" v-model="selectedDifficulty">
+        <select id="difficulty-select" v-model="selectedDifficulty" class="filter-select">
           <option value="">Все сложности</option>
           <option
             v-for="level in difficultyLevels"
@@ -26,6 +27,7 @@
           </option>
         </select>
       </div>
+      
       <ul class="section__list">
         <li class="news__item" v-for="course in filteredCourses" :key="course.id">
           <router-link
@@ -33,7 +35,7 @@
             class="news__link"
           >
             <div class="news__image">
-              <img :src="course.image" alt="" class="news__icon" />
+              <img :src="course.image" :alt="course.title" class="news__icon" />
             </div>
             <div class="news__container">
               <h3 class="news__subtitle">{{ course.title }}</h3>
@@ -83,37 +85,6 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-.department__title {
-  font-size: calc(70px + 1.5vw);
-}
-
-.department__description {
-  top: 0;
-}
-
-.section__list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  padding: 0;
-  margin: 0;
-}
-
-.news__item {
-  list-style: none;
-}
-
-@media (max-width: 768px) {
-  .section__list {
-    grid-template-columns: 1fr;
-  }
-
-  .department__title {
-    font-size: calc(22px + 1.5vw);
-  }
-}
-.filters__wrapper {
-    margin-bottom: 25px;
-}
+<style lang="scss" scoped>
+@import '../assets/scss/Courses.scss';
 </style>

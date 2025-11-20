@@ -1,0 +1,400 @@
+// Переменные (совместимые с хедером)
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+// Секция department (герой)
+.department {
+  position: relative;
+  padding: 120px 2rem 80px;
+  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+  overflow: hidden;
+  
+  &__wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+  
+  &__title {
+    font-size: calc(3.5rem + 1.5vw);
+    font-weight: 700;
+    background: $blue-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    font-family: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+    animation: titleSlideUp 0.8s ease-out;
+  }
+  
+  &__description {
+    font-size: 1.25rem;
+    color: $text-medium;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 400;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+  }
+}
+
+// Анимации
+@keyframes titleSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Фоновые круги
+#bg-circle-1,
+#bg-circle-2,
+#bg-circle-5 {
+  position: absolute;
+  border-radius: 50%;
+  background: $blue-gradient;
+  opacity: 0.1;
+  filter: blur(40px);
+  animation: float 6s ease-in-out infinite;
+}
+
+#bg-circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  left: -150px;
+  animation-delay: 0s;
+}
+
+#bg-circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  right: 10%;
+  animation-delay: 2s;
+}
+
+#bg-circle-5 {
+  width: 250px;
+  height: 250px;
+  top: 50%;
+  left: -125px;
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+}
+
+// Секция новостей/курсов
+.news {
+  position: relative;
+  padding: 80px 2rem;
+  background: $soft-white;
+  
+  &__wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+}
+
+// Фильтры
+.filters__wrapper {
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  
+  label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-dark;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  select {
+    padding: 12px 16px;
+    border: 2px solid $light-grey;
+    border-radius: 12px;
+    background: $pure-white;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    color: $text-dark;
+    cursor: pointer;
+    @include smooth-transition;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 3px $accent-glow;
+    }
+    
+    option {
+      padding: 8px;
+    }
+  }
+}
+
+// Сетка курсов
+.section__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+// Карточка курса
+.news__item {
+  @include glass-effect;
+  border-radius: 20px;
+  overflow: hidden;
+  @include smooth-transition;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.15),
+      0 8px 25px rgba(23, 61, 237, 0.1);
+    
+    .news__image {
+      transform: scale(1.05);
+    }
+    
+    .news__subtitle {
+      color: $primary-blue;
+    }
+  }
+}
+
+.news__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.news__image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  @include smooth-transition;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, rgba(255, 255, 255, 0.8));
+  }
+}
+
+.news__icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  @include smooth-transition;
+}
+
+.news__container {
+  padding: 1.5rem;
+}
+
+.news__subtitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-dark;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.4;
+  font-family: 'Inter', sans-serif;
+  @include smooth-transition;
+}
+
+.news__description {
+  font-size: 0.95rem;
+  color: $text-medium;
+  line-height: 1.5;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+// Адаптивность
+@media (max-width: 1024px) {
+  .department {
+    padding: 100px 1.5rem 60px;
+    
+    &__title {
+      font-size: calc(2.5rem + 1.5vw);
+    }
+  }
+  
+  .news {
+    padding: 60px 1.5rem;
+  }
+  
+  .section__list {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .department {
+    padding: 80px 1rem 40px;
+    
+    &__title {
+      font-size: calc(2rem + 1.5vw);
+    }
+    
+    &__description {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .news {
+    padding: 40px 1rem;
+  }
+  
+  .section__list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .filters__wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    
+    label {
+      text-align: center;
+    }
+  }
+  
+  .news__container {
+    padding: 1.25rem;
+  }
+  
+  .news__image {
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .department {
+    padding: 60px 0.75rem 30px;
+    
+    &__title {
+      font-size: calc(1.5rem + 1.5vw);
+    }
+  }
+  
+  .news {
+    padding: 30px 0.75rem;
+  }
+  
+  .news__container {
+    padding: 1rem;
+  }
+  
+  .news__subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .news__description {
+    font-size: 0.9rem;
+  }
+  
+  #bg-circle-1,
+  #bg-circle-2,
+  #bg-circle-5 {
+    display: none; // Скрываем на очень маленьких экранах для производительности
+  }
+}
+
+// Дополнительные декоративные элементы
+.department::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(23, 61, 237, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(77, 124, 254, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+// Эффект загрузки для карточек
+.news__item {
+  animation: cardSlideUp 0.6s ease-out;
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+@keyframes cardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
