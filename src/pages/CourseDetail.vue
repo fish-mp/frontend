@@ -5,7 +5,8 @@
       <div class="course-detail__content">
         <h1 class="course-detail__title">{{ course.title }}</h1>
         <p class="course-detail__desc">{{ course.short_description }}</p>
-        <button v-if="course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
+        <p v-if="!isAuth"  class="course-access__msg course-access__msg--error">Чтобы записаться нужно авторизироваться!</p>
+        <button v-else="course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
           @click="fetchNewCourse(course.id)">
           Записаться на курс
         </button>
@@ -47,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCourseStore } from '../stores/course'
 import { useAuthStore } from '../stores/auth'
@@ -56,6 +57,9 @@ import type { Course } from '../types/Course'
 const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
+
+const auth = useAuthStore();
+const isAuth = computed(() => auth.isAuthenticated);
 
 const course = ref<Course | null>(null)
 const isLoading = ref(false)
