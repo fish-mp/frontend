@@ -12,46 +12,44 @@
       <!-- Навигация -->
       <nav ref="mobileNav" :class="[styles.nav, { [styles.navOpen]: isMobileNavOpen }]">
         <div :class="styles.navBackdrop"></div>
-        
-        <router-link 
-          to="/" 
-          :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/' }]" 
-          @click="closeMobileNav"
-        >
+
+        <router-link to="/" :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/' }]"
+          @click="closeMobileNav">
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
           <span :class="styles.navText">Главная</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
-        
-        <router-link 
-          to="/aquaristics" 
-          :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/aquaristics' }]" 
-          @click="closeMobileNav"
-        >
+
+        <router-link to="/aquaristics"
+          :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/aquaristics' }]" @click="closeMobileNav">
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
           <span :class="styles.navText">Аквариумистика</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
-        
-        <router-link 
-          to="/news" 
-          :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/news' }]" 
-          @click="closeMobileNav"
-        >
+
+        <router-link to="/news" :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/news' }]"
+          @click="closeMobileNav">
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M19 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V18C21 19.1046 20.1046 20 19 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M19 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V18C21 19.1046 20.1046 20 19 20Z"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
             </svg>
           </div>
           <span :class="styles.navText">Новости</span>
@@ -74,14 +72,13 @@
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <router-link 
-          to="/events" 
-          :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/events' }]" 
-          @click="closeMobileNav"
-        >
+        <router-link to="/events" :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/events' }]"
+          @click="closeMobileNav">
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M8 7V3M16 7V3M7 11H17M5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V19C3 20.1046 3.89543 21 5 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M8 7V3M16 7V3M7 11H17M5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V19C3 20.1046 3.89543 21 5 21Z"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
           <span :class="styles.navText">Мероприятия</span>
@@ -161,8 +158,6 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useAuthStore } from "../stores/auth";
 import { useRoute, useRouter } from "vue-router";
-import { useCourseStore } from "../stores/course";
-import { useDifficultyLevels } from "../composables/useDifficultyLevels";
 import LoginPopup from "../components/LoginPopup.vue";
 import RegisterPopup from "../components/RegisterPopup.vue";
 
@@ -171,14 +166,11 @@ import styles from '../assets/scss/Header.module.scss';
 
 const emit = defineEmits(['toggle-sidebar'])
 const router = useRouter();
-const courseStore = useCourseStore();
+const route = useRoute();
 
 const showLogin = ref(false);
 const showRegister = ref(false);
-const dropdownOpen = ref(false);
 const isMobileNavOpen = ref(false);
-
-const difficultyLevels = useDifficultyLevels();
 
 const mobileNav = ref(null);
 const burger = ref(null);
@@ -190,8 +182,6 @@ const user = computed(() => auth.user);
 const userInitials = computed(() => {
   return user.value?.first_name?.[0] || user.value?.email?.[0]?.toUpperCase() || 'U';
 });
-
-const route = useRoute();
 
 function closeMobileNav() {
   isMobileNavOpen.value = false;
@@ -255,3 +245,7 @@ watch(
   }
 );
 </script>
+
+<style lang="scss" scoped>
+@use '../assets/scss/index.scss';
+</style>
