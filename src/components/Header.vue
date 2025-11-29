@@ -23,7 +23,7 @@
               <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <span :class="styles.navText">TEST</span>
+          <span :class="styles.navText">Главная</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
         
@@ -58,41 +58,21 @@
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <div :class="styles.navDropdown" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
-          <div :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/courses' }]">
-            <div :class="styles.navIcon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span :class="styles.navText">
-              Курсы
-              <svg width="16" height="16" style="margin-left: 8px; vertical-align: middle" viewBox="0 0 24 24" fill="none">
-                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-            <div :class="styles.navHighlight"></div>
+        <!-- КУРСЫ ПЕРЕД МЕРОПРИЯТИЯМИ -->
+        <router-link 
+          to="/courses" 
+          :class="[styles.navLink, styles.coursesLink, { [styles.navLinkActive]: $route.path === '/courses' }]" 
+          @click="closeMobileNav"
+        >
+          <div :class="styles.navIcon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-          <transition name="dropdown">
-            <div v-if="dropdownOpen" :class="styles.dropdownList">
-              <a 
-                v-for="level in difficultyLevels" 
-                :key="level.value" 
-                href="#" 
-                :class="styles.dropdownLink" 
-                @click.prevent="navigateToCoursesWithFilter(level.value)"
-              >
-                <span :class="styles.dropdownIcon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span :class="styles.dropdownText">{{ level.label }}</span>
-              </a>
-            </div>
-          </transition>
-        </div>
+          <span :class="styles.navText">Курсы</span>
+          <div :class="styles.navHighlight"></div>
+        </router-link>
 
         <router-link 
           to="/events" 
@@ -107,9 +87,34 @@
           <span :class="styles.navText">Мероприятия</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
+
+        <!-- МОБИЛЬНЫЕ КНОПКИ АВТОРИЗАЦИИ -->
+        <div :class="styles.mobileActions">
+          <template v-if="!isAuth">
+            <button :class="[styles.btn, styles.btnPrimary]" @click="handleLoginClick">
+              <span :class="styles.btnText">Войти</span>
+              <div :class="styles.btnShine"></div>
+            </button>
+            <button :class="[styles.btn, styles.btnSecondary]" @click="handleRegisterClick">
+              <span :class="styles.btnText">Регистрация</span>
+              <div :class="styles.btnGlow"></div>
+            </button>
+          </template>
+          <template v-else>
+            <div :class="styles.userProfile">
+              <div :class="styles.userAvatar">
+                {{ userInitials }}
+              </div>
+              <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
+              <button :class="[styles.btn, styles.btnLogout]" @click="handleLogout">
+                <span :class="styles.btnText">Выйти</span>
+              </button>
+            </div>
+          </template>
+        </div>
       </nav>
 
-      <!-- Кнопки авторизации -->
+      <!-- ДЕСКТОПНЫЕ КНОПКИ АВТОРИЗАЦИИ -->
       <div :class="styles.actions">
         <template v-if="!isAuth">
           <button :class="[styles.btn, styles.btnPrimary]" @click="showLogin = true">
@@ -124,7 +129,7 @@
         <template v-else>
           <div :class="styles.userProfile">
             <div :class="styles.userAvatar">
-              {{ user?.first_name?.[0] || user?.email?.[0] || 'U' }}
+              {{ userInitials }}
             </div>
             <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
             <button :class="[styles.btn, styles.btnLogout]" @click="auth.logout()">
@@ -134,11 +139,12 @@
         </template>
       </div>
 
-      <!-- Бургер меню -->
+      <!-- БУРГЕР МЕНЮ -->
       <button 
         :class="[styles.burger, { [styles.burgerOpen]: isMobileNavOpen }]" 
         ref="burger" 
         @click="toggleMobileNav"
+        aria-label="Открыть меню"
       >
         <div :class="[styles.burgerLine, styles.burgerLine1]"></div>
         <div :class="[styles.burgerLine, styles.burgerLine2]"></div>
@@ -181,15 +187,28 @@ const auth = useAuthStore();
 const isAuth = computed(() => auth.isAuthenticated);
 const user = computed(() => auth.user);
 
+const userInitials = computed(() => {
+  return user.value?.first_name?.[0] || user.value?.email?.[0]?.toUpperCase() || 'U';
+});
+
 const route = useRoute();
 
 function closeMobileNav() {
   isMobileNavOpen.value = false;
+  document.body.style.overflow = '';
 }
 
 function toggleMobileNav() {
   isMobileNavOpen.value = !isMobileNavOpen.value;
-  emit('toggle-sidebar')
+  
+  // Блокируем скролл при открытом меню
+  if (isMobileNavOpen.value) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+  
+  emit('toggle-sidebar');
 }
 
 function onClickOutside(event) {
@@ -200,8 +219,24 @@ function onClickOutside(event) {
     !mobileNav.value.contains(event.target) &&
     !burger.value.contains(event.target)
   ) {
-    isMobileNavOpen.value = false;
+    closeMobileNav();
   }
+}
+
+// Обработчики для мобильных кнопок
+function handleLoginClick() {
+  showLogin.value = true;
+  closeMobileNav();
+}
+
+function handleRegisterClick() {
+  showRegister.value = true;
+  closeMobileNav();
+}
+
+function handleLogout() {
+  auth.logout();
+  closeMobileNav();
 }
 
 onMounted(() => {
@@ -210,21 +245,13 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener("click", onClickOutside);
+  document.body.style.overflow = '';
 });
 
 watch(
   () => route.fullPath,
   () => {
-    isMobileNavOpen.value = false;
+    closeMobileNav();
   }
 );
-
-const navigateToCoursesWithFilter = (difficulty) => {
-  router.push({
-    path: '/courses',
-    query: { difficulty }
-  });
-  closeMobileNav();
-  dropdownOpen.value = false;
-};
 </script>

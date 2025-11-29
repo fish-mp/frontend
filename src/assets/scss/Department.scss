@@ -10,6 +10,110 @@ $text-medium: #5d6d87;
 $text-light: #8a9bb8;
 $accent-glow: rgba(23, 61, 237, 0.15);
 
+// _mixins.scss
+
+
+// Glass morphism эффект
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    $shadow-md,
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+// Плавные переходы
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+// Градиентная рамка (совместимая версия)
+@mixin gradient-border-card {
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)) padding-box,
+    linear-gradient(135deg, transparent, transparent) border-box;
+  border: 2px solid transparent;
+  
+  &:hover {
+    background: 
+      linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)) padding-box,
+      $blue-gradient border-box;
+  }
+}
+
+// Анимация появления снизу
+@mixin fade-in-up($delay: 0s) {
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) #{$delay} both;
+}
+
+// Анимация плавающего эффекта
+@mixin float-animation {
+  animation: float 8s ease-in-out infinite;
+}
+
+// Фоновый градиент для секций
+@mixin section-background {
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(23, 61, 237, 0.02) 0%, transparent 50%),
+    linear-gradient(135deg, $pure-white 0%, $soft-white 100%);
+}
+
+// Точковый фон-паттерн
+@mixin dot-pattern {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23173DED' fill-opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+}
+
+// Декоративный круг
+@mixin decorative-circle($size: 300px, $opacity: 0.05, $blur: 40px) {
+  position: absolute;
+  width: $size;
+  height: $size;
+  background: $blue-gradient;
+  border-radius: 50%;
+  opacity: $opacity;
+  filter: blur($blur);
+  z-index: 1;
+}
+
+// Адаптивный текст
+@mixin responsive-text($min-size, $max-size) {
+  font-size: clamp(#{$min-size}, #{$max-size}, 5vw);
+}
+
+// Кнопка с градиентом
+@mixin gradient-button {
+  background: $blue-gradient;
+  color: $pure-white;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  @include smooth-transition;
+
+  &:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(23, 61, 237, 0.3),
+      0 10px 25px rgba(23, 61, 237, 0.2);
+  }
+}
+
 // Миксины
 @mixin glass-effect {
   background: rgba(255, 255, 255, 0.75);
@@ -317,5 +421,1324 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   
   :deep(.yandex-maps) {
     margin-top: 0;
+  }
+}
+
+
+
+// Анимация плавания рыбок
+@mixin fish-swim($duration: 20s, $delay: 0s) {
+  animation: fishSwim $duration linear infinite $delay;
+}
+
+// Анимация пузырьков
+@mixin bubble-rise($duration: 8s, $delay: 0s) {
+  animation: bubbleRise $duration ease-in infinite $delay;
+}
+
+// Анимация водорослей
+@mixin seaweed-sway($duration: 6s, $delay: 0s) {
+  animation: seaweedSway $duration ease-in-out infinite $delay;
+}
+
+// Эффект ряби на воде
+@mixin water-ripple {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(23, 61, 237, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(23, 61, 237, 0.08) 0%, transparent 50%);
+    animation: waterRipple 15s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+.department {
+  @include section-background;
+  @include dot-pattern;
+  @include water-ripple;
+  color: $text-dark;
+  padding: 160px 0 100px;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: 
+    // Основной водный градиент
+    linear-gradient(160deg, #e0f7fa 0%, #b2ebf2 30%, #80deea 70%, #4dd0e1 100%),
+    radial-gradient(circle at 10% 20%, rgba(23, 61, 237, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(23, 61, 237, 0.08) 0%, transparent 40%),
+    // Эффект глубины
+    linear-gradient(180deg, rgba(224, 247, 250, 0.8) 0%, rgba(178, 235, 242, 0.9) 100%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,30 Q60,20 90,30 Q100,50 90,70 Q60,80 30,70 Q20,50 30,30 Z' fill='%23007c91' fill-opacity='0.03'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='2' fill='%23173DED' fill-opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+    animation: waterFlow 20s linear infinite;
+  }
+}
+
+.department__wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 60px;
+  position: relative;
+  z-index: 3;
+  text-align: center;
+}
+
+.department__title {
+  font-size: clamp(2.8rem, 6vw, 4.8rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #006978 0%, #004d40 50%, #173DED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 30px;
+  text-shadow: 0 4px 20px rgba(0, 105, 120, 0.2);
+  @include fade-in-up(0.3s);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, #00bcd4, #173DED, #004d40);
+    border-radius: 2px;
+    animation: widthGrow 1.2s ease-out 1s both, colorShift 4s ease-in-out infinite 2s;
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 25px;
+  }
+}
+
+.department__description {
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: #006978;
+  max-width: 800px;
+  margin: 0 auto;
+  font-weight: 500;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
+  @include fade-in-up(0.5s);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 25px 40px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    padding: 20px 30px;
+  }
+}
+
+// Анимированные рыбки
+.fish {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  
+  &.fish-1 {
+    top: 20%;
+    left: 5%;
+    @include fish-swim(25s, 0s);
+    
+    .fish-body {
+      width: 80px;
+      height: 30px;
+      background: linear-gradient(45deg, #FF6B35, #FF8E53);
+      border-radius: 50% 40% 40% 50%;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        right: -15px;
+        top: 5px;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(45deg, #FF6B35, #FF8E53);
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 10px;
+        width: 8px;
+        height: 8px;
+        background: white;
+        border-radius: 50%;
+      }
+    }
+  }
+  
+  &.fish-2 {
+    top: 60%;
+    left: 15%;
+    @include fish-swim(30s, 3s);
+    
+    .fish-body {
+      width: 60px;
+      height: 25px;
+      background: linear-gradient(45deg, #4ECDC4, #44A08D);
+      border-radius: 50% 40% 40% 50%;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        right: -12px;
+        top: 3px;
+        width: 15px;
+        height: 15px;
+        background: linear-gradient(45deg, #4ECDC4, #44A08D);
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+      }
+    }
+  }
+  
+  &.fish-3 {
+    top: 40%;
+    right: 10%;
+    @include fish-swim(35s, 5s);
+    transform: scaleX(-1);
+    
+    .fish-body {
+      width: 100px;
+      height: 35px;
+      background: linear-gradient(45deg, #45B7D1, #96C93D);
+      border-radius: 50% 40% 40% 50%;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        right: -18px;
+        top: 8px;
+        width: 25px;
+        height: 25px;
+        background: linear-gradient(45deg, #45B7D1, #96C93D);
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+      }
+      
+      .fin {
+        position: absolute;
+        top: -5px;
+        left: 30px;
+        width: 15px;
+        height: 10px;
+        background: linear-gradient(45deg, #45B7D1, #96C93D);
+        clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      }
+    }
+  }
+}
+
+// Пузырьки
+.bubble {
+  position: absolute;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3));
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  
+  @for $i from 1 through 12 {
+    &.bubble-#{$i} {
+      $size: random(20) + 5px;
+      width: $size;
+      height: $size;
+      left: random(90) + 5%;
+      bottom: -50px;
+      animation: bubbleRise (random(15) + 8s) ease-in infinite (random(5) + 0s);
+      animation-delay: random(5) + 0s;
+    }
+  }
+}
+
+// Водоросли
+.seaweed {
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  
+  &.seaweed-1 {
+    left: 10%;
+    @include seaweed-sway(8s, 0s);
+    
+    .stem {
+      width: 8px;
+      height: 120px;
+      background: linear-gradient(to top, #2E7D32, #4CAF50, #81C784);
+      border-radius: 4px 4px 0 0;
+      
+      .leaf {
+        position: absolute;
+        background: #4CAF50;
+        border-radius: 50% 0 50% 0;
+        
+        &:nth-child(1) {
+          width: 25px;
+          height: 15px;
+          top: 80px;
+          left: -20px;
+          transform: rotate(-20deg);
+        }
+        
+        &:nth-child(2) {
+          width: 30px;
+          height: 18px;
+          top: 50px;
+          right: -25px;
+          transform: rotate(15deg);
+        }
+      }
+    }
+  }
+  
+  &.seaweed-2 {
+    right: 15%;
+    @include seaweed-sway(6s, 2s);
+    
+    .stem {
+      width: 6px;
+      height: 90px;
+      background: linear-gradient(to top, #1B5E20, #388E3C, #66BB6A);
+      border-radius: 3px 3px 0 0;
+      
+      .leaf {
+        position: absolute;
+        background: #388E3C;
+        border-radius: 0 50% 0 50%;
+        
+        &:nth-child(1) {
+          width: 20px;
+          height: 12px;
+          top: 60px;
+          left: -15px;
+          transform: rotate(-10deg);
+        }
+      }
+    }
+  }
+}
+
+// Фоновые декоративные элементы
+#bg-circle-1 {
+  @include decorative-circle(400px, 0.08, 60px);
+  top: 10%;
+  left: 8%;
+  background: radial-gradient(circle, #00bcd4, #0097a7, #006978);
+  animation: float 12s ease-in-out infinite;
+}
+
+#bg-circle-2 {
+  @include decorative-circle(300px, 0.06, 50px);
+  bottom: 15%;
+  right: 6%;
+  background: radial-gradient(circle, #4dd0e1, #26c6da, #00acc1);
+  animation: float 15s ease-in-out infinite reverse;
+}
+
+// Новые анимации
+@keyframes fishSwim {
+  0% {
+    transform: translateX(-100px) translateY(0) scaleX(1);
+  }
+  25% {
+    transform: translateX(25vw) translateY(-30px) scaleX(1);
+  }
+  50% {
+    transform: translateX(50vw) translateY(20px) scaleX(1);
+  }
+  51% {
+    transform: translateX(50vw) translateY(20px) scaleX(-1);
+  }
+  75% {
+    transform: translateX(25vw) translateY(-10px) scaleX(-1);
+  }
+  100% {
+    transform: translateX(-100px) translateY(0) scaleX(-1);
+  }
+}
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-120vh) scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes seaweedSway {
+  0%, 100% {
+    transform: skewX(2deg);
+  }
+  50% {
+    transform: skewX(-2deg);
+  }
+}
+
+@keyframes waterRipple {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.8;
+  }
+}
+
+@keyframes waterFlow {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 100px 100px, 50px 50px;
+  }
+}
+
+@keyframes colorShift {
+  0%, 100% {
+    background: linear-gradient(90deg, #00bcd4, #173DED, #004d40);
+  }
+  33% {
+    background: linear-gradient(90deg, #173DED, #004d40, #00bcd4);
+  }
+  66% {
+    background: linear-gradient(90deg, #004d40, #00bcd4, #173DED);
+  }
+}
+
+// Анимации из предыдущей версии
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-30px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(15px) rotate(240deg);
+  }
+}
+
+@keyframes widthGrow {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 120px;
+    opacity: 1;
+  }
+}
+
+// Адаптивность с учетом хедера
+@media (max-width: 1200px) {
+  .department__wrapper {
+    padding: 0 40px;
+  }
+  
+  .department {
+    padding: 140px 0 80px;
+  }
+}
+
+@media (max-width: 968px) {
+  .department {
+    padding: 130px 0 70px;
+    min-height: 80vh;
+  }
+  
+  #bg-circle-1 {
+    width: 300px;
+    height: 300px;
+    top: 8%;
+    left: 5%;
+  }
+  
+  #bg-circle-2 {
+    width: 250px;
+    height: 250px;
+    bottom: 12%;
+    right: 4%;
+  }
+  
+  // Скрываем некоторые рыбки на планшетах
+  .fish-3 {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .department {
+    padding: 120px 0 60px;
+    min-height: 70vh;
+  }
+  
+  .department__wrapper {
+    padding: 0 30px;
+  }
+  
+  .department__title {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    margin-bottom: 20px;
+  }
+  
+  .department__description {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    padding: 20px 25px;
+  }
+  
+  #bg-circle-1 {
+    width: 200px;
+    height: 200px;
+    top: 6%;
+    left: -5%;
+  }
+  
+  #bg-circle-2 {
+    width: 180px;
+    height: 180px;
+    bottom: 8%;
+    right: -5%;
+  }
+  
+  // Скрываем больше элементов на мобильных
+  .fish-2 {
+    display: none;
+  }
+  
+  .seaweed-2 {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .department {
+    padding: 110px 0 50px;
+    min-height: 60vh;
+  }
+  
+  .department__wrapper {
+    padding: 0 20px;
+  }
+  
+  .department__title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 15px;
+  }
+  
+  .department__description {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    padding: 15px 20px;
+  }
+  
+  #bg-circle-1 {
+    width: 150px;
+    height: 150px;
+    top: 4%;
+    left: -8%;
+  }
+  
+  #bg-circle-2 {
+    width: 120px;
+    height: 120px;
+    bottom: 6%;
+    right: -8%;
+  }
+  
+  // Оставляем только самую необходимую анимацию
+  .bubble {
+    animation-duration: 12s !important;
+  }
+}
+
+
+// ... существующие миксины ...
+
+// Плавная анимация плавания для красивых рыбок
+@mixin elegant-fish-swim($duration: 25s, $delay: 0s) {
+  animation: elegantFishSwim $duration ease-in-out infinite $delay;
+}
+
+// Анимация взмахов плавников
+@mixin fin-flap($duration: 2s, $delay: 0s) {
+  animation: finFlap $duration ease-in-out infinite $delay;
+}
+
+// Анимация мерцания (для неоновых рыбок)
+@mixin neon-glow($duration: 3s, $delay: 0s) {
+  animation: neonGlow $duration ease-in-out infinite $delay;
+}
+
+// Анимация плавного поворота
+@mixin gentle-turn($duration: 8s, $delay: 0s) {
+  animation: gentleTurn $duration ease-in-out infinite $delay;
+}
+
+.department {
+  @include section-background;
+  @include dot-pattern;
+  @include water-ripple;
+  color: $text-dark;
+  padding: 160px 0 100px;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: 
+    // Красивый водный градиент
+    linear-gradient(160deg, #e3f2fd 0%, #bbdefb 20%, #90caf9 50%, #64b5f6 80%, #42a5f5 100%),
+    radial-gradient(circle at 15% 25%, rgba(33, 150, 243, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(3, 169, 244, 0.12) 0%, transparent 40%),
+    // Эффект солнечных лучей в воде
+    linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40,80 Q100,60 160,80 Q180,120 160,160 Q100,180 40,160 Q20,120 40,80 Z' fill='%23007c91' fill-opacity='0.02'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1.5' fill='%23173DED' fill-opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    animation: waterFlow 25s linear infinite;
+  }
+}
+
+.department__wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 60px;
+  position: relative;
+  z-index: 4;
+  text-align: center;
+}
+
+.department__title {
+  font-size: clamp(2.8rem, 6vw, 4.8rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #01579b 0%, #0288d1 30%, #4fc3f7 70%, #81d4fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 30px;
+  text-shadow: 0 6px 25px rgba(2, 136, 209, 0.3);
+  @include fade-in-up(0.3s);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, #00bcd4, #2196f3, #03a9f4);
+    border-radius: 2px;
+    animation: (widthGrow 1.2s ease-out 1s both, colorShift 4s ease-in-out infinite 2s);
+
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+  }
+  
+
+}
+.department__description {
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: #0277bd;
+  max-width: 800px;
+  margin: 0 auto;
+  font-weight: 500;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.9);
+  @include fade-in-up(0.5s);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  padding: 30px 50px;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 30px rgba(33, 150, 243, 0.2);
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    padding: 25px 35px;
+  }
+}
+
+// Стильные красивые рыбки
+.fish {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+  
+  // Рыбка-клоун (оранжевая с белыми полосками)
+  &.clown-fish {
+    top: 25%;
+    left: 8%;
+    @include elegant-fish-swim(28s, 0s);
+    
+    .fish-body {
+      width: 100px;
+      height: 45px;
+      background: 
+        linear-gradient(45deg, #FF6D00, #FF9100, #FFAB00),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 10px,
+          white 10px,
+          white 13px
+        );
+      background-blend-mode: overlay;
+      border-radius: 50% 40% 40% 50%;
+      position: relative;
+      transform-style: preserve-3d;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 15px;
+        width: 12px;
+        height: 12px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 8px white;
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 14px;
+        left: 17px;
+        width: 6px;
+        height: 6px;
+        background: #263238;
+        border-radius: 50%;
+      }
+      
+      .fin {
+        position: absolute;
+        
+        &.dorsal-fin {
+          top: -12px;
+          left: 40px;
+          width: 20px;
+          height: 25px;
+          background: linear-gradient(45deg, #FF6D00, #FF9100);
+          clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+          @include fin-flap(1.8s, 0.2s);
+        }
+        
+        &.pectoral-fin {
+          top: 15px;
+          left: 25px;
+          width: 15px;
+          height: 20px;
+          background: linear-gradient(45deg, #FF6D00, #FF9100);
+          clip-path: polygon(0% 50%, 100% 0%, 100% 100%);
+          @include fin-flap(1.5s, 0.5s);
+        }
+      }
+      
+      .tail {
+        position: absolute;
+        right: -25px;
+        top: 12px;
+        width: 35px;
+        height: 25px;
+        background: linear-gradient(45deg, #FF6D00, #FF9100);
+        clip-path: polygon(0% 0%, 100% 50%, 0% 100%, 20% 50%);
+        @include fin-flap(2s, 0s);
+      }
+    }
+  }
+  
+  // Синяя неоновая рыбка
+  &.neon-fish {
+    top: 65%;
+    left: 12%;
+    @include elegant-fish-swim(32s, 3s);
+    @include neon-glow(4s, 1s);
+    
+    .fish-body {
+      width: 80px;
+      height: 30px;
+      background: 
+        radial-gradient(circle at 30% 50%, #00E5FF, #0091EA),
+        linear-gradient(45deg, #00B0FF, #0091EA);
+      background-blend-mode: overlay;
+      border-radius: 50% 45% 45% 50%;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 12px;
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 10px white;
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        width: 5px;
+        height: 5px;
+        background: #006064;
+        border-radius: 50%;
+      }
+      
+      .neon-stripe {
+        position: absolute;
+        top: 12px;
+        left: 25px;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, #00E5FF, #18FFFF, #00E5FF);
+        border-radius: 2px;
+        box-shadow: 0 0 10px #00E5FF;
+        animation: neonPulse 2s ease-in-out infinite;
+      }
+      
+      .tail {
+        position: absolute;
+        right: -20px;
+        top: 8px;
+        width: 25px;
+        height: 20px;
+        background: linear-gradient(45deg, #00B0FF, #0091EA);
+        clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+        @include fin-flap(1.7s, 0.3s);
+      }
+    }
+  }
+  
+  // Золотая рыбка с вуалевыми плавниками
+  &.gold-fish {
+    top: 45%;
+    right: 8%;
+    @include elegant-fish-swim(35s, 6s);
+    
+    .fish-body {
+      width: 90px;
+      height: 50px;
+      background: 
+        radial-gradient(circle at 30% 50%, #FFD740, #FFC400),
+        linear-gradient(45deg, #FFC400, #FFAB00);
+      background-blend-mode: overlay;
+      border-radius: 50% 40% 40% 50%;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 12px;
+        height: 12px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 8px white;
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 17px;
+        left: 17px;
+        width: 6px;
+        height: 6px;
+        background: #5D4037;
+        border-radius: 50%;
+      }
+      
+      .veil-tail {
+        position: absolute;
+        right: -40px;
+        top: 5px;
+        width: 50px;
+        height: 40px;
+        background: linear-gradient(45deg, rgba(255, 193, 7, 0.8), rgba(255, 160, 0, 0.6));
+        clip-path: polygon(0% 0%, 100% 20%, 80% 50%, 100% 80%, 0% 100%, 20% 50%);
+        @include fin-flap(2.5s, 0.4s);
+        filter: blur(0.5px);
+      }
+      
+      .flowing-fin {
+        position: absolute;
+        bottom: -15px;
+        left: 30px;
+        width: 25px;
+        height: 30px;
+        background: linear-gradient(45deg, rgba(255, 193, 7, 0.7), rgba(255, 160, 0, 0.5));
+        clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+        @include fin-flap(2s, 0.6s);
+        filter: blur(0.5px);
+      }
+    }
+  }
+  
+  // Рыбка-ангел (полосатая)
+  &.angel-fish {
+    top: 75%;
+    right: 15%;
+    @include elegant-fish-swim(30s, 4s);
+    
+    .fish-body {
+      width: 70px;
+      height: 60px;
+      background: 
+        linear-gradient(45deg, #7C4DFF, #536DFE),
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 5px,
+          #E1F5FE 5px,
+          #E1F5FE 8px
+        );
+      background-blend-mode: multiply;
+      border-radius: 50% 40% 40% 50%;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 12px;
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 8px white;
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 22px;
+        left: 14px;
+        width: 5px;
+        height: 5px;
+        background: #311B92;
+        border-radius: 50%;
+      }
+      
+      .angel-fin {
+        position: absolute;
+        top: -20px;
+        left: 25px;
+        width: 15px;
+        height: 40px;
+        background: linear-gradient(45deg, #7C4DFF, #536DFE);
+        clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+        @include fin-flap(1.6s, 0.2s);
+      }
+      
+      .angel-tail {
+        position: absolute;
+        right: -15px;
+        top: 20px;
+        width: 30px;
+        height: 25px;
+        background: linear-gradient(45deg, #7C4DFF, #536DFE);
+        clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+        @include fin-flap(1.8s, 0.5s);
+      }
+    }
+  }
+}
+
+// Пузырьки (улучшенные)
+.bubble {
+  position: absolute;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.3));
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: 
+    inset 0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 15px rgba(255, 255, 255, 0.6);
+  
+  @for $i from 1 through 15 {
+    &.bubble-#{$i} {
+      $size: random(25) + 8px;
+      width: $size;
+      height: $size;
+      left: random(90) + 5%;
+      bottom: -60px;
+      animation: 
+        bubbleRise (random(20) + 10s) ease-in infinite (random(8) + 0s),
+        bubbleSway (random(10) + 5s) ease-in-out infinite (random(5) + 0s);
+    }
+  }
+}
+
+// Водоросли (более красивые)
+.seaweed {
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  
+  &.seaweed-1 {
+    left: 8%;
+    @include seaweed-sway(7s, 0s);
+    
+    .stem {
+      width: 10px;
+      height: 150px;
+      background: linear-gradient(to top, #1B5E20, #388E3C, #66BB6A, #A5D6A7);
+      border-radius: 5px 5px 0 0;
+      
+      .leaf {
+        position: absolute;
+        background: linear-gradient(45deg, #388E3C, #4CAF50);
+        border-radius: 50% 0 50% 0;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        
+        &:nth-child(1) {
+          width: 35px;
+          height: 20px;
+          top: 100px;
+          left: -25px;
+          transform: rotate(-25deg);
+        }
+        
+        &:nth-child(2) {
+          width: 40px;
+          height: 22px;
+          top: 60px;
+          right: -30px;
+          transform: rotate(20deg);
+        }
+        
+        &:nth-child(3) {
+          width: 30px;
+          height: 18px;
+          top: 30px;
+          left: -20px;
+          transform: rotate(-15deg);
+        }
+      }
+    }
+  }
+  
+  &.seaweed-2 {
+    right: 12%;
+    @include seaweed-sway(9s, 3s);
+    
+    .stem {
+      width: 8px;
+      height: 120px;
+      background: linear-gradient(to top, #2E7D32, #4CAF50, #81C784, #C8E6C9);
+      border-radius: 4px 4px 0 0;
+      
+      .leaf {
+        position: absolute;
+        background: linear-gradient(45deg, #4CAF50, #66BB6A);
+        border-radius: 0 50% 0 50%;
+        box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.1);
+        
+        &:nth-child(1) {
+          width: 30px;
+          height: 16px;
+          top: 80px;
+          left: -20px;
+          transform: rotate(-12deg);
+        }
+        
+        &:nth-child(2) {
+          width: 25px;
+          height: 14px;
+          top: 45px;
+          right: -22px;
+          transform: rotate(15deg);
+        }
+      }
+    }
+  }
+}
+
+// Фоновые декоративные элементы
+#bg-circle-1 {
+  @include decorative-circle(450px, 0.1, 70px);
+  top: 12%;
+  left: 10%;
+  background: radial-gradient(circle, #40C4FF, #00B0FF, #0091EA);
+  animation: float 15s ease-in-out infinite;
+}
+
+#bg-circle-2 {
+  @include decorative-circle(350px, 0.08, 60px);
+  bottom: 18%;
+  right: 8%;
+  background: radial-gradient(circle, #80DEEA, #4DD0E1, #00BCD4);
+  animation: float 18s ease-in-out infinite reverse;
+}
+
+// Новые красивые анимации
+@keyframes elegantFishSwim {
+  0% {
+    transform: translateX(-150px) translateY(0) scaleX(1) rotate(0deg);
+  }
+  20% {
+    transform: translateX(20vw) translateY(-40px) scaleX(1) rotate(3deg);
+  }
+  40% {
+    transform: translateX(40vw) translateY(25px) scaleX(1) rotate(-2deg);
+  }
+  60% {
+    transform: translateX(60vw) translateY(-15px) scaleX(1) rotate(2deg);
+  }
+  61% {
+    transform: translateX(60vw) translateY(-15px) scaleX(-1) rotate(-2deg);
+  }
+  80% {
+    transform: translateX(30vw) translateY(35px) scaleX(-1) rotate(-3deg);
+  }
+  100% {
+    transform: translateX(-150px) translateY(0) scaleX(-1) rotate(0deg);
+  }
+}
+
+@keyframes finFlap {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes neonGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px #00E5FF) drop-shadow(0 0 10px #0091EA);
+  }
+  50% {
+    filter: drop-shadow(0 0 15px #00E5FF) drop-shadow(0 0 20px #0091EA) drop-shadow(0 0 25px #00B0FF);
+  }
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    opacity: 0.8;
+    box-shadow: 0 0 10px #00E5FF;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 20px #00E5FF, 0 0 30px #18FFFF;
+  }
+}
+
+@keyframes gentleTurn {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+}
+
+@keyframes bubbleSway {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+}
+
+// Существующие анимации
+@keyframes waterRipple {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.8;
+  }
+}
+
+@keyframes waterFlow {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 200px 200px, 100px 100px;
+  }
+}
+
+@keyframes colorShift {
+  0%, 100% {
+    background: linear-gradient(90deg, #00bcd4, #2196f3, #03a9f4);
+  }
+  33% {
+    background: linear-gradient(90deg, #2196f3, #03a9f4, #00bcd4);
+  }
+  66% {
+    background: linear-gradient(90deg, #03a9f4, #00bcd4, #2196f3);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-25px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(12px) rotate(240deg);
+  }
+}
+
+@keyframes widthGrow {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 120px;
+    opacity: 1;
+  }
+}
+
+// Адаптивность
+@media (max-width: 1200px) {
+  .department__wrapper {
+    padding: 0 40px;
+  }
+  
+  .department {
+    padding: 140px 0 80px;
+  }
+}
+
+@media (max-width: 968px) {
+  .department {
+    padding: 130px 0 70px;
+    min-height: 80vh;
+  }
+  
+  // Скрываем одну рыбку на планшетах
+  .angel-fish {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .department {
+    padding: 120px 0 60px;
+    min-height: 70vh;
+  }
+  
+  .department__wrapper {
+    padding: 0 30px;
+  }
+  
+  // Скрываем еще одну рыбку на мобильных
+  .gold-fish {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .department {
+    padding: 110px 0 50px;
+    min-height: 60vh;
+  }
+  
+  .department__wrapper {
+    padding: 0 20px;
+  }
+  
+  // Оставляем только две самые красивые рыбки
+  .neon-fish {
+    display: none;
   }
 }
