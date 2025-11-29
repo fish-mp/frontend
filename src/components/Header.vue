@@ -1,4 +1,4 @@
-<template>
+  <template>
   <header :class="styles.header">
     <div :class="styles.headerWrapper">
       <!-- Логотип -->
