@@ -1,4 +1,4 @@
-
+// Header.module.scss
 $pure-white: #ffffff;
 $soft-white: #fafbfc;
 $light-grey: #f0f4f8;
@@ -46,7 +46,6 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   }
 }
 
-// Хедер с красивыми скруглениями
 .header {
   @include glass-effect;
   @include gradient-border;
@@ -61,8 +60,8 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   border-radius: 24px;
   margin: 0 auto;
   animation: headerSlideDown 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
-  
-  &__wrapper {
+
+  &Wrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -83,23 +82,23 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 }
 
 // Логотип
-.logo-container {
+.logoContainer {
   position: relative;
   display: flex;
   align-items: center;
   @include smooth-transition;
-  
+
   &:hover {
     transform: scale(1.05);
-    
-    .logo-glow {
+
+    .logoGlow {
       opacity: 0.6;
       transform: translate(-50%, -50%) scale(1.1);
     }
   }
 }
 
-.logo-glow {
+.logoGlow {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -114,7 +113,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   z-index: 0;
 }
 
-.header__logo {
+.logo {
   width: 50px;
   height: auto;
   position: relative;
@@ -124,12 +123,12 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 }
 
 // Навигация
-.header__nav {
+.nav {
   display: flex;
   gap: 0.5rem;
   align-items: center;
   position: relative;
-  
+
   @media (max-width: 1024px) {
     display: none;
     position: fixed;
@@ -146,8 +145,8 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    
-    &--open {
+
+    &.navOpen {
       display: flex;
       animation: mobileNavSlideDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
@@ -166,7 +165,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   }
 }
 
-.nav-backdrop {
+.navBackdrop {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -181,7 +180,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   opacity: 0.7;
 }
 
-.header__nav-link {
+.navLink {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -195,20 +194,20 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   position: relative;
   @include smooth-transition;
   overflow: hidden;
-  
-  .nav-icon {
+
+  .navIcon {
     width: 20px;
     height: 20px;
     color: $text-medium;
     transition: all 0.3s ease;
   }
-  
-  .nav-text {
+
+  .navText {
     position: relative;
     z-index: 2;
   }
-  
-  .nav-highlight {
+
+  .navHighlight {
     position: absolute;
     top: 0;
     left: -100%;
@@ -219,37 +218,37 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     transition: all 0.4s ease;
     border-radius: 16px;
   }
-  
+
   &:hover {
     color: $primary-blue;
     transform: translateY(-2px);
-    
-    .nav-icon {
+
+    .navIcon {
       color: $primary-blue;
       transform: scale(1.1);
     }
-    
-    .nav-highlight {
+
+    .navHighlight {
       left: 0;
       opacity: 0.08;
     }
   }
-  
-  &--active {
+
+  &.navLinkActive {
     color: $primary-blue;
     background: rgba(23, 61, 237, 0.08);
     border: 1px solid rgba(23, 61, 237, 0.15);
-    
-    .nav-icon {
+
+    .navIcon {
       color: $primary-blue;
     }
-    
-    .nav-highlight {
+
+    .navHighlight {
       left: 0;
       opacity: 0.1;
     }
   }
-  
+
   @media (max-width: 1024px) {
     padding: 1rem 1.5rem;
     font-size: 1.1rem;
@@ -260,11 +259,11 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 }
 
 // Дропдаун меню
-.header__nav-dropdown {
+.navDropdown {
   position: relative;
-  
+
   &:hover {
-    .header__dropdown-list {
+    .dropdownList {
       opacity: 1;
       visibility: visible;
       transform: translateY(0);
@@ -272,7 +271,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   }
 }
 
-.header__dropdown-list {
+.dropdownList {
   position: absolute;
   top: 100%;
   left: 0;
@@ -291,7 +290,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.header__dropdown-link {
+.dropdownLink {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -300,34 +299,34 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   text-decoration: none;
   border-radius: 14px;
   transition: all 0.3s ease;
-  
-  .dropdown-icon {
+
+  .dropdownIcon {
     width: 16px;
     height: 16px;
     color: $text-medium;
   }
-  
-  .dropdown-text {
+
+  .dropdownText {
     font-weight: 500;
   }
-  
+
   &:hover {
     background: rgba(23, 61, 237, 0.08);
     color: $primary-blue;
     transform: translateX(8px);
-    
-    .dropdown-icon {
+
+    .dropdownIcon {
       color: $primary-blue;
     }
   }
 }
 
 // Кнопки
-.header__actions {
+.actions {
   display: flex;
   gap: 1rem;
   align-items: center;
-  
+
   @media (max-width: 1024px) {
     display: none;
   }
@@ -344,18 +343,18 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   cursor: pointer;
   overflow: hidden;
   @include smooth-transition;
-  
-  .btn-text {
+
+  .btnText {
     position: relative;
     z-index: 2;
   }
-  
-  &--primary {
+
+  &.btnPrimary {
     background: $blue-gradient;
     color: $pure-white;
     box-shadow: 0 4px 15px rgba(23, 61, 237, 0.3);
-    
-    .btn-shine {
+
+    .btnShine {
       position: absolute;
       top: 0;
       left: -100%;
@@ -364,23 +363,23 @@ $accent-glow: rgba(23, 61, 237, 0.15);
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
       transition: left 0.6s ease;
     }
-    
+
     &:hover {
       transform: translateY(-3px) scale(1.02);
       box-shadow: 0 8px 25px rgba(23, 61, 237, 0.4);
-      
-      .btn-shine {
+
+      .btnShine {
         left: 100%;
       }
     }
   }
-  
-  &--secondary {
+
+  &.btnSecondary {
     background: transparent;
     color: $primary-blue;
     border: 2px solid $primary-blue;
-    
-    .btn-glow {
+
+    .btnGlow {
       position: absolute;
       top: 0;
       left: 0;
@@ -391,25 +390,25 @@ $accent-glow: rgba(23, 61, 237, 0.15);
       transition: opacity 0.3s ease;
       border-radius: 16px;
     }
-    
+
     &:hover {
       background: $primary-blue;
       color: $pure-white;
       transform: translateY(-3px) scale(1.02);
       box-shadow: 0 8px 25px rgba(23, 61, 237, 0.3);
-      
-      .btn-glow {
+
+      .btnGlow {
         opacity: 1;
       }
     }
   }
-  
-  &--logout {
+
+  &.btnLogout {
     background: transparent;
     color: $text-medium;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
-    
+
     &:hover {
       background: rgba(239, 68, 68, 0.1);
       border-color: rgba(239, 68, 68, 0.3);
@@ -420,7 +419,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 }
 
 // Профиль пользователя
-.user-profile {
+.userProfile {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -430,7 +429,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   backdrop-filter: blur(10px);
 }
 
-.user-avatar {
+.userAvatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -444,14 +443,14 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   box-shadow: 0 4px 12px rgba(23, 61, 237, 0.3);
 }
 
-.user__name {
+.userName {
   color: $text-dark;
   font-weight: 500;
   font-size: 0.95rem;
 }
 
 // Бургер меню
-.header__burger {
+.burger {
   display: none;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.5);
@@ -461,17 +460,17 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   padding: 0.75rem;
   gap: 4px;
   transition: all 0.3s ease;
-  
+
   @media (max-width: 1024px) {
     display: flex;
   }
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.7);
     transform: scale(1.05);
   }
-  
-  .burger-line {
+
+  .burgerLine {
     width: 22px;
     height: 2px;
     background: $text-dark;
@@ -479,19 +478,19 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
   }
-  
-  &--open {
-    .burger-line-1 {
+
+  &.burgerOpen {
+    .burgerLine1 {
       transform: rotate(45deg) translate(6px, 6px);
       background: $primary-blue;
     }
-    
-    .burger-line-2 {
+
+    .burgerLine2 {
       opacity: 0;
       transform: scale(0);
     }
-    
-    .burger-line-3 {
+
+    .burgerLine3 {
       transform: rotate(-45deg) translate(6px, -6px);
       background: $primary-blue;
     }
@@ -499,13 +498,13 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 }
 
 // Анимации для dropdown
-.dropdown-enter-active,
-.dropdown-leave-active {
+.dropdownEnterActive,
+.dropdownLeaveActive {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.dropdown-enter-from,
-.dropdown-leave-to {
+.dropdownEnterFrom,
+.dropdownLeaveTo {
   opacity: 0;
   transform: translateY(-15px);
 }
@@ -518,18 +517,18 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     width: calc(100% - 20px);
     border-radius: 20px;
   }
-  
-  .header__logo {
+
+  .logo {
     width: 45px;
   }
-  
-  .mobile-actions {
+
+  .mobileActions {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     margin-top: 2rem;
     width: 100%;
-    
+
     .btn {
       width: 100%;
       text-align: center;
@@ -542,22 +541,22 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     padding: 0.875rem 1.25rem;
     border-radius: 18px;
   }
-  
-  .header__logo {
+
+  .logo {
     width: 40px;
   }
-  
-  .header__nav {
+
+  .nav {
     padding: 1.5rem;
     border-radius: 18px;
   }
-  
+
   .btn {
     padding: 0.75rem 1.5rem;
     font-size: 0.9rem;
   }
-  
-  .user-profile {
+
+  .userProfile {
     flex-direction: column;
     gap: 0.75rem;
     text-align: center;
@@ -572,19 +571,19 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     top: 8px;
     width: calc(100% - 16px);
   }
-  
-  .header__nav {
+
+  .nav {
     padding: 1.25rem;
     border-radius: 16px;
   }
-  
-  .header__nav-link {
+
+  .navLink {
     font-size: 1rem;
     padding: 0.875rem 1.25rem;
     border-radius: 12px;
   }
-  
-  .user-profile {
+
+  .userProfile {
     gap: 0.5rem;
   }
 }

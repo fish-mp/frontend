@@ -1,0 +1,455 @@
+$pure-white: #ffffff;
+$soft-white: #fafbfc;
+$light-grey: #f0f4f8;
+$primary-blue: #173DED;
+$blue-gradient: linear-gradient(135deg, #173DED 0%, #4d7cfe 50%, #8ba9ff 100%);
+$text-dark: #1a1a1a;
+$text-medium: #5d6d87;
+$text-light: #8a9bb8;
+$accent-glow: rgba(23, 61, 237, 0.15);
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$error-color: #ef4444;
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+@mixin smooth-transition {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.course-detail {
+  padding: 140px 2rem 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  min-height: 100vh;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 400px;
+    background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+    z-index: -1;
+    border-radius: 0 0 40px 40px;
+  }
+}
+
+.course-detail__wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.course-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  @include smooth-transition;
+  
+  &:hover {
+    background: $pure-white;
+    transform: translateX(-5px);
+    box-shadow: 0 4px 15px rgba(23, 61, 237, 0.15);
+  }
+}
+
+// Контент курса
+.course-detail__content {
+  @include glass-effect;
+  padding: 2.5rem;
+  border-radius: 24px;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: contentSlideUp 0.6s ease-out;
+}
+
+@keyframes contentSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.course-detail__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+  background: $blue-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.course-detail__desc {
+  font-size: 1.25rem;
+  color: $text-medium;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+  font-weight: 400;
+}
+
+.course-detail__text {
+  font-size: 1.125rem;
+  color: $text-dark;
+  line-height: 1.7;
+  margin: 0;
+}
+
+// Кнопка записи
+.course-detail__enroll {
+  margin-top: 1rem;
+}
+
+// Состояния доступа
+.course-access {
+  margin-bottom: 2rem;
+  animation: contentSlideUp 0.6s ease-out 0.2s both;
+}
+
+.course-access__msg {
+  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  font-weight: 500;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  @include glass-effect;
+  
+  &::before {
+    font-size: 1.25rem;
+  }
+  
+  &--success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: $success-color;
+  }
+  
+  &--warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: $warning-color;
+  }
+  
+  &--error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: $error-color;
+  }
+}
+
+// Секция загрузки материалов
+.course-detail__download {
+  width: 100%;
+  text-align: center;
+  padding: 2rem 0 0;
+  border-top: 1px solid $light-grey;
+  margin-top: 2rem;
+}
+
+.course-detail__download-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-dark;
+  margin: 0 0 1.5rem 0;
+}
+
+.course-detail__files {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.course-detail__file {
+  animation: fileSlideUp 0.6s ease-out;
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+@keyframes fileSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Кнопки (в стиле хедера)
+.btn {
+  position: relative;
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  @include smooth-transition;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  
+  .btn-text {
+    position: relative;
+    z-index: 2;
+  }
+  
+  &--primary {
+    background: $blue-gradient;
+    color: $pure-white;
+    box-shadow: 0 4px 15px rgba(23, 61, 237, 0.3);
+    
+    .btn-shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(23, 61, 237, 0.4);
+      
+      .btn-shine {
+        left: 100%;
+      }
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+  
+  &--secondary {
+    background: transparent;
+    color: $primary-blue;
+    border: 2px solid $primary-blue;
+    
+    .btn-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: $blue-gradient;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 12px;
+    }
+    
+    &:hover {
+      background: $primary-blue;
+      color: $pure-white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(23, 61, 237, 0.3);
+      
+      .btn-glow {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Состояния загрузки и ошибок
+.course-detail__loading,
+.course-detail__not-found {
+  text-align: center;
+  padding: 4rem 2rem;
+  @include glass-effect;
+  border-radius: 24px;
+  margin-top: 2rem;
+  
+  p {
+    font-size: 1.125rem;
+    color: $text-medium;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.course-detail__loading {
+  p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    
+    &::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid $primary-blue;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Анимации переходов
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+  .course-detail {
+    padding: 120px 1rem 2rem;
+    
+    &__content {
+      padding: 2rem 1.5rem;
+      border-radius: 20px;
+    }
+    
+    &__title {
+      font-size: 2rem;
+    }
+    
+    &__desc {
+      font-size: 1.125rem;
+    }
+  }
+  
+  .course-detail__files {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .course-detail {
+    padding: 100px 0.75rem 1.5rem;
+    
+    &__content {
+      padding: 1.5rem 1.25rem;
+      border-radius: 16px;
+    }
+    
+    &__title {
+      font-size: 1.75rem;
+    }
+    
+    &__desc {
+      font-size: 1rem;
+    }
+    
+    &__text {
+      font-size: 1rem;
+    }
+  }
+  
+  .course-access__msg {
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+// Дополнительные декоративные элементы
+.course-detail__wrapper::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: $blue-gradient;
+  border-radius: 50%;
+  opacity: 0.05;
+  filter: blur(40px);
+  z-index: -1;
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+.course-access__msg {
+  &::before {
+    font-size: 1.5rem;
+  }
+  
+  &[class*="applied"]::before {
+    content: '⏳';
+  }
+  
+  &[class*="enrolled"]::before {
+    content: '✅';
+  }
+  
+  &[class*="rejected"]::before {
+    content: '❌';
+  }
+}

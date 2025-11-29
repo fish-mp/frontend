@@ -1,0 +1,21 @@
+name: Deploy
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: debian-latest
+    steps:
+      - name: SSH deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          port: ${{ secrets.PROD_SSH_PORT }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script_stop: true
+          command_timeout: 20m
+          script: |
+            BRANCH=main FRONT_BRANCH=main /home/desai/deploy/deploy.sh
