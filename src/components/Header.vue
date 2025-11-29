@@ -58,41 +58,16 @@
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <div :class="styles.navDropdown" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
-          <div :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/courses' }]">
-            <div :class="styles.navIcon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span :class="styles.navText">
-              Курсы
-              <svg width="16" height="16" style="margin-left: 8px; vertical-align: middle" viewBox="0 0 24 24" fill="none">
-                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-            <div :class="styles.navHighlight"></div>
+        <router-link to="/courses" class="header__nav-link" active-class="header__nav-link--active" @click="closeMobileNav">
+          <div class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
-          <transition name="dropdown">
-            <div v-if="dropdownOpen" :class="styles.dropdownList">
-              <a 
-                v-for="level in difficultyLevels" 
-                :key="level.value" 
-                href="#" 
-                :class="styles.dropdownLink" 
-                @click.prevent="navigateToCoursesWithFilter(level.value)"
-              >
-                <span :class="styles.dropdownIcon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span :class="styles.dropdownText">{{ level.label }}</span>
-              </a>
-            </div>
-          </transition>
-        </div>
+          <span class="nav-text">Курсы</span>
+          <div class="nav-highlight"></div>
+        </router-link>
 
         <router-link 
           to="/events" 
@@ -155,8 +130,6 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useAuthStore } from "../stores/auth";
 import { useRoute, useRouter } from "vue-router";
-import { useCourseStore } from "../stores/course";
-import { useDifficultyLevels } from "../composables/useDifficultyLevels";
 import LoginPopup from "../components/LoginPopup.vue";
 import RegisterPopup from "../components/RegisterPopup.vue";
 
@@ -165,14 +138,11 @@ import styles from '../assets/scss/Header.module.scss';
 
 const emit = defineEmits(['toggle-sidebar'])
 const router = useRouter();
-const courseStore = useCourseStore();
+const route = useRoute();
 
 const showLogin = ref(false);
 const showRegister = ref(false);
-const dropdownOpen = ref(false);
 const isMobileNavOpen = ref(false);
-
-const difficultyLevels = useDifficultyLevels();
 
 const mobileNav = ref(null);
 const burger = ref(null);
@@ -180,8 +150,6 @@ const burger = ref(null);
 const auth = useAuthStore();
 const isAuth = computed(() => auth.isAuthenticated);
 const user = computed(() => auth.user);
-
-const route = useRoute();
 
 function closeMobileNav() {
   isMobileNavOpen.value = false;
@@ -218,13 +186,8 @@ watch(
     isMobileNavOpen.value = false;
   }
 );
-
-const navigateToCoursesWithFilter = (difficulty) => {
-  router.push({
-    path: '/courses',
-    query: { difficulty }
-  });
-  closeMobileNav();
-  dropdownOpen.value = false;
-};
 </script>
+
+<style lang="scss" scoped>
+@use '../assets/scss/Header.scss';
+</style>

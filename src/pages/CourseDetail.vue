@@ -11,14 +11,10 @@
       <div class="course-detail__content">
         <h1 class="course-detail__title">{{ course.title }}</h1>
         <p class="course-detail__desc">{{ course.short_description }}</p>
-        
-        <button 
-          v-if="course.enrollment_state === null" 
-          class="btn btn--primary course-detail__enroll"
-          @click="fetchNewCourse(course.id)"
-        >
-          <span class="btn-text">Записаться на курс</span>
-          <div class="btn-shine"></div>
+        <p v-if="!isAuth"  class="course-access__msg course-access__msg--error">Чтобы записаться нужно авторизироваться!</p>
+        <button v-else="course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
+          @click="fetchNewCourse(course.id)">
+          Записаться на курс
         </button>
       </div>
 
@@ -70,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCourseStore } from '../stores/course'
 import { useAuthStore } from '../stores/auth'
@@ -79,6 +75,9 @@ import type { Course } from '../types/Course'
 const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
+
+const auth = useAuthStore();
+const isAuth = computed(() => auth.isAuthenticated);
 
 const course = ref<Course | null>(null)
 const isLoading = ref(false)
@@ -126,6 +125,170 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
-@import '../assets/scss/CourseDetail.scss';
+<style scoped>
+.course-detail {
+  padding: 3rem 1rem;
+  max-width: 900px;
+  margin: 100px auto;
+  font-family: Inter, sans-serif;
+}
+
+.course-detail__download {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.course-detail__back {
+  color: #4f9da6;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 1rem;
+  transition: color .3s;
+}
+
+.course-detail__back:hover {
+  color: #31727a;
+}
+
+.course-detail__desc {
+  font-size: 1.13rem;
+  line-height: 1.6;
+}
+
+.course-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.course-detail__title {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.course-detail__enroll {
+  margin-top: .5rem;
+}
+
+.course-access {
+  margin-bottom: 2rem;
+}
+
+.course-access__msg {
+  background: #e8f6ff;
+  padding: .75rem 1rem;
+  border-radius: .5rem;
+  color: #31727a;
+  font-size: 1rem;
+}
+
+.course-access__msg--error {
+  background: #ffe8e8;
+  color: #a12b2b;
+}
+
+.course-detail__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.course-detail__text {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #444;
+  margin: 0;
+}
+
+.course-detail__download-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.course-detail__files {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.course-detail__file .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.btn {
+  padding: .75rem 1.25rem;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .3s, transform .2s;
+}
+
+.btn--primary {
+  background: #4f9da6;
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: #31727a;
+  transform: translateY(-2px);
+}
+
+.btn--secondary {
+  background: #f0f0f0;
+  color: #444;
+}
+
+.btn--secondary:hover {
+  background: #d9d9d9;
+  transform: translateY(-2px);
+}
+
+.course-detail__loading,
+.course-detail__not-found {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .course-detail__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .course-detail__title {
+    font-size: 2rem;
+  }
+
+  .course-detail {
+    margin: 60px auto 20px;
+  }
+}
 </style>
