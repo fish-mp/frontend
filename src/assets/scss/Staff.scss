@@ -174,33 +174,28 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 
 .staff__item {
   @include glass-effect;
-  @include gradient-border;
   border-radius: 24px;
   padding: 40px;
   position: relative;
   overflow: hidden;
   @include smooth-transition;
-  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-
-  @for $i from 1 through 6 {
-    &:nth-child(#{$i}) {
-      animation-delay: #{$i * 0.1}s;
-    }
-  }
-
+  
+  // Градиентная рамка через background-image
+  background: 
+    linear-gradient($pure-white, $pure-white) padding-box,
+    linear-gradient(135deg, transparent, transparent) border-box;
+  border: 2px solid transparent;
+  
   &:hover {
+    background: 
+      linear-gradient($pure-white, $pure-white) padding-box,
+      $blue-gradient border-box;
     transform: translateY(-8px) scale(1.02);
     box-shadow: 
       0 25px 50px rgba(0, 0, 0, 0.15),
       0 15px 35px $accent-glow;
-
-    .staff__image img {
-      transform: scale(1.05);
-      box-shadow: 0 10px 30px rgba(23, 61, 237, 0.3);
-    }
   }
 }
-
 .staff__image {
   width: 200px;
   height: 200px;

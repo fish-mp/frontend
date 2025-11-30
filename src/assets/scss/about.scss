@@ -115,7 +115,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 
 .about__header {
   @include glass-effect;
-  @include gradient-border-animated;
+
   padding: 60px;
   border-radius: 24px;
   position: relative;
@@ -164,7 +164,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 
   &--second {
     @include glass-effect;
-    @include gradient-border-animated;
+
     @include particle-effect;
     padding: 45px;
     border-radius: 24px;

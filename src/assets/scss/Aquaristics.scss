@@ -25,26 +25,67 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@mixin gradient-border {
-  position: relative;
+// ЗАМЕНА: Убираем старый gradient-border и используем background-image подход
+.department__info {
+  @include glass-effect;
+  border-radius: 24px;
+  padding: 50px;
+  margin-top: 40px;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
   
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    padding: 2px;
-    background: $blue-gradient;
-    border-radius: inherit;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: xor;
-    -webkit-mask-composite: xor;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  // Градиентная рамка через background-image (аналогично другим компонентам)
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)) padding-box,
+    linear-gradient(135deg, transparent, transparent) border-box;
+  border: 2px solid transparent;
+  
+
+  
+  p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: $text-medium;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 20px;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 6px;
+      height: 6px;
+      background: $blue-gradient;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    
+    &:hover {
+      color: $text-dark;
+      transform: translateX(5px);
+      
+      &::before {
+        width: 8px;
+        height: 8px;
+        background: $primary-blue;
+        box-shadow: 0 0 10px rgba(23, 61, 237, 0.3);
+      }
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
   
-  &:hover::before {
-    opacity: 1;
+  @media (max-width: 768px) {
+    padding: 35px 30px;
+    margin-top: 30px;
+    
+    p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
   }
 }
 
@@ -109,62 +150,6 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   @media (max-width: 768px) {
     font-size: 1.3rem;
     margin-bottom: 40px;
-  }
-}
-
-.department__info {
-  @include glass-effect;
-  @include gradient-border;
-  border-radius: 24px;
-  padding: 50px;
-  margin-top: 40px;
-  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s both;
-  
-  p {
-    font-size: 1.2rem;
-    line-height: 1.8;
-    color: $text-medium;
-    margin-bottom: 1.5rem;
-    position: relative;
-    padding-left: 20px;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 12px;
-      width: 6px;
-      height: 6px;
-      background: $blue-gradient;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-    }
-    
-    &:hover {
-      color: $text-dark;
-      transform: translateX(5px);
-      
-      &::before {
-        width: 8px;
-        height: 8px;
-        background: $primary-blue;
-        box-shadow: 0 0 10px rgba(23, 61, 237, 0.3);
-      }
-    }
-    
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    padding: 35px 30px;
-    margin-top: 30px;
-    
-    p {
-      font-size: 1.1rem;
-      line-height: 1.7;
-    }
   }
 }
 

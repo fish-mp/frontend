@@ -351,8 +351,4 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 }
 
 // Специальные эффекты
-.footer__contact-item:hover .footer__contact-icon,
-.footer__contact-method:hover .footer__contact-icon {
-  filter: brightness(0) saturate(100%) invert(26%) sepia(89%) saturate(2583%) hue-rotate(228deg) brightness(94%) contrast(101%);
-}
 

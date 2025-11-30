@@ -104,7 +104,7 @@ $aqua-color: #00BFA6;
 // Карточка рыбки
 .fish-card {
   @include glass-effect;
-  @include gradient-border;
+
   max-width: 800px;
   margin: 0 auto;
   border-radius: 24px;

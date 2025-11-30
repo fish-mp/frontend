@@ -1,27 +1,34 @@
 <template>
-    <section class="news courses">
+    <section class="courses news">
         <span id="bg-circle-5"></span>
-        <div class="news__wrapper">
-            <div class="news__header">
-                <h2 class="news__title">КУРСЫ</h2>
-                <router-link to="/courses" class="news__more-link">ВСЕ КУРСЫ</router-link>
+        <div class="courses__wrapper news__wrapper">
+            <div class="courses__header news__header">
+                <h2 class="courses__title news__title">КУРСЫ</h2>
+                <router-link to="/courses" class="courses__more-link news__more-link">
+                    ВСЕ КУРСЫ
+                </router-link>
             </div>
-            <ul class="news__list courses__list">
-                <li class="news__item courses__item" v-for="course in courses" :key="course.id">
-                    <router-link :to="{ name: 'CourseDetail', params: { id: course.id } }"
-                        class="news__link courses__link">
-                        <div class="news__image courses__image">
-                            <img :src="course.image" alt="" class="news__icon courses__icon" />
+            <ul class="courses__list news__list">
+                <li class="courses__item news__item" v-for="course in courses" :key="course.id">
+                    <router-link :to="{ name: 'CourseDetail', params: { id: course.id } }" 
+                                class="courses__link news__link">
+                        <div class="courses__image news__image">
+                            <img :src="course.image" :alt="course.title" 
+                                 class="courses__icon news__icon" />
                         </div>
-                        <div class="news__container courses__container">
-                            <!-- убрали .news__date -->
-                            <h3 class="news__subtitle courses__subtitle">{{ course.title }}</h3>
-                            <p class="news__description courses__description">{{ course.shortDescription }}</p>
+                        <div class="courses__container news__container">
+                            <h3 class="courses__subtitle news__subtitle">{{ course.title }}</h3>
+                            <p class="courses__description news__description">
+                                {{ course.shortDescription }}
+                            </p>
                         </div>
                     </router-link>
                 </li>
             </ul>
-            <router-link to="/courses" class="news__more-link news__more-link--second">ВСЕ КУРСЫ</router-link>
+            <router-link to="/courses" 
+                        class="courses__more-link courses__more-link--second news__more-link news__more-link--second">
+                ВСЕ КУРСЫ
+            </router-link>
         </div>
     </section>
 </template>
@@ -58,72 +65,6 @@ const courses = ref<Course[]>([
 ])
 </script>
 
-<style scoped>
-/* основы из вашего news__list */
-.news__list {
-    display: flex;
-    gap: 20px;
-    padding: 0;
-    margin: 0;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-}
-
-.news__item {
-    list-style: none;
-    /* два элемента сразу: каждый занимает половину контейнера минус gap */
-    flex: 0 0 calc((100% - 20px) / 2);
-    scroll-snap-align: start;
-}
-
-/* прячем скроллбар */
-.news__list::-webkit-scrollbar {
-    display: none;
-}
-
-.news__list {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-/* адаптив: на мобилке — один элемент */
-@media (max-width: 768px) {
-    .news__item {
-        flex: 0 0 100%;
-    }
-
-    .news__more-link {
-        margin-top: 20px;
-    }
-}
-
-/* можно скопировать остальные стили из новостей для картинок и текста */
-.news__image,
-.courses__image {
-    width: 100%;
-    height: 180px;
-    overflow: hidden;
-}
-
-.news__image img,
-.courses__image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* заголовок */
-.news__subtitle,
-.courses__subtitle {
-    font-size: 1.25rem;
-    margin: 12px 0 8px;
-}
-
-/* описание */
-.news__description,
-.courses__description {
-    font-size: 1rem;
-    color: #555;
-}
+<style lang="scss" scoped>
+@use '../assets/scss/Courses2.scss';
 </style>

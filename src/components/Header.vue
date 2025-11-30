@@ -1,4 +1,4 @@
-<template>
+  <template>
   <header :class="styles.header">
     <div :class="styles.headerWrapper">
       <!-- Логотип -->
@@ -56,15 +56,16 @@
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <router-link to="/courses" :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/courses' }]"
-          @click="closeMobileNav">
+        <!-- КУРСЫ ПЕРЕД МЕРОПРИЯТИЯМИ -->
+        <router-link 
+          to="/courses" 
+          :class="[styles.navLink, styles.coursesLink, { [styles.navLinkActive]: $route.path === '/courses' }]" 
+          @click="closeMobileNav"
+        >
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-              <path
-                d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
           <span :class="styles.navText">Курсы</span>
@@ -83,9 +84,34 @@
           <span :class="styles.navText">Мероприятия</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
+
+        <!-- МОБИЛЬНЫЕ КНОПКИ АВТОРИЗАЦИИ -->
+        <div :class="styles.mobileActions">
+          <template v-if="!isAuth">
+            <button :class="[styles.btn, styles.btnPrimary]" @click="handleLoginClick">
+              <span :class="styles.btnText">Войти</span>
+              <div :class="styles.btnShine"></div>
+            </button>
+            <button :class="[styles.btn, styles.btnSecondary]" @click="handleRegisterClick">
+              <span :class="styles.btnText">Регистрация</span>
+              <div :class="styles.btnGlow"></div>
+            </button>
+          </template>
+          <template v-else>
+            <div :class="styles.userProfile">
+              <div :class="styles.userAvatar">
+                {{ userInitials }}
+              </div>
+              <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
+              <button :class="[styles.btn, styles.btnLogout]" @click="handleLogout">
+                <span :class="styles.btnText">Выйти</span>
+              </button>
+            </div>
+          </template>
+        </div>
       </nav>
 
-      <!-- Кнопки авторизации -->
+      <!-- ДЕСКТОПНЫЕ КНОПКИ АВТОРИЗАЦИИ -->
       <div :class="styles.actions">
         <template v-if="!isAuth">
           <button :class="[styles.btn, styles.btnPrimary]" @click="showLogin = true">
@@ -100,7 +126,7 @@
         <template v-else>
           <div :class="styles.userProfile">
             <div :class="styles.userAvatar">
-              {{ user?.first_name?.[0] || user?.email?.[0] || 'U' }}
+              {{ userInitials }}
             </div>
             <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
             <button :class="[styles.btn, styles.btnLogout]" @click="auth.logout()">
@@ -110,8 +136,13 @@
         </template>
       </div>
 
-      <!-- Бургер меню -->
-      <button :class="[styles.burger, { [styles.burgerOpen]: isMobileNavOpen }]" ref="burger" @click="toggleMobileNav">
+      <!-- БУРГЕР МЕНЮ -->
+      <button 
+        :class="[styles.burger, { [styles.burgerOpen]: isMobileNavOpen }]" 
+        ref="burger" 
+        @click="toggleMobileNav"
+        aria-label="Открыть меню"
+      >
         <div :class="[styles.burgerLine, styles.burgerLine1]"></div>
         <div :class="[styles.burgerLine, styles.burgerLine2]"></div>
         <div :class="[styles.burgerLine, styles.burgerLine3]"></div>
@@ -148,13 +179,26 @@ const auth = useAuthStore();
 const isAuth = computed(() => auth.isAuthenticated);
 const user = computed(() => auth.user);
 
+const userInitials = computed(() => {
+  return user.value?.first_name?.[0] || user.value?.email?.[0]?.toUpperCase() || 'U';
+});
+
 function closeMobileNav() {
   isMobileNavOpen.value = false;
+  document.body.style.overflow = '';
 }
 
 function toggleMobileNav() {
   isMobileNavOpen.value = !isMobileNavOpen.value;
-  emit('toggle-sidebar')
+  
+  // Блокируем скролл при открытом меню
+  if (isMobileNavOpen.value) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+  
+  emit('toggle-sidebar');
 }
 
 function onClickOutside(event) {
@@ -165,8 +209,24 @@ function onClickOutside(event) {
     !mobileNav.value.contains(event.target) &&
     !burger.value.contains(event.target)
   ) {
-    isMobileNavOpen.value = false;
+    closeMobileNav();
   }
+}
+
+// Обработчики для мобильных кнопок
+function handleLoginClick() {
+  showLogin.value = true;
+  closeMobileNav();
+}
+
+function handleRegisterClick() {
+  showRegister.value = true;
+  closeMobileNav();
+}
+
+function handleLogout() {
+  auth.logout();
+  closeMobileNav();
 }
 
 onMounted(() => {
@@ -175,12 +235,13 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener("click", onClickOutside);
+  document.body.style.overflow = '';
 });
 
 watch(
   () => route.fullPath,
   () => {
-    isMobileNavOpen.value = false;
+    closeMobileNav();
   }
 );
 </script>
