@@ -10,7 +10,7 @@
       </p>
     </div>
   </section>
-  
+
   <section class="news">
     <span id="bg-circle-5"></span>
     <div class="news__wrapper">
@@ -18,22 +18,15 @@
         <label for="difficulty-select">Фильтр по сложности:</label>
         <select id="difficulty-select" v-model="selectedDifficulty" class="filter-select">
           <option value="">Все сложности</option>
-          <option
-            v-for="level in difficultyLevels"
-            :key="level.value"
-            :value="level.value"
-          >
+          <option v-for="level in difficultyLevels" :key="level.value" :value="level.value">
             {{ level.label }}
           </option>
         </select>
       </div>
-      
+
       <ul class="section__list">
         <li class="news__item" v-for="course in filteredCourses" :key="course.id">
-          <router-link
-            :to="{ name: 'CourseDetail', params: { id: course.id } }"
-            class="news__link"
-          >
+          <router-link :to="{ name: 'CourseDetail', params: { id: course.id } }" class="news__link">
             <div class="news__image">
               <img :src="course.image" :alt="course.title" class="news__icon" />
             </div>
@@ -58,16 +51,15 @@ const route = useRoute();
 const courseStore = useCourseStore();
 const selectedDifficulty = ref<string>("");
 
+// Обработка query параметра из URL
 watch(() => route.query.difficulty, (newDifficulty) => {
-  if (newDifficulty) {
-    selectedDifficulty.value = newDifficulty as string;
-  } else {
-    selectedDifficulty.value = "";
-  }
-});
+  selectedDifficulty.value = newDifficulty ? (newDifficulty as string) : "";
+}, { immediate: true });
 
+// Получаем уровни сложности
 const difficultyLevels = useDifficultyLevels();
 
+// Фильтрация курсов
 const filteredCourses = computed(() => {
   if (!selectedDifficulty.value) {
     return courseStore.courses;
@@ -79,9 +71,6 @@ const filteredCourses = computed(() => {
 
 onMounted(() => {
   courseStore.fetchCourses();
-  if (route.query.difficulty) {
-    selectedDifficulty.value = route.query.difficulty as string;
-  }
 });
 </script>
 
