@@ -6,6 +6,7 @@ const DIFFICULTY_CONFIG = [
   { dbValue: "Сложность 1", label: "Легкий", order: 1 },
   { dbValue: "Сложность 2", label: "Средний", order: 2 },
   { dbValue: "Сложность 3", label: "Профи", order: 3 },
+  { dbValue: "Сложность 4", label: "Проект", order: 4 },
 ] as const;
 
 export const useDifficultyLevels = () => {
