@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import staffImg from '../../src/assets/image/staff.png'
+import staffImg from '../../src/assets/image/staff.jpg'
 import staff1Img from '../../src/assets/image/staff1.png'
 
 interface StaffPerson {
