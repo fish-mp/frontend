@@ -81,6 +81,7 @@ const isAuth = computed(() => auth.isAuthenticated);
 
 const course = ref<Course | null>(null)
 const isLoading = ref(false)
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const fetchCourse = async () => {
   try {
@@ -92,7 +93,7 @@ const fetchCourse = async () => {
     if (storedCourse) {
       course.value = storedCourse
     } else {
-      const response = await fetch(`https://fish-mp.miv-dev.ru/api/courses/${courseId}/`, {
+      const response = await fetch(`${BACKEND_URL}/api/courses/${courseId}/`, {
         headers: {
           'Authorization': `Bearer ${useAuthStore().accessToken}`
         }
