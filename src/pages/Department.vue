@@ -229,7 +229,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import staffImg from '../../src/assets/image/staff.jpg'
+import staffImg from '../../src/assets/image/staff.png'
 import staff1Img from '../../src/assets/image/staff1.png'
 
 interface StaffPerson {
@@ -246,7 +246,7 @@ interface StaffPerson {
   education?: string
   achievements?: string[]
   coursesList?: { id: number; title: string; description: string }[]
-  department?: 'mathematics' | 'physics' | 'informatics' | 'engineering'
+  department?: 'mathematics' | 'physics' | 'informatics' | 'engineering' | 'lead'
   isLead?: boolean
 }
 
@@ -277,117 +277,30 @@ const staff: StaffPerson[] = [
   },
   {
     id: 2,
-    name: "Смирнова Мария Викторовна",
-    position: "Старший преподаватель",
-    degree: "Кандидат технических наук",
-    experience: "9 лет стажа",
+    name: "Бритвина Валентина Валентиновна",
+    position: "-",
+    degree: "-",
+    experience: "-",
     photo: staffImg,
-    expertise: ["Веб-разработка", "JavaScript", "React", "Node.js", "Базы данных"],
-    bio: "Практикующий fullstack-разработчик с опытом работы в крупных IT-компаниях. Преподает современные технологии веб-разработки.",
+    expertise: ["-",],
+    bio: "-",
     courses: 6,
     publications: 15,
-    education: "МГТУ им. Н.Э. Баумана, факультет информатики и систем управления",
+    education: "-",
     achievements: [
-      "Сертифицированный специалист AWS",
-      "Победитель хакатона CodeFest 2020",
-      "Ментор в программе для начинающих разработчиков"
+      "-"
     ],
     coursesList: [
-      { id: 3, title: "Современный JavaScript", description: "От основ до продвинутых концепций" },
-      { id: 4, title: "Fullstack разработка", description: "React + Node.js + PostgreSQL" }
+      { id: 3, title: "-", description: "-" },
     ],
-    department: "informatics"
+    department: "lead"
   },
-  {
-    id: 3,
-    name: "Иванов Сергей Петрович",
-    position: "Ассистент",
-    degree: "Кандидат физико-математических наук",
-    experience: "3 года стажа",
-    photo: staff1Img,
-    expertise: ["Теоретическая физика", "Квантовая механика", "Нанотехнологии"],
-    bio: "Молодой ученый, специализирующийся на квантовых вычислениях и наноматериалах. Активный участник международных научных конференций.",
-    courses: 4,
-    publications: 8,
-    education: "Физтех (МФТИ), факультет общей и прикладной физики",
-    achievements: [
-      "Стипендиат программы Фулбрайта",
-      "Автор патента в области нанотехнологий",
-      "Научный руководитель студенческих проектов"
-    ],
-    department: "physics"
-  },
-  {
-    id: 4,
-    name: "Попова Елена Дмитриевна",
-    position: "Доцент",
-    degree: "Доктор технических наук",
-    experience: "21 год стажа",
-    photo: staffImg,
-    expertise: ["Системное программирование", "Операционные системы", "Компьютерные сети", "Кибербезопасность"],
-    bio: "Эксперт в области системного программирования и информационной безопасности. Имеет опыт работы в оборонной промышленности.",
-    courses: 10,
-    publications: 78,
-    education: "СПбГУ, математико-механический факультет",
-    achievements: [
-      "Эксперт Министерства цифрового развития",
-      "Член редколлегии журнала 'Информационная безопасность'",
-      "Разработчик защищенных систем для госсектора"
-    ],
-    coursesList: [
-      { id: 5, title: "Операционные системы", description: "Архитектура и программирование" },
-      { id: 6, title: "Кибербезопасность", description: "Основы и практика" }
-    ],
-    department: "informatics",
-    isLead: false
-  },
-  {
-    id: 5,
-    name: "Васильев Андрей Николаевич",
-    position: "Профессор",
-    degree: "Доктор физико-математических наук",
-    experience: "25 лет стажа",
-    photo: staff1Img,
-    expertise: ["Вычислительная математика", "Численные методы", "Суперкомпьютеры", "HPC"],
-    bio: "Ведущий специалист в области высокопроизводительных вычислений. Руководитель научной лаборатории суперкомпьютерного моделирования.",
-    courses: 7,
-    publications: 92,
-    education: "НГУ, механико-математический факультет",
-    achievements: [
-      "Руководитель мегагранта Правительства РФ",
-      "Член Европейской академии наук",
-      "Научный консультант в Росатоме"
-    ],
-    department: "mathematics",
-    isLead: true
-  },
-  {
-    id: 6,
-    name: "Козлова Ирина Сергеевна",
-    position: "Доцент",
-    degree: "Кандидат педагогических наук",
-    experience: "12 лет стажа",
-    photo: staffImg,
-    expertise: ["Методика преподавания", "Образовательные технологии", "E-learning", "Pedagogy"],
-    bio: "Специалист в области педагогики и образовательных технологий. Разработчик инновационных методик онлайн-обучения.",
-    courses: 5,
-    publications: 24,
-    education: "МПГУ, факультет педагогики и психологии",
-    achievements: [
-      "Автор учебников по методике преподавания",
-      "Эксперт в аккредитации образовательных программ",
-      "Тренер преподавателей вузов"
-    ],
-    department: "informatics"
-  }
 ]
 
 // Фильтры и поиск
 const filters = [
   { id: 'all', label: 'Все' },
   { id: 'mathematics', label: 'Математика' },
-  { id: 'informatics', label: 'Информатика' },
-  { id: 'physics', label: 'Физика' },
   { id: 'lead', label: 'Руководство' }
 ]
 
