@@ -4,6 +4,11 @@ html {
     overflow-x: hidden;
 }
 
+body {
+margin: 0 !important;
+padding: 0;
+}
+
 a {
     text-decoration: none;
 }
@@ -43,6 +48,10 @@ body {
     overflow-x: hidden;
 }
 
+body {
+margin: 0 !important;
+padding: 0;
+}
 
 ::-webkit-scrollbar {
     width: 0;
