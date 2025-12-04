@@ -18,8 +18,8 @@
         <label for="difficulty-select">Фильтр по сложности:</label>
         <select id="difficulty-select" v-model="selectedDifficulty" class="filter-select">
           <option value="">Все сложности</option>
-          <option v-for="level in difficultyLevels" :key="level.value" :value="level.value">
-            {{ level.label }}
+          <option v-for="level in difficultyLevels" :key="level" :value="level">
+            {{ level }}
           </option>
         </select>
       </div>
@@ -56,7 +56,7 @@ watch(() => route.query.difficulty, (newDifficulty) => {
   selectedDifficulty.value = newDifficulty ? (newDifficulty as string) : "";
 }, { immediate: true });
 
-// Получаем уровни сложности
+// Получаем уникальные уровни сложности из данных
 const difficultyLevels = useDifficultyLevels();
 
 // Фильтрация курсов
