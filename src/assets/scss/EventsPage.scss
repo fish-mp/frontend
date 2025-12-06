@@ -212,7 +212,6 @@ $finished-color: #757575;
 
 .news__item {
   @include glass-effect;
-  @include gradient-border;
   border-radius: 20px;
   overflow: hidden;
   animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
