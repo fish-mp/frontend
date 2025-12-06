@@ -43,6 +43,12 @@ export const router = createRouter({
       name: "Department",
       component: () => import("../pages/Department.vue"),
     },
+      {
+      path: "/shop",
+      name: "shop",
+      component: () => import("../pages/shop.vue"),
+    },
+    
     {
       path: "/events",
       name: "Events",

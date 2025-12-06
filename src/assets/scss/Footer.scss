@@ -9,15 +9,17 @@ $text-dark: #1a1a1a;
 $text-medium: #5d6d87;
 $text-light: #8a9bb8;
 $accent-glow: rgba(23, 61, 237, 0.15);
+$aqua-color: #00BFA6;
+$light-blue: #64b5f6;
 
 // Миксины
 @mixin glass-effect {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
     inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
 
@@ -52,9 +54,13 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 .footer {
   @include glass-effect;
   border-top: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 60px 0 40px;
+  padding: 70px 0 30px;
   position: relative;
   overflow: hidden;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(23, 61, 237, 0.02) 0%, transparent 50%),
+    linear-gradient(135deg, $pure-white 0%, $soft-white 100%);
 
   &::before {
     content: '';
@@ -64,8 +70,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     right: 0;
     bottom: 0;
     background: 
-      radial-gradient(circle at 20% 80%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(23, 61, 237, 0.02) 0%, transparent 50%);
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23173DED' fill-opacity='0.03'/%3E%3C/svg%3E");
     pointer-events: none;
   }
 }
@@ -76,6 +81,10 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   padding: 0 60px;
   position: relative;
   z-index: 2;
+  
+  @media (max-width: 768px) {
+    padding: 0 30px;
+  }
 }
 
 .footer__list {
@@ -84,7 +93,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   gap: 80px;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 50px 0;
   
   @media (max-width: 968px) {
     grid-template-columns: 1fr;
@@ -109,15 +118,22 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   }
 }
 
-
+.footer__logo-link {
+  display: inline-block;
+  @include smooth-transition;
+  
+  &:hover {
+    transform: translateY(-3px) scale(1.05);
+  }
+}
 
 .footer__logo {
-  width: 80px;
+  width: 90px;
   height: auto;
- 
+  filter: drop-shadow(0 4px 12px rgba(23, 61, 237, 0.2));
   
   @media (max-width: 768px) {
-    width: 70px;
+    width: 80px;
   }
 }
 
@@ -134,79 +150,156 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 .footer__contact-method {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.5);
+  gap: 18px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   @include smooth-transition;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $blue-gradient;
+    opacity: 0;
+    @include smooth-transition;
+    z-index: -1;
+  }
   
   &:hover {
-    background: rgba(255, 255, 255, 0.7);
-    transform: translateX(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    
+    &::before {
+      opacity: 0.08;
+    }
+    
+    .footer__icon-wrapper {
+      background: $blue-gradient;
+      transform: rotate(10deg) scale(1.1);
+      
+      .footer__icon {
+        fill: $pure-white;
+      }
+    }
+    
+    .footer__contact-text {
+      color: $text-dark;
+    }
   }
 }
 
-.footer__contact-icon {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
+.footer__icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(23, 61, 237, 0.1) 0%, rgba(100, 181, 246, 0.1) 100%);
+  @include smooth-transition;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $blue-gradient;
+    opacity: 0;
+    @include smooth-transition;
+  }
+}
+
+.footer__icon {
+  width: 22px;
+  height: 22px;
+  fill: $primary-blue;
+  @include smooth-transition;
+  position: relative;
+  z-index: 1;
 }
 
 .footer__contact-text {
   color: $text-dark;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 1.05rem;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
+  @include smooth-transition;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+}
+
+.footer__contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .footer__title {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: $text-dark;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: $blue-gradient;
-    border-radius: 2px;
-  }
-  
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
-  }
-}
-
-.footer__text {
-  color: $text-medium;
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-// Декоративные элементы
-.footer {
-  position: relative;
+  padding-bottom: 15px;
   
   &::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, $primary-blue, transparent);
-    opacity: 0.3;
+    width: 50px;
+    height: 3px;
+    background: $blue-gradient;
+    border-radius: 2px;
   }
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+  }
+}
+
+.footer__text {
+  color: $text-medium;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+}
+
+.footer__bottom {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 1px solid rgba($light-grey, 0.5);
+  text-align: center;
+}
+
+.footer__decorative-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, $primary-blue, transparent);
+  margin-bottom: 25px;
+  opacity: 0.3;
+}
+
+.footer__copyright {
+  color: $text-medium;
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.8;
 }
 
 // Анимации
@@ -233,6 +326,23 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   }
 }
 
+// Декоративные элементы
+.footer__contact-item,
+.footer__contact-method {
+  .footer__icon-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    opacity: 0;
+    @include smooth-transition;
+  }
+  
+  &:hover .footer__icon-wrapper::after {
+    opacity: 1;
+  }
+}
+
 // Адаптивность
 @media (max-width: 1200px) {
   .footer__wrapper {
@@ -246,7 +356,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 
 @media (max-width: 968px) {
   .footer {
-    padding: 50px 0 30px;
+    padding: 50px 0 25px;
   }
   
   .footer__wrapper {
@@ -264,7 +374,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 
 @media (max-width: 768px) {
   .footer {
-    padding: 40px 0 25px;
+    padding: 40px 0 20px;
   }
   
   .footer__wrapper {
@@ -273,6 +383,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   
   .footer__list {
     gap: 40px;
+    margin-bottom: 40px;
   }
   
   .footer__item {
@@ -285,19 +396,29 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   
   .footer__contact-item,
   .footer__contact-method {
-    padding: 14px 18px;
+    padding: 16px 20px;
+    gap: 16px;
   }
   
-  .footer__contact-text {
-    font-size: 0.95rem;
+  .footer__icon-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .footer__icon {
+    width: 20px;
+    height: 20px;
   }
   
   .footer__title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
   }
   
-  .footer__text {
-    font-size: 0.95rem;
+  .footer__bottom {
+    margin-top: 40px;
+    padding-top: 25px;
   }
 }
 
@@ -312,6 +433,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   
   .footer__list {
     gap: 35px;
+    margin-bottom: 35px;
   }
   
   .footer__item {
@@ -323,32 +445,66 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   }
   
   .footer__logo {
-    width: 60px;
+    width: 70px;
   }
   
   .footer__contact-item,
   .footer__contact-method {
-    padding: 12px 16px;
+    padding: 14px 18px;
     gap: 14px;
   }
   
-  .footer__contact-icon {
-    width: 20px;
-    height: 20px;
+  .footer__icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  
+  .footer__icon {
+    width: 18px;
+    height: 18px;
   }
   
   .footer__contact-text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
   
   .footer__title {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   
   .footer__text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+  }
+  
+  .footer__copyright {
+    font-size: 0.85rem;
   }
 }
 
-// Специальные эффекты
+// Анимация для иконок при загрузке
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
 
+.footer__icon {
+  animation: iconFloat 3s ease-in-out infinite;
+  
+  .footer__contact-item:hover &,
+  .footer__contact-method:hover & {
+    animation: none;
+  }
+}
+
+// Эффект свечения при наведении
+.footer__contact-item:hover,
+.footer__contact-method:hover {
+  .footer__icon-wrapper {
+    box-shadow: 0 0 20px rgba(23, 61, 237, 0.3);
+  }
+}
