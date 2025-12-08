@@ -613,6 +613,7 @@ $finished-color: #757575;
   flex: 1;
   max-width: 300px;
   position: relative;
+  box-sizing: border-box;
   
   @media (max-width: 768px) {
     max-width: 100%;
@@ -625,6 +626,7 @@ $finished-color: #757575;
   border-radius: 12px;
   border: 2px solid rgba(23, 61, 237, 0.2);
   background: rgba(255, 255, 255, 0.8);
+  box-sizing: border-box;
   font-size: 1rem;
   color: $text-dark;
   @include smooth-transition;
