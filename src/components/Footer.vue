@@ -63,7 +63,7 @@
       
       <div class="footer__bottom">
         <div class="footer__decorative-line"></div>
-        <p class="footer__copyright">© 2024 Юношеская школа аквариумистики "АкваВселенная". Все права защищены.</p>
+        <p class="footer__copyright">© 2025 Юношеская школа аквариумистики "АкваВселенная". Все права защищены.</p>
       </div>
     </div>
   </footer>
