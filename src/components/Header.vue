@@ -56,28 +56,56 @@
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <!-- КУРСЫ ПЕРЕД МЕРОПРИЯТИЯМИ -->
-        <router-link 
-          to="/courses" 
-          :class="[styles.navLink, styles.coursesLink, { [styles.navLinkActive]: $route.path === '/courses' }]" 
-          @click="closeMobileNav"
-        >
-          <div :class="styles.navIcon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+        <!-- ВЫПАДАЮЩЕЕ МЕНЮ КУРСОВ -->
+        <div :class="[styles.dropdown, { [styles.dropdownOpen]: isCoursesDropdownOpen }]"
+          @mouseenter="openCoursesDropdown"
+          @mouseleave="closeCoursesDropdown">
+          <button :class="[styles.dropdownToggle, { [styles.navLinkActive]: isCoursesActive }]"
+            @click="toggleCoursesDropdown">
+            <div :class="styles.navIcon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span :class="styles.navText">Курсы</span>
+            <div :class="styles.dropdownArrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </button>
+          
+          <div :class="styles.dropdownMenu">
+            <router-link 
+              to="/courses" 
+              :class="[styles.dropdownItem, { [styles.dropdownItemActive]: $route.path === '/courses' }]"
+              @click="closeAllDropdowns">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+              <span>Все курсы</span>
+            </router-link>
+            
+            <router-link 
+              to="/my-courses" 
+              :class="[styles.dropdownItem, { [styles.dropdownItemActive]: $route.path === '/my-courses' }]"
+              @click="closeAllDropdowns">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Мои курсы</span>
+            </router-link>
           </div>
-          <span :class="styles.navText">Курсы</span>
-          <div :class="styles.navHighlight"></div>
-        </router-link>
+        </div>
 
         <!-- МАГАЗИН -->
         <router-link 
           to="/shop" 
           :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/shop' }]" 
-          @click="closeMobileNav"
-        >
+          @click="closeMobileNav">
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C16.4696 17 15.9609 17.2107 15.5858 17.5858C15.2107 17.9609 15 18.4696 15 19C15 19.5304 15.2107 20.0391 15.5858 20.4142C15.9609 20.7893 16.4696 21 17 21C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19C19 18.4696 18.7893 18.0391 18.4142 17.5858C17.9609 17.2107 17.5304 17 17 17ZM9 19C9 19.5304 8.78929 20.0391 8.41421 20.4142C8.03914 20.7893 7.53043 21 7 21C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19C5 18.4696 5.21071 17.9609 5.58579 17.5858C5.96086 17.2107 6.46957 17 7 17C7.53043 17 8.03914 17.2107 8.41421 17.5858C8.78929 17.9609 9 18.4696 9 19Z" 
@@ -187,6 +215,7 @@ const route = useRoute();
 const showLogin = ref(false);
 const showRegister = ref(false);
 const isMobileNavOpen = ref(false);
+const isCoursesDropdownOpen = ref(false);
 
 const mobileNav = ref(null);
 const burger = ref(null);
@@ -199,8 +228,36 @@ const userInitials = computed(() => {
   return user.value?.first_name?.[0] || user.value?.email?.[0]?.toUpperCase() || 'U';
 });
 
+const isCoursesActive = computed(() => {
+  return route.path === '/courses' || route.path === '/my-courses';
+});
+
+function openCoursesDropdown() {
+  if (window.innerWidth > 1024) {
+    isCoursesDropdownOpen.value = true;
+  }
+}
+
+function closeCoursesDropdown() {
+  if (window.innerWidth > 1024) {
+    isCoursesDropdownOpen.value = false;
+  }
+}
+
+function toggleCoursesDropdown() {
+  if (window.innerWidth <= 1024) {
+    isCoursesDropdownOpen.value = !isCoursesDropdownOpen.value;
+  }
+}
+
+function closeAllDropdowns() {
+  isCoursesDropdownOpen.value = false;
+  closeMobileNav();
+}
+
 function closeMobileNav() {
   isMobileNavOpen.value = false;
+  isCoursesDropdownOpen.value = false;
   document.body.style.overflow = '';
 }
 
@@ -258,6 +315,7 @@ watch(
   () => route.fullPath,
   () => {
     closeMobileNav();
+    isCoursesDropdownOpen.value = false;
   }
 );
 </script>

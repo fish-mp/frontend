@@ -70,6 +70,11 @@ export const router = createRouter({
       name: "NewsDetail",
       component: () => import("../pages/NewsDetail.vue"),
     },
+       {
+      path: '/my-courses',
+      name: 'MyCourses',
+      component: () => import('../pages/MyCourses.vue'), // Новый маршрут
+    },
     {
       path: "/:pathMatch(.*)*",
       name: "NotFound",

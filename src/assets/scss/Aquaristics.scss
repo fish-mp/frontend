@@ -44,7 +44,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   p {
     font-size: 1.2rem;
     line-height: 1.8;
-    color: $text-medium;
+    color: $text-dark;
     margin-bottom: 1.5rem;
     position: relative;
     padding-left: 20px;
@@ -62,8 +62,8 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     }
     
     &:hover {
-      color: $text-dark;
-      transform: translateX(5px);
+  
+
       
       &::before {
         width: 8px;
