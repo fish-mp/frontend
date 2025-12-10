@@ -142,12 +142,12 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
-import { useCourseStore } from "../stores/course";
+
 import type { Course } from "../types/Course";
 
 const router = useRouter();
 const authStore = useAuthStore();
-const courseStore = useCourseStore();
+
 
 const searchQuery = ref<string>("");
 const selectedStatus = ref<string>("");
@@ -164,7 +164,7 @@ const fetchMyCourses = async () => {
     isLoading.value = true;
     error.value = null;
     
-    const response = await fetch('http://127.0.0.1:8000/api/my-courses/', {
+    const response = await fetch('http://127.0.0.1:8000/api/courses/my/', {
       headers: {
         'Authorization': `Bearer ${authStore.accessToken}`,
       },
@@ -218,15 +218,6 @@ const getStatusText = (status: string) => {
   return statusMap[status] || status;
 };
 
-const handleLogin = () => {
-  // Здесь можно открыть модалку логина или перенаправить
-  router.push('/login');
-};
-
-const handleRegister = () => {
-  // Здесь можно открыть модалку регистрации или перенаправить
-  router.push('/register');
-};
 
 onMounted(() => {
   if (isAuth.value) {
