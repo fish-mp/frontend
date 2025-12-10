@@ -5,6 +5,7 @@ import type { Course } from "../types/Course";
 
 export const useCourseStore = defineStore("course", () => {
   const courses = ref<Course[]>([]);
+  const myCourses = ref<Course[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
   const auth = useAuthStore();
@@ -33,8 +34,41 @@ export const useCourseStore = defineStore("course", () => {
     }
   };
 
+  const fetchMyCourses = async () => {
+    try {
+      isLoading.value = true;
+      error.value = null;
+      
+      if (!auth.isAuthenticated) {
+        throw new Error("Требуется авторизация");
+      }
+
+      const response = await fetch(`${BACKEND_URL}/api/my-courses/`, {
+        headers: {
+          Authorization: `Bearer ${auth.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        console.error("Ошибка /api/my-courses/:", response.status, body);
+        throw new Error(`Сервер вернул ${response.status}`);
+      }
+
+      myCourses.value = await response.json();
+    } catch (err: any) {
+      error.value = err.message;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   const enrollToCourse = async (courseId: number) => {
     try {
+      if (!auth.isAuthenticated) {
+        throw new Error("Требуется авторизация");
+      }
+
       const response = await fetch(
         `${BACKEND_URL}/api/courses/${courseId}/enroll/`,
         {
@@ -48,6 +82,7 @@ export const useCourseStore = defineStore("course", () => {
 
       if (!response.ok) throw new Error("Ошибка записи на курс");
 
+      // Обновляем состояние курса в списке всех курсов
       const updatedCourses = courses.value.map((course) =>
         course.id === courseId
           ? { ...course, enrollment_state: "applied" }
@@ -64,9 +99,11 @@ export const useCourseStore = defineStore("course", () => {
 
   return {
     courses,
+    myCourses,
     isLoading,
     error,
     fetchCourses,
+    fetchMyCourses,
     enrollToCourse,
   };
 });
