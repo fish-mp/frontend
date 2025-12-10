@@ -140,12 +140,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 import type { Course } from "../types/Course";
 
-const router = useRouter();
+
 const authStore = useAuthStore();
 
 
@@ -218,15 +217,7 @@ const getStatusText = (status: string) => {
   return statusMap[status] || status;
 };
 
-const handleLogin = () => {
-  // Здесь можно открыть модалку логина или перенаправить
-  router.push('/login');
-};
 
-const handleRegister = () => {
-  // Здесь можно открыть модалку регистрации или перенаправить
-  router.push('/register');
-};
 
 onMounted(() => {
   if (isAuth.value) {
