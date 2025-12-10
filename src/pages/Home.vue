@@ -50,16 +50,16 @@
     
     <!-- Космические косяки -->
     <div class="fish-shoal shoal-1">
-      <div class="small-fish" v-for="n in 12" :key="n" :style="`--fish-index: ${n}`"></div>
+      <div class="small-fish" v-for="n in 8" :key="n" :style="`--fish-index: ${n}`"></div>
     </div>
     
     <div class="fish-shoal shoal-2">
-      <div class="small-fish" v-for="n in 10" :key="n" :style="`--fish-index: ${n}`"></div>
+      <div class="small-fish" v-for="n in 6" :key="n" :style="`--fish-index: ${n}`"></div>
     </div>
     
     <!-- Космические пузыри -->
     <div 
-      v-for="i in 30" 
+      v-for="i in 20" 
       :key="`bubble-${i}`" 
       :class="`cosmic-bubble bubble-${i}`"
       @click="popBubble(i, $event)"
@@ -87,7 +87,7 @@
     <div class="crystal crystal-2"></div>
     <div class="crystal crystal-3"></div>
     
-    <!-- Контент -->
+    <!-- Контент по центру -->
     <div class="universe-content">
       <div class="content-wrapper">
         <h1 class="department__title">Юношеская школа аквариумистики "АкваВселенная"</h1>
@@ -95,6 +95,9 @@
           Здесь вы сможете более подробно познакомиться с интересующими вас рыбками. У вас
           появится возможность воспользоваться нашими курсами по аквариумистике.
         </p>
+        <button class="cta-button" @click.stop="scrollToAbout">
+          Узнать больше
+        </button>
       </div>
     </div>
   </section>
@@ -180,6 +183,15 @@ const popBubble = (index, event) => {
   }
 }
 
+// Прокрутка к следующей секции
+const scrollToAbout = () => {
+  const aboutSection = document.querySelector('.about-section') || 
+                       document.querySelector('section:not(.aqua-universe)')
+  if (aboutSection) {
+    aboutSection.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 // Добавляем CSS для эффектов
 onMounted(() => {
   const style = document.createElement('style')
@@ -197,7 +209,7 @@ onMounted(() => {
   `
   document.head.appendChild(style)
   
-  // Создаем звезды
+  // Создаем звезды с учетом мобильных устройств
   createStars()
 })
 
@@ -206,7 +218,10 @@ const createStars = () => {
   const starsContainer = document.querySelector('.stars')
   if (!starsContainer) return
   
-  for (let i = 0; i < 200; i++) {
+  const isMobile = window.innerWidth < 768
+  const starCount = isMobile ? 80 : 120
+  
+  for (let i = 0; i < starCount; i++) {
     const star = document.createElement('div')
     star.className = 'star'
     star.style.cssText = `
@@ -229,35 +244,33 @@ const createStars = () => {
 <style lang="scss" scoped>
 .aqua-universe {
   background: 
-    // Глубокий космический градиент
     radial-gradient(ellipse at 50% 30%, 
       #000428 0%,
       #001233 30%,
       #002855 60%,
       #000428 100%),
-    
-    // Туманности
     radial-gradient(circle at 20% 20%, 
       rgba(0, 100, 200, 0.2) 0%,
       transparent 60%),
     radial-gradient(circle at 80% 60%, 
       rgba(100, 0, 200, 0.15) 0%,
       transparent 60%),
-    
-    // Звездная пыль
     radial-gradient(circle at 40% 70%, 
       rgba(255, 255, 255, 0.1) 0%,
       transparent 40%);
   
   color: white;
-  padding: 160px 0 100px;
   position: relative;
   overflow: hidden;
   min-height: 100vh;
-
-  max-height: 1000px;
   width: 100%;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  // Убрал фиксированную высоту, теперь контент по центру
 }
 
 .cosmic-background {
@@ -401,7 +414,7 @@ const createStars = () => {
   }
 }
 
-// РЫБЫ - как раньше, но с космическим свечением
+// РЫБЫ
 .fish {
   position: absolute;
   z-index: 4;
@@ -420,7 +433,6 @@ const createStars = () => {
     animation: glowPulse 3s ease-in-out infinite;
   }
   
-  // Рыбка-клоун (слева направо)
   &.clown-fish {
     top: 25%;
     left: -100px;
@@ -506,7 +518,6 @@ const createStars = () => {
     }
   }
   
-  // Неоновая рыбка (справа налево)
   &.neon-fish {
     top: 65%;
     right: -80px;
@@ -573,7 +584,6 @@ const createStars = () => {
     }
   }
   
-  // Золотая рыбка (слева направо)
   &.gold-fish {
     top: 45%;
     left: -90px;
@@ -639,7 +649,6 @@ const createStars = () => {
     }
   }
   
-  // Рыбка-ангел (справа налево)
   &.angel-fish {
     top: 75%;
     right: -70px;
@@ -713,7 +722,7 @@ const createStars = () => {
   }
 }
 
-// Косяки маленьких рыб
+// Косяки маленьких рыб (уменьшил количество для мобилок)
 .fish-shoal {
   position: absolute;
   z-index: 3;
@@ -778,7 +787,7 @@ const createStars = () => {
   }
 }
 
-// Космические пузыри
+// Космические пузыри (уменьшил количество)
 .cosmic-bubble {
   position: absolute;
   background: radial-gradient(circle at 30% 30%, 
@@ -803,7 +812,7 @@ const createStars = () => {
     animation: bubblePop 0.5s ease-out forwards;
   }
   
-  // 30 космических пузырей
+  // 20 космических пузырей (вместо 30)
   &.bubble-1 { width: 12px; height: 12px; left: 5%; bottom: -60px; animation: cosmicBubbleRise 25s linear infinite 0s, cosmicBubbleSway 15s ease-in-out infinite 0s; }
   &.bubble-2 { width: 18px; height: 18px; left: 15%; bottom: -60px; animation: cosmicBubbleRise 22s linear infinite 2s, cosmicBubbleSway 12s ease-in-out infinite 1s; }
   &.bubble-3 { width: 10px; height: 10px; left: 25%; bottom: -60px; animation: cosmicBubbleRise 28s linear infinite 1s, cosmicBubbleSway 18s ease-in-out infinite 2s; }
@@ -814,7 +823,11 @@ const createStars = () => {
   &.bubble-8 { width: 15px; height: 15px; left: 75%; bottom: -60px; animation: cosmicBubbleRise 29s linear infinite 1.2s, cosmicBubbleSway 19s ease-in-out infinite 1.2s; }
   &.bubble-9 { width: 17px; height: 17px; left: 85%; bottom: -60px; animation: cosmicBubbleRise 23s linear infinite 3.5s, cosmicBubbleSway 13s ease-in-out infinite 3.5s; }
   &.bubble-10 { width: 13px; height: 13px; left: 95%; bottom: -60px; animation: cosmicBubbleRise 27s linear infinite 0.8s, cosmicBubbleSway 17s ease-in-out infinite 0.8s; }
-  // И так далее до 30...
+  &.bubble-11 { width: 15px; height: 15px; left: 10%; bottom: -60px; animation: cosmicBubbleRise 26s linear infinite 4s, cosmicBubbleSway 16s ease-in-out infinite 4s; }
+  &.bubble-12 { width: 11px; height: 11px; left: 20%; bottom: -60px; animation: cosmicBubbleRise 30s linear infinite 5s, cosmicBubbleSway 20s ease-in-out infinite 5s; }
+  &.bubble-13 { width: 19px; height: 19px; left: 30%; bottom: -60px; animation: cosmicBubbleRise 23s linear infinite 6s, cosmicBubbleSway 13s ease-in-out infinite 6s; }
+  &.bubble-14 { width: 14px; height: 14px; left: 40%; bottom: -60px; animation: cosmicBubbleRise 27s linear infinite 7s, cosmicBubbleSway 17s ease-in-out infinite 7s; }
+  &.bubble-15 { width: 16px; height: 16px; left: 50%; bottom: -60px; animation: cosmicBubbleRise 25s linear infinite 8s, cosmicBubbleSway 15s ease-in-out infinite 8s; }
 }
 
 // Эффекты ряби
@@ -832,18 +845,23 @@ const createStars = () => {
   box-shadow: 0 0 50px rgba(0, 229, 255, 0.8);
 }
 
-// Контент
+// Контент по центру
 .universe-content {
   position: relative;
   z-index: 10;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 60px;
+  padding: 20px;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .content-wrapper {
   text-align: center;
+  max-width: 900px;
+  width: 100%;
 }
 
 .department__title {
@@ -886,7 +904,7 @@ const createStars = () => {
   line-height: 1.7;
   color: #e0f7fa;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 60px auto 40px;
   font-weight: 500;
   text-shadow: 
     0 2px 10px rgba(0, 0, 0, 0.5),
@@ -901,11 +919,50 @@ const createStars = () => {
     0 15px 35px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     0 0 40px rgba(0, 229, 255, 0.4);
+}
+
+.cta-button {
+  background: linear-gradient(135deg, #00e5ff, #0091ea);
+  color: white;
+  border: none;
+  padding: 18px 45px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s both;
+  box-shadow: 
+    0 10px 30px rgba(0, 145, 234, 0.4),
+    0 0 40px rgba(0, 229, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 5;
   
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    padding: 25px 35px;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+      0 15px 40px rgba(0, 145, 234, 0.6),
+      0 0 60px rgba(0, 229, 255, 0.5);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+  }
+  
+  &:hover::before {
+    left: 100%;
   }
 }
 
@@ -1066,14 +1123,11 @@ const createStars = () => {
   66% { background: linear-gradient(90deg, #0066cc, #00e5ff, #0091ea); }
 }
 
-// Адаптивность
+// АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+
 @media (max-width: 1200px) {
   .universe-content {
     padding: 0 40px;
-  }
-  
-  .aqua-universe {
-    padding: 140px 0 80px;
   }
   
   .nebula-1 {
@@ -1089,8 +1143,8 @@ const createStars = () => {
 
 @media (max-width: 968px) {
   .aqua-universe {
-    padding: 130px 0 70px;
-    min-height: 80vh;
+    min-height: 90vh;
+    padding: 15px;
   }
   
   .angel-fish {
@@ -1104,17 +1158,6 @@ const createStars = () => {
   .crystal-3 {
     display: none;
   }
-}
-
-@media (max-width: 768px) {
-  .aqua-universe {
-    padding: 120px 0 60px;
-    min-height: 70vh;
-  }
-  
-  .universe-content {
-    padding: 0 30px;
-  }
   
   .department__title {
     font-size: clamp(2.2rem, 5vw, 3.5rem);
@@ -1125,6 +1168,45 @@ const createStars = () => {
     font-size: 1.2rem;
     line-height: 1.6;
     padding: 25px 35px;
+    margin: 40px auto 30px;
+  }
+  
+  .cta-button {
+    padding: 16px 40px;
+    font-size: 1.2rem;
+  }
+  
+  // Уменьшаем количество пузырей на планшетах
+  .cosmic-bubble:nth-child(n+11) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .aqua-universe {
+    min-height: 85vh;
+    padding: 10px;
+  }
+  
+  .universe-content {
+    padding: 0 20px;
+  }
+  
+  .department__title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 15px;
+    
+    &::after {
+      width: 80px;
+      bottom: -15px;
+    }
+  }
+  
+  .department__description {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    padding: 20px 25px;
+    margin: 30px auto 25px;
   }
   
   .gold-fish {
@@ -1138,27 +1220,57 @@ const createStars = () => {
   .fish-shoal.shoal-2 {
     display: none;
   }
+  
+  .planet-1 {
+    width: 80px;
+    height: 80px;
+    top: 5%;
+    right: 10%;
+  }
+  
+  .nebula-1 {
+    width: 200px;
+    height: 200px;
+    top: 5%;
+    left: 5%;
+  }
+  
+  .nebula-2 {
+    width: 150px;
+    height: 150px;
+    bottom: 10%;
+    right: 5%;
+  }
+  
+  .cta-button {
+    padding: 14px 35px;
+    font-size: 1.1rem;
+  }
+  
+  // Еще меньше пузырей на мобилках
+  .cosmic-bubble:nth-child(n+6) {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
   .aqua-universe {
-    padding: 110px 0 50px;
-    min-height: 60vh;
+    min-height: 80vh;
   }
   
   .universe-content {
-    padding: 0 20px;
+    padding: 0 15px;
   }
   
   .department__title {
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    margin-bottom: 15px;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
   }
   
   .department__description {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    padding: 20px 25px;
+    font-size: 1rem;
+    line-height: 1.4;
+    padding: 18px 20px;
+    margin: 25px auto 20px;
   }
   
   .neon-fish {
@@ -1166,13 +1278,48 @@ const createStars = () => {
   }
   
   .planet-1 {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
   }
   
-  .nebula-1 {
-    width: 200px;
-    height: 200px;
+  .crystal-1, .crystal-2 {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .clown-fish .fish-body {
+    width: 80px;
+    height: 35px;
+  }
+  
+  .cta-button {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+  
+  // Минимум пузырей на маленьких экранах
+  .cosmic-bubble:nth-child(n+4) {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .department__title {
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+  }
+  
+  .department__description {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+  
+  .fish-shoal.shoal-1 {
+    display: none;
+  }
+  
+  .cta-button {
+    padding: 10px 25px;
+    font-size: 0.95rem;
   }
 }
 </style>

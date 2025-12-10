@@ -1,11 +1,4 @@
-:root {
-  --color-white: #FFFFFF;
-  --color-turquoise: #00BFA6;
-  --color-turquoise-dark: #009688;
-  --color-turquoise-light: #E0F7F5;
-  --color-text: #004F4B;
-  --overlay-bg: rgba(0, 191, 166, 0.05);
-}
+
 
 @font-face {
   font-family: "Gotham Pro";
@@ -90,6 +83,14 @@
   src: local("Gotham Pro Medium Italic"), local("GothamPro-MediumItalic"), url("../fonts/GothamPro-MediumItalic.eot?#iefix") format("embedded-opentype"), url("../fonts/GothamPro-MediumItalic.woff") format("woff"), url("../fonts/GothamPro-MediumItalic.ttf") format("truetype");
   font-weight: 500;
   font-style: italic;
+}
+
+body {
+  font-family: "Gotham Pro", Arial, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 html {
   overflow-x: hidden;

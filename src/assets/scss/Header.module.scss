@@ -116,7 +116,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   max-width: 100%;
   flex: 1;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 
   @media (max-width: 1024px) {
     // МОБИЛЬНАЯ ВЕРСИЯ
@@ -183,6 +183,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   overflow: hidden;
   white-space: nowrap;
   flex-shrink: 0;
+  z-index: 1000;
 
   .navIcon {
     width: 20px;
@@ -212,15 +213,18 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   &:hover {
     color: $primary-blue;
     transform: translateY(-2px);
+    z-index: 1000;
 
     .navIcon {
       color: $primary-blue;
       transform: scale(1.1);
+      z-index: 100;
     }
 
     .navHighlight {
       left: 0;
       opacity: 0.08;
+        z-index: 100;
     }
   }
 
@@ -228,6 +232,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     color: $primary-blue;
     background: rgba(23, 61, 237, 0.08);
     border: 1px solid rgba(23, 61, 237, 0.15);
+      z-index: 100;
 
     .navIcon {
       color: $primary-blue;
@@ -313,6 +318,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
   @include smooth-transition;
   flex-shrink: 0;
   box-sizing: border-box;
+  z-index: 2000;
 
   .btnText {
     position: relative;
@@ -337,6 +343,8 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     &:hover {
       transform: translateY(-3px) scale(1.02);
       box-shadow: 0 8px 25px rgba(23, 61, 237, 0.4);
+      z-index: 99;
+      position: relative;
 
       .btnShine {
         left: 100%;
@@ -348,6 +356,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     background: transparent;
     color: $primary-blue;
     border: 2px solid $primary-blue;
+    z-index: 200;
 
     .btnGlow {
       position: absolute;
