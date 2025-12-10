@@ -51,7 +51,7 @@ export const useCourseStore = defineStore("course", () => {
 
       if (!response.ok) {
         const body = await response.text();
-        console.error("Ошибка /api/my-courses/:", response.status, body);
+        console.error("Ошибка:", response.status, body);
         throw new Error(`Сервер вернул ${response.status}`);
       }
 

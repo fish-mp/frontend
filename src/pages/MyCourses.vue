@@ -140,12 +140,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 import type { Course } from "../types/Course";
 
-const router = useRouter();
+
 const authStore = useAuthStore();
 
 
@@ -164,7 +163,7 @@ const fetchMyCourses = async () => {
     isLoading.value = true;
     error.value = null;
     
-    const response = await fetch('http://127.0.0.1:8000/api/courses/my/', {
+    const response = await fetch(`${BACKEND_URL}/api/courses/my/`, {
       headers: {
         'Authorization': `Bearer ${authStore.accessToken}`,
       },
@@ -217,6 +216,7 @@ const getStatusText = (status: string) => {
   };
   return statusMap[status] || status;
 };
+
 
 
 onMounted(() => {
