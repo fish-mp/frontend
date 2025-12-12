@@ -205,7 +205,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import staffImg from '../../src/assets/image/staff.png'
+import staffImg from '../../src/assets/image/staff.jpg'
 
 interface StaffPerson {
   id: number
