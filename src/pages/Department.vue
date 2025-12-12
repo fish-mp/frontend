@@ -5,13 +5,14 @@
         <div class="staff-hero__content">
           <router-link to="/" class="staff-hero__back">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
             </svg>
             На главную
           </router-link>
           <h1 class="staff-hero__title">Наши преподаватели</h1>
           <p class="staff-hero__subtitle">Профессионалы с многолетним опытом работы и научными достижениями</p>
-          
+
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-card__number">18+</div>
@@ -43,36 +44,22 @@
       <div class="staff-list__wrapper">
         <div class="staff-filters">
           <div class="filter-buttons">
-            <button 
-              v-for="filter in filters" 
-              :key="filter.id"
-              class="filter-btn"
-              :class="{ 'filter-btn--active': activeFilter === filter.id }"
-              @click="setFilter(filter.id)"
-            >
+            <button v-for="filter in filters" :key="filter.id" class="filter-btn"
+              :class="{ 'filter-btn--active': activeFilter === filter.id }" @click="setFilter(filter.id)">
               {{ filter.label }}
             </button>
           </div>
           <div class="search-box">
-            <input 
-              v-model="searchQuery" 
-              type="text" 
-              placeholder="Поиск преподавателя..."
-              class="search-input"
-            />
+            <input v-model="searchQuery" type="text" placeholder="Поиск преподавателя..." class="search-input" />
             <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
         </div>
 
         <div class="staff-grid">
-          <div 
-            v-for="person in filteredStaff" 
-            :key="person.id" 
-            class="staff-card"
-            @click="openStaffModal(person)"
-          >
+          <div v-for="person in filteredStaff" :key="person.id" class="staff-card" @click="openStaffModal(person)">
             <div class="staff-card__image">
               <img :src="person.photo" :alt="person.name" class="staff-image" />
               <div class="staff-card__badge" v-if="person.isLead">
@@ -83,17 +70,20 @@
               <h3 class="staff-card__name">{{ person.name }}</h3>
               <p class="staff-card__position">{{ person.position }}</p>
               <p class="staff-card__degree">{{ person.degree }}</p>
-              
+
               <div class="staff-card__info">
                 <div class="info-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                   <span>{{ person.experience }}</span>
                 </div>
                 <div class="info-item" v-if="person.courses">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                   <span>{{ person.courses }} курсов</span>
                 </div>
@@ -101,11 +91,7 @@
 
               <div class="staff-card__expertise" v-if="person.expertise">
                 <div class="expertise-tags">
-                  <span 
-                    v-for="(skill, idx) in person.expertise.slice(0, 3)" 
-                    :key="idx"
-                    class="expertise-tag"
-                  >
+                  <span v-for="(skill, idx) in person.expertise.slice(0, 3)" :key="idx" class="expertise-tag">
                     {{ skill }}
                   </span>
                   <span v-if="person.expertise.length > 3" class="expertise-tag expertise-tag--more">
@@ -117,7 +103,8 @@
               <button class="staff-card__button">
                 <span>Подробнее</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
                 </svg>
               </button>
             </div>
@@ -140,10 +127,11 @@
       <div class="staff-modal__content">
         <button class="staff-modal__close" @click="closeModal">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
         </button>
-        
+
         <div class="staff-modal__header">
           <div class="staff-modal__image">
             <img :src="selectedStaff.photo" :alt="selectedStaff.name" />
@@ -152,7 +140,7 @@
             <h2 class="staff-modal__name">{{ selectedStaff.name }}</h2>
             <p class="staff-modal__position">{{ selectedStaff.position }}</p>
             <p class="staff-modal__degree">{{ selectedStaff.degree }}</p>
-            
+
             <div class="staff-modal__stats">
               <div class="stat">
                 <div class="stat__value">{{ selectedStaff.experience }}</div>
@@ -179,11 +167,7 @@
           <div class="staff-modal__section" v-if="selectedStaff.expertise">
             <h3 class="section-title">Экспертиза</h3>
             <div class="expertise-list">
-              <span 
-                v-for="(skill, idx) in selectedStaff.expertise" 
-                :key="idx"
-                class="expertise-item"
-              >
+              <span v-for="(skill, idx) in selectedStaff.expertise" :key="idx" class="expertise-item">
                 {{ skill }}
               </span>
             </div>
@@ -192,11 +176,7 @@
           <div class="staff-modal__section" v-if="selectedStaff.coursesList">
             <h3 class="section-title">Ведет курсы</h3>
             <div class="courses-list">
-              <div 
-                v-for="course in selectedStaff.coursesList" 
-                :key="course.id"
-                class="course-item"
-              >
+              <div v-for="course in selectedStaff.coursesList" :key="course.id" class="course-item">
                 <h4 class="course-item__title">{{ course.title }}</h4>
                 <p class="course-item__desc">{{ course.description }}</p>
               </div>
@@ -211,11 +191,7 @@
           <div class="staff-modal__section" v-if="selectedStaff.achievements">
             <h3 class="section-title">Достижения</h3>
             <ul class="achievements-list">
-              <li 
-                v-for="(achievement, idx) in selectedStaff.achievements" 
-                :key="idx"
-                class="achievement-item"
-              >
+              <li v-for="(achievement, idx) in selectedStaff.achievements" :key="idx" class="achievement-item">
                 <span class="achievement-icon">🏆</span>
                 <span>{{ achievement }}</span>
               </li>
@@ -230,7 +206,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import staffImg from '../../src/assets/image/staff.png'
-import staff1Img from '../../src/assets/image/staff1.png'
 
 interface StaffPerson {
   id: number
@@ -253,45 +228,34 @@ interface StaffPerson {
 const staff: StaffPerson[] = [
   {
     id: 1,
-    name: "Кузнецов Павел Андреевич",
-    position: "Заведующий кафедрой",
-    degree: "Доктор физико-математических наук, профессор",
-    experience: "18 лет стажа",
-    photo: staff1Img,
-    expertise: ["Математический анализ", "Дифференциальные уравнения", "Теория вероятностей", "Машинное обучение"],
-    bio: "Ведущий специалист в области прикладной математики и математического моделирования. Автор более 50 научных публикаций в международных журналах.",
-    courses: 8,
-    publications: 52,
-    education: "МГУ им. М.В. Ломоносова, механико-математический факультет",
-    achievements: [
-      "Лауреат премии Правительства РФ в области науки и техники",
-      "Грант РНФ на исследование машинного обучения",
-      "Научный руководитель 5 кандидатских диссертаций"
-    ],
-    coursesList: [
-      { id: 1, title: "Математический анализ", description: "Углубленный курс для программистов" },
-      { id: 2, title: "Теория вероятностей", description: "Применение в data science" }
-    ],
-    department: "mathematics",
-    isLead: true
-  },
-  {
-    id: 2,
     name: "Бритвина Валентина Валентиновна",
-    position: "-",
-    degree: "-",
-    experience: "-",
+    position: "Доцент",
+    degree: "Кандидат педагогических наук",
+    experience: "Общий стаж 30 лет, педагогический стаж 21 год",
     photo: staffImg,
-    expertise: ["-",],
-    bio: "-",
-    courses: 6,
-    publications: 15,
-    education: "-",
+    expertise: [
+      "Математическая статистика",
+      "Веб-аналитика",
+      "Информационная безопасность",
+      "Цифровые технологии",
+      "Теория вероятностей",
+      "Математическое моделирование",
+      "Туризм и гостиничное дело"
+    ],
+    bio: "Доцент кафедры «Инфокогнитивные технологии» факультета Информационные технологии Московского политехнического университета и кафедры «Управление и информатика в технических системах» МГТУ «СТАНКИН». Автор более 200 научных работ, организатор международных конференций и олимпиад. Основные научные интересы лежат в области применения математических методов и информационных технологий в различных сферах.",
+    courses: 0,
+    publications: 200,
+    education: "Российская государственная академия физической культуры (2002), Московский государственный областной университет (2010)",
     achievements: [
-      "-"
+      "Автор более 200 научных работ",
+      "Организатор международных научно-практических конференций",
+      "Член программных/организационных комитетов международных конференций",
+      "Главный редактор научно-методического журнала «Теория и практика проектного образования»",
+      "Scopus Author ID: 55961145900",
+      "Участник более 20 научных мероприятий ежегодно"
     ],
     coursesList: [
-      { id: 3, title: "-", description: "-" },
+      { id: 1, title: "-", description: "-" },
     ],
     department: "lead"
   },
@@ -343,7 +307,7 @@ const filteredStaff = computed(() => {
   // Применяем поиск
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    result = result.filter(person => 
+    result = result.filter(person =>
       person.name.toLowerCase().includes(query) ||
       person.position.toLowerCase().includes(query) ||
       person.degree.toLowerCase().includes(query) ||
@@ -380,7 +344,7 @@ $finished-color: #757575;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.05);
@@ -392,7 +356,7 @@ $finished-color: #757575;
 
 // Основные стили
 .staff-page {
-  background: 
+  background:
     radial-gradient(circle at 0% 0%, rgba(23, 61, 237, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 100% 100%, rgba(23, 61, 237, 0.02) 0%, transparent 50%),
     linear-gradient(135deg, $pure-white 0%, $soft-white 100%);
@@ -400,7 +364,7 @@ $finished-color: #757575;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -408,7 +372,7 @@ $finished-color: #757575;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
       url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23173DED' fill-opacity='0.05'/%3E%3C/svg%3E");
     pointer-events: none;
   }
@@ -417,7 +381,7 @@ $finished-color: #757575;
 .staff-hero {
   padding: 160px 0 80px;
   position: relative;
-  
+
   &__wrapper {
     max-width: 1200px;
     margin: 0 auto;
@@ -425,13 +389,13 @@ $finished-color: #757575;
     position: relative;
     z-index: 2;
   }
-  
+
   &__content {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
   }
-  
+
   &__back {
     display: inline-flex;
     align-items: center;
@@ -445,17 +409,17 @@ $finished-color: #757575;
     padding: 10px 16px;
     border-radius: 12px;
     background: rgba(23, 61, 237, 0.08);
-    
+
     &:hover {
       background: rgba(23, 61, 237, 0.15);
       transform: translateX(-5px);
     }
-    
+
     svg {
       margin-right: 4px;
     }
   }
-  
+
   &__title {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 800;
@@ -467,7 +431,7 @@ $finished-color: #757575;
     letter-spacing: -0.02em;
     margin: 0 0 20px 0;
   }
-  
+
   &__subtitle {
     font-size: 1.3rem;
     color: $text-medium;
@@ -481,11 +445,11 @@ $finished-color: #757575;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin-top: 40px;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
   }
@@ -497,12 +461,12 @@ $finished-color: #757575;
   border-radius: 20px;
   text-align: center;
   @include smooth-transition;
-  
+
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   }
-  
+
   &__number {
     font-size: 2.5rem;
     font-weight: 800;
@@ -512,7 +476,7 @@ $finished-color: #757575;
     background-clip: text;
     margin-bottom: 10px;
   }
-  
+
   &__label {
     font-size: 0.95rem;
     color: $text-medium;
@@ -526,21 +490,21 @@ $finished-color: #757575;
   background: $blue-gradient;
   opacity: 0.1;
   filter: blur(20px);
-  
+
   &--1 {
     width: 300px;
     height: 300px;
     top: -150px;
     right: -150px;
   }
-  
+
   &--2 {
     width: 200px;
     height: 200px;
     bottom: -100px;
     left: 10%;
   }
-  
+
   &--3 {
     width: 150px;
     height: 150px;
@@ -552,7 +516,7 @@ $finished-color: #757575;
 .staff-list-section {
   padding: 0 0 100px;
   position: relative;
-  
+
   &__wrapper {
     max-width: 1200px;
     margin: 0 auto;
@@ -569,7 +533,7 @@ $finished-color: #757575;
   justify-content: space-between;
   align-items: center;
   gap: 30px;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
@@ -591,18 +555,18 @@ $finished-color: #757575;
   font-weight: 600;
   cursor: pointer;
   @include smooth-transition;
-  
+
   &:hover {
     border-color: $primary-blue;
     color: $primary-blue;
     background: rgba(23, 61, 237, 0.05);
   }
-  
+
   &--active {
     background: $primary-blue;
     color: $pure-white;
     border-color: $primary-blue;
-    
+
     &:hover {
       background: darken($primary-blue, 10%);
     }
@@ -614,7 +578,7 @@ $finished-color: #757575;
   max-width: 300px;
   position: relative;
   box-sizing: border-box;
-  
+
   @media (max-width: 768px) {
     max-width: 100%;
   }
@@ -630,13 +594,13 @@ $finished-color: #757575;
   font-size: 1rem;
   color: $text-dark;
   @include smooth-transition;
-  
+
   &:focus {
     outline: none;
     border-color: $primary-blue;
     box-shadow: 0 0 0 3px rgba(23, 61, 237, 0.1);
   }
-  
+
   &::placeholder {
     color: $text-light;
   }
@@ -655,11 +619,11 @@ $finished-color: #757575;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 30px;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
-  
+
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
   }
@@ -672,47 +636,47 @@ $finished-color: #757575;
   cursor: pointer;
   @include smooth-transition;
   position: relative;
-  
+
   &:hover {
     transform: translateY(-10px);
-    box-shadow: 
+    box-shadow:
       0 20px 40px rgba(0, 0, 0, 0.15),
       0 10px 20px rgba(23, 61, 237, 0.1);
-    
+
     .staff-card__button {
       background: $primary-blue;
       color: $pure-white;
       transform: translateX(5px);
     }
   }
-  
+
   &__image {
     position: relative;
     height: 200px;
     overflow: hidden;
-    
+
     .staff-image {
       width: 100%;
       height: 100%;
       object-fit: cover;
       @include smooth-transition;
     }
-    
+
     &:hover .staff-image {
       transform: scale(1.05);
     }
   }
-  
+
   &__badge {
     position: absolute;
     top: 15px;
     right: 15px;
   }
-  
+
   &__content {
     padding: 25px;
   }
-  
+
   &__name {
     font-size: 1.5rem;
     font-weight: 700;
@@ -720,21 +684,21 @@ $finished-color: #757575;
     margin: 0 0 10px 0;
     line-height: 1.3;
   }
-  
+
   &__position {
     font-size: 1rem;
     color: $primary-blue;
     font-weight: 600;
     margin: 0 0 8px 0;
   }
-  
+
   &__degree {
     font-size: 0.9rem;
     color: $text-medium;
     margin: 0 0 20px 0;
     line-height: 1.4;
   }
-  
+
   &__info {
     display: flex;
     gap: 20px;
@@ -742,11 +706,11 @@ $finished-color: #757575;
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(23, 61, 237, 0.1);
   }
-  
+
   &__expertise {
     margin-bottom: 25px;
   }
-  
+
   &__button {
     display: flex;
     align-items: center;
@@ -759,11 +723,11 @@ $finished-color: #757575;
     font-weight: 600;
     cursor: pointer;
     @include smooth-transition;
-    
+
     svg {
       @include smooth-transition;
     }
-    
+
     &:hover svg {
       transform: translateX(5px);
     }
@@ -776,7 +740,7 @@ $finished-color: #757575;
   gap: 8px;
   font-size: 0.9rem;
   color: $text-medium;
-  
+
   svg {
     color: $primary-blue;
   }
@@ -795,7 +759,7 @@ $finished-color: #757575;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
-  
+
   &--more {
     background: rgba(23, 61, 237, 0.05);
     color: $text-light;
@@ -811,7 +775,7 @@ $finished-color: #757575;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  
+
   &--blue {
     background: $blue-gradient;
     color: $pure-white;
@@ -824,18 +788,18 @@ $finished-color: #757575;
   border-radius: 24px;
   text-align: center;
   grid-column: 1 / -1;
-  
+
   &__icon {
     font-size: 4rem;
     margin-bottom: 20px;
   }
-  
+
   &__title {
     font-size: 1.8rem;
     color: $text-dark;
     margin-bottom: 15px;
   }
-  
+
   &__text {
     font-size: 1.1rem;
     color: $text-medium;
@@ -852,11 +816,11 @@ $finished-color: #757575;
   font-weight: 600;
   cursor: pointer;
   @include smooth-transition;
-  
+
   &:hover {
     background: rgba(23, 61, 237, 0.1);
   }
-  
+
   &--outline {
     &:hover {
       background: $primary-blue;
@@ -880,7 +844,7 @@ $finished-color: #757575;
   justify-content: center;
   padding: 20px;
   animation: fadeIn 0.3s ease;
-  
+
   &__content {
     @include glass-effect;
     max-width: 800px;
@@ -891,7 +855,7 @@ $finished-color: #757575;
     position: relative;
     animation: slideUp 0.4s ease;
   }
-  
+
   &__close {
     position: absolute;
     top: 20px;
@@ -908,26 +872,26 @@ $finished-color: #757575;
     justify-content: center;
     z-index: 10;
     @include smooth-transition;
-    
+
     &:hover {
       background: $pure-white;
       transform: rotate(90deg);
     }
   }
-  
+
   &__header {
     display: flex;
     gap: 30px;
     padding: 40px 40px 30px;
     border-bottom: 1px solid rgba(23, 61, 237, 0.1);
-    
+
     @media (max-width: 768px) {
       flex-direction: column;
       text-align: center;
       padding: 30px 20px;
     }
   }
-  
+
   &__image {
     flex-shrink: 0;
     width: 150px;
@@ -936,71 +900,72 @@ $finished-color: #757575;
     overflow: hidden;
     border: 4px solid $pure-white;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    
+
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
+
     @media (max-width: 768px) {
       width: 120px;
       height: 120px;
       margin: 0 auto;
     }
   }
-  
+
   &__info {
     flex: 1;
   }
-  
+
   &__name {
     font-size: 2rem;
     font-weight: 800;
     color: $text-dark;
     margin: 0 0 10px 0;
   }
-  
+
   &__position {
     font-size: 1.2rem;
     color: $primary-blue;
     font-weight: 600;
     margin: 0 0 8px 0;
   }
-  
+
   &__degree {
     font-size: 1rem;
     color: $text-medium;
     margin: 0 0 25px 0;
   }
-  
+
   &__stats {
     display: flex;
     gap: 30px;
-    
+
     @media (max-width: 480px) {
       flex-direction: column;
       gap: 15px;
     }
   }
-  
+
   &__body {
     padding: 30px 40px;
-    
+
     @media (max-width: 768px) {
       padding: 20px;
     }
   }
-  
+
   &__section {
     margin-bottom: 30px;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
   }
-  
-  &__bio, &__education {
+
+  &__bio,
+  &__education {
     font-size: 1.1rem;
     line-height: 1.6;
     color: $text-medium;
@@ -1015,7 +980,7 @@ $finished-color: #757575;
   margin-bottom: 15px;
   position: relative;
   padding-bottom: 10px;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -1030,7 +995,7 @@ $finished-color: #757575;
 
 .stat {
   text-align: center;
-  
+
   &__value {
     font-size: 1.8rem;
     font-weight: 800;
@@ -1040,7 +1005,7 @@ $finished-color: #757575;
     background-clip: text;
     margin-bottom: 5px;
   }
-  
+
   &__label {
     font-size: 0.9rem;
     color: $text-medium;
@@ -1075,14 +1040,14 @@ $finished-color: #757575;
   background: rgba(255, 255, 255, 0.6);
   border-radius: 12px;
   border: 1px solid rgba(23, 61, 237, 0.1);
-  
+
   &__title {
     font-size: 1.1rem;
     font-weight: 600;
     color: $text-dark;
     margin: 0 0 5px 0;
   }
-  
+
   &__desc {
     font-size: 0.95rem;
     color: $text-medium;
@@ -1104,16 +1069,16 @@ $finished-color: #757575;
   padding: 12px;
   background: rgba(255, 255, 255, 0.6);
   border-radius: 12px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
-  
+
   .achievement-icon {
     flex-shrink: 0;
     font-size: 1.2rem;
   }
-  
+
   span {
     color: $text-medium;
     line-height: 1.5;
@@ -1122,8 +1087,13 @@ $finished-color: #757575;
 
 // Анимации
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
@@ -1131,6 +1101,7 @@ $finished-color: #757575;
     opacity: 0;
     transform: translateY(50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1148,7 +1119,7 @@ $finished-color: #757575;
   .staff-hero {
     padding: 120px 0 40px;
   }
-  
+
   .staff-hero__subtitle {
     font-size: 1.1rem;
   }
@@ -1158,7 +1129,7 @@ $finished-color: #757575;
   .staff-hero {
     padding: 100px 0 30px;
   }
-  
+
   .staff-hero__title {
     font-size: 2rem;
   }

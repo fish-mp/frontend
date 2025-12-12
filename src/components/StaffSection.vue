@@ -32,7 +32,6 @@
 
 <script setup lang="ts">
 import staffImg from '../../src/assets/image/staff.jpg'
-import staff1Img from '../../src/assets/image/staff1.png'
 
 interface StaffPerson {
   id: number
@@ -47,18 +46,10 @@ const staff: StaffPerson[] = [
   {
     id: 1,
     name: "Бритвина Валентина Валентиновна",
-    position: "доцент",
+    position: "Доцент. Кандидат педагогических наук",
     experience: "Стаж 32 лет",
     photo: staffImg,
-  },
-  {
-    id: 2,
-    name: "Иванов Иван Иванович",
-    position: "доцент",
-    experience: "Стаж 32 лет",
-    photo: staff1Img,
-    noIcon: true,
-  },
+  }
 ]
 </script>
 
