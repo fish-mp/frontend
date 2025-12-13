@@ -23,7 +23,6 @@
         <p class="auth-required__description">
           Для просмотра ваших курсов необходимо войти в систему.
         </p>
-        
       </div>
 
       <div v-else>
@@ -48,21 +47,6 @@
               </button>
             </label>
           </div>
-
-          <label for="status-select" class="difficulty__label">Фильтр по статусу:</label>
-          <div class="select-wrapper">
-            <select id="status-select" v-model="selectedStatus" class="filter-select">
-              <option value="">Все статусы</option>
-              <option value="enrolled">Записан</option>
-              <option value="in_progress">В процессе</option>
-              <option value="completed">Завершен</option>
-            </select>
-            <div class="select-arrow">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </div>
-          </div>
         </div>
 
         <div v-if="isLoading" class="loading-container">
@@ -83,33 +67,22 @@
         </div>
 
         <ul v-else-if="filteredCourses.length" class="section__list">
-          <li class="news__item" v-for="course in filteredCourses" :key="course.id">
-            <router-link :to="{ name: 'CourseDetail', params: { id: course.id } }" class="news__link">
+          <li class="news__item" v-for="enrollment in filteredCourses" :key="enrollment.id">
+            <router-link 
+              :to="{ name: 'CourseDetail', params: { id: enrollment.course.id } }" 
+              class="news__link"
+              @click.prevent="goToCourseDetail(enrollment.course.id)"
+            >
               <div class="news__image">
-                <img :src="course.image" :alt="course.title" class="news__icon" />
-                <span class="news__status" :class="course.enrollment_state">
-                  {{ getStatusText(course.enrollment_state) }}
-                </span>
+                <img 
+                  :src="enrollment.course.image || '/api/placeholder/400/300'" 
+                  :alt="enrollment.course.title" 
+                  class="news__icon" 
+                />
               </div>
               <div class="news__container">
-                <div class="course-meta">
-                  <span class="course-difficulty" :class="course.tag?.name?.toLowerCase()">
-                    {{ course.tag?.name || 'Не указано' }}
-                  </span>
-                  <span class="course-progress" v-if="course.progress !== undefined">
-                    Прогресс: {{ course.progress }}%
-                  </span>
-                </div>
-                <h3 class="news__subtitle">{{ course.title }}</h3>
-                <p class="news__description">{{ course.short_description }}</p>
-                <div class="news__footer">
-                  <span class="news__read-more">
-                    Продолжить обучение
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                  </span>
-                </div>
+                <h3 class="news__subtitle">{{ enrollment.course.title }}</h3>
+                <p class="news__description">{{ enrollment.course.short_description }}</p>
               </div>
             </router-link>
           </li>
@@ -123,10 +96,10 @@
           </div>
           <h2 class="no-courses__title">Курсов пока нет</h2>
           <p class="no-courses__description">
-            {{ searchQuery || selectedStatus ? 'Попробуйте изменить параметры фильтрации' : 'Вы еще не записались ни на один курс' }}
+            {{ searchQuery ? 'Попробуйте изменить параметры поиска' : 'Вы еще не записались ни на один курс' }}
           </p>
           <router-link 
-            v-if="!searchQuery && !selectedStatus"
+            v-if="!searchQuery"
             to="/courses" 
             class="no-courses__button"
           >
@@ -140,19 +113,44 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-import type { Course } from "../types/Course";
-
-
+const router = useRouter();
 const authStore = useAuthStore();
 
+// Типы данных
+interface Course {
+  id: number;
+  title: string;
+  short_description: string;
+  description: string;
+  image: string;
+  tag?: {
+    id: number;
+    name: string;
+  };
+  files?: Array<{
+    id: number;
+    file: string;
+    title: string;
+  }>;
+  enrollment_state?: string | null;
+}
 
+interface Enrollment {
+  id: number;
+  course: Course;
+  state: string;
+  created_at: string;
+}
+
+// Реактивные переменные
 const searchQuery = ref<string>("");
-const selectedStatus = ref<string>("");
 const isLoading = ref<boolean>(false);
 const error = ref<string | null>(null);
-const myCourses = ref<Course[]>([]);
+const myEnrollments = ref<Enrollment[]>([]);
 
 const isAuth = computed(() => authStore.isAuthenticated);
 
@@ -166,16 +164,19 @@ const fetchMyCourses = async () => {
     const response = await fetch(`${BACKEND_URL}/api/courses/my/`, {
       headers: {
         'Authorization': `Bearer ${authStore.accessToken}`,
+        'Content-Type': 'application/json'
       },
     });
     
     if (!response.ok) {
-      throw new Error('Ошибка загрузки курсов');
+      const errorText = await response.text();
+      throw new Error(`Ошибка загрузки курсов: ${response.status} - ${errorText}`);
     }
     
-    myCourses.value = await response.json();
+    const data = await response.json();
+    myEnrollments.value = data;
   } catch (err: any) {
-    error.value = err.message;
+    error.value = err.message || 'Ошибка загрузки курсов';
     console.error('Ошибка загрузки моих курсов:', err);
   } finally {
     isLoading.value = false;
@@ -183,20 +184,15 @@ const fetchMyCourses = async () => {
 };
 
 const filteredCourses = computed(() => {
-  let filtered = myCourses.value;
+  let filtered = myEnrollments.value;
 
   // Фильтрация по поисковому запросу
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase().trim();
     filtered = filtered.filter(
-      (course) => course.title.toLowerCase().includes(query)
-    );
-  }
-
-  // Фильтрация по статусу
-  if (selectedStatus.value) {
-    filtered = filtered.filter(
-      (course) => course.enrollment_state === selectedStatus.value
+      (enrollment) => 
+        enrollment.course.title.toLowerCase().includes(query) ||
+        enrollment.course.short_description.toLowerCase().includes(query)
     );
   }
 
@@ -207,17 +203,14 @@ const clearSearch = () => {
   searchQuery.value = "";
 };
 
-const getStatusText = (status: string) => {
-  const statusMap: Record<string, string> = {
-    'enrolled': 'Записан',
-    'in_progress': 'В процессе',
-    'completed': 'Завершен',
-    'applied': 'Ожидает подтверждения'
-  };
-  return statusMap[status] || status;
+// Функция для перехода к деталям курса
+const goToCourseDetail = (courseId: number) => {
+  // Сначала загружаем курс, затем переходим
+  router.push({ 
+    name: 'CourseDetail', 
+    params: { id: courseId.toString() } 
+  });
 };
-
-
 
 onMounted(() => {
   if (isAuth.value) {
@@ -298,81 +291,6 @@ onMounted(() => {
         transform: translateY(-2px);
       }
     }
-  }
-}
-
-.course-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.course-difficulty {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  background: rgba(23, 61, 237, 0.1);
-  color: $primary-blue;
-  
-  &.новичок {
-    background: rgba(0, 191, 166, 0.1);
-    color: #00BFA6;
-  }
-  
-  &.продвинутый {
-    background: rgba(255, 183, 77, 0.1);
-    color: #FFB74D;
-  }
-  
-  &.эксперт {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-  }
-}
-
-.course-progress {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: $text-medium;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 4px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.news__status {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: $pure-white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  z-index: 2;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  
-  &.enrolled {
-    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-  }
-  
-  &.in_progress {
-    background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
-  }
-  
-  &.completed {
-    background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);
-  }
-  
-  &.applied {
-    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
   }
 }
 
@@ -503,6 +421,35 @@ onMounted(() => {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+// Исправляем стили для изображений курсов
+.news__icon {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+// Исправляем стили для карточек курсов
+.news__link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    
+    .news__subtitle {
+      color: $primary-blue;
+    }
+    
+    .news__read-more {
+      transform: translateX(5px);
+    }
   }
 }
 </style>

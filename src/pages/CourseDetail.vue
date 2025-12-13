@@ -92,7 +92,7 @@
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   </svg>
-                  <span>Скачать</span>
+                  <span class="file-card__download-text">Скачать</span>
                 </a>
               </div>
             </div>
@@ -509,7 +509,7 @@ $error-color: #FF5252;
   }
 }
 
-// Секция с файлами
+// Секция с файлами - ИСПРАВЛЕНО
 .course-detail__download {
   margin-top: 40px;
 }
@@ -533,7 +533,7 @@ $error-color: #FF5252;
 
 .course-detail__files-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
 
@@ -542,9 +542,11 @@ $error-color: #FF5252;
   border-radius: 20px;
   padding: 24px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
   @include smooth-transition;
+  position: relative;
+  overflow: hidden;
   
   &:hover {
     transform: translateY(-4px);
@@ -554,9 +556,10 @@ $error-color: #FF5252;
 
 .file-card__content {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   flex: 1;
+  min-width: 0; // Важно для корректной работы text-overflow
 }
 
 .file-card__icon {
@@ -568,10 +571,13 @@ $error-color: #FF5252;
   background: rgba(23, 61, 237, 0.08);
   border-radius: 12px;
   color: $primary-blue;
+  flex-shrink: 0;
 }
 
 .file-card__info {
   flex: 1;
+  min-width: 0; // Важно для корректной работы text-overflow
+  overflow: hidden;
 }
 
 .file-card__title {
@@ -579,24 +585,34 @@ $error-color: #FF5252;
   font-weight: 600;
   color: $text-dark;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .file-card__type {
   font-size: 0.9rem;
   color: $text-light;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .file-card__download-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 10px 16px;
   background: rgba(23, 61, 237, 0.1);
   color: $primary-blue;
   text-decoration: none;
   border-radius: 12px;
   font-weight: 500;
   @include smooth-transition;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 8px;
   
   &:hover {
     background: rgba(23, 61, 237, 0.15);
@@ -604,7 +620,10 @@ $error-color: #FF5252;
   }
 }
 
-// Состояния загрузки
+.file-card__download-text {
+  white-space: nowrap;
+}
+
 .course-detail__loading {
   text-align: center;
   padding: 80px 20px;
@@ -749,8 +768,12 @@ $error-color: #FF5252;
     padding: 120px 0 40px;
   }
   
+  .course-detail__wrapper {
+    padding: 0 16px;
+  }
+  
   .course-detail__content {
-    padding: 25px 20px;
+    padding: 24px 16px;
     border-radius: 16px;
   }
   
@@ -772,12 +795,36 @@ $error-color: #FF5252;
   .course-detail__file-card {
     flex-direction: column;
     align-items: stretch;
-    gap: 20px;
+    gap: 16px;
   }
   
   .file-card__content {
     flex-direction: column;
     text-align: center;
+    align-items: center;
+  }
+  
+  .file-card__info {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .file-card__title {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+  
+  .file-card__type {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+  
+  .file-card__download-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0;
   }
 }
 </style>
