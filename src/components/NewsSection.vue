@@ -19,7 +19,7 @@
                     </router-link>
                 </li>
             </ul>
-            <router-link to="/news" class="news__more-link news__more-link--second">ВСЕ НОВОСТИ</router-link>
+            
         </div>
     </section>
 </template>
