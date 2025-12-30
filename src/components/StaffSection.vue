@@ -47,7 +47,7 @@ const staff: StaffPerson[] = [
     id: 1,
     name: "Бритвина Валентина Валентиновна",
     position: "Доцент. Кандидат педагогических наук",
-    experience: "Стаж 32 лет",
+    experience: "Стаж 33 года",
     photo: staffImg,
   }
 ]
