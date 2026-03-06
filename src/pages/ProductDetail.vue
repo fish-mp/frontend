@@ -139,7 +139,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 // ---------- Тестовые данные (копируем из shop.vue с дополнениями) ----------
 interface Product {
