@@ -80,6 +80,12 @@ export const router = createRouter({
       name: "NotFound",
       component: NotFound,
     },
+    {
+  path: "/shop/:id",
+  name: "ProductDetail",
+  component: () => import("../pages/ProductDetail.vue"),
+  props: (route) => ({ id: Number(route.params.id) }),
+}
   ],
   scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {
