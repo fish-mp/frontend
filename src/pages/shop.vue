@@ -10,48 +10,49 @@
 
   <section class="shop-section">
     <div class="shop-section__wrapper">
-      <!-- Карусель подборок -->
+      <!-- Карусель-слайдер (одно большое изображение) -->
       <div class="shop-carousel">
-        <h2 class="shop-carousel__title">Популярные подборки</h2>
-        <div class="shop-carousel__track" ref="carouselTrack">
-          <button
-            v-for="(collection, idx) in collections"
-            :key="idx"
-            class="shop-carousel__item"
-            @click="selectCollection(collection)"
-            :class="{ active: selectedCollection === collection }"
-            :style="{ '--collection-color': collection.color }"
+        <h2 class="shop-carousel__title">Актуальное</h2>
+        <div class="carousel-container">
+          <button 
+            class="carousel-arrow carousel-arrow--left" 
+            @click="prevSlide" 
+            :disabled="currentSlide === 0"
           >
-            <div class="shop-carousel__item-icon">
-              <!-- SVG иконки для каждой подборки -->
-              <svg v-if="collection.icon === 'new'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2v4M12 22v-4M4 12H2h2m14 0h2-2M5.636 5.636l2.828 2.828M18.364 18.364l-2.828-2.828M18.364 5.636l-2.828 2.828M5.636 18.364l2.828 2.828M16 12a4 4 0 1 0-8 0 4 4 0 0 0 8 0z"/>
-              </svg>
-              <svg v-if="collection.icon === 'hit'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-              </svg>
-              <svg v-if="collection.icon === 'beginner'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="8" r="5"/>
-                <path d="M5 16v2a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-2"/>
-              </svg>
-              <svg v-if="collection.icon === 'premium'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-              <svg v-if="collection.icon === 'sale'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 12.5V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h6.5"/><path d="M16 19h6"/><path d="M19 16v6"/><path d="M12 12h.01"/>
-              </svg>
-              <svg v-if="collection.icon === 'equipment'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-              </svg>
-              <svg v-if="collection.icon === 'food'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2"/><path d="M12 2v6"/><path d="M8 2v6"/><path d="M16 2v6"/>
-              </svg>
-              <svg v-if="collection.icon === 'decor'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M2 12h20"/><path d="M12 2v20"/><path d="M4.93 4.93l14.14 14.14"/><path d="M19.07 4.93L4.93 19.07"/>
-              </svg>
-            </div>
-            <span class="shop-carousel__item-name">{{ collection.name }}</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
           </button>
+          
+          <div 
+            class="carousel-slide" 
+            :style="{ backgroundImage: `url(${carouselImages[currentSlide].url})` }"
+          >
+            <div class="carousel-overlay">
+              <h3 class="carousel-title">{{ carouselImages[currentSlide].title }}</h3>
+              <p class="carousel-subtitle">{{ carouselImages[currentSlide].subtitle }}</p>
+            </div>
+          </div>
+          
+          <button 
+            class="carousel-arrow carousel-arrow--right" 
+            @click="nextSlide" 
+            :disabled="currentSlide === carouselImages.length - 1"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="carousel-dots">
+          <span
+            v-for="(_, index) in carouselImages"
+            :key="index"
+            class="carousel-dot"
+            :class="{ active: currentSlide === index }"
+            @click="currentSlide = index"
+          ></span>
         </div>
       </div>
 
@@ -79,25 +80,28 @@
             </div>
           </div>
 
-          <!-- Категория -->
+          <!-- Категория (радио-кнопки) -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Категория</label>
             <div class="shop-filters__options">
-              <label v-for="cat in categories" :key="cat" class="shop-filters__checkbox">
-                <input type="checkbox" :value="cat" v-model="selectedCategories" />
+              <label v-for="cat in categories" :key="cat" class="shop-filters__radio">
+                <input type="radio" :value="cat" v-model="selectedCategory" />
                 <span>{{ cat }}</span>
               </label>
             </div>
           </div>
 
-          <!-- Бренд -->
+          <!-- Бренд (зависит от выбранной категории) -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Бренд</label>
             <div class="shop-filters__options">
-              <label v-for="brand in brands" :key="brand" class="shop-filters__checkbox">
+              <label v-for="brand in filteredBrands" :key="brand" class="shop-filters__checkbox">
                 <input type="checkbox" :value="brand" v-model="selectedBrands" />
                 <span>{{ brand }}</span>
               </label>
+              <div v-if="filteredBrands.length === 0" class="shop-filters__empty">
+                Нет брендов для выбранной категории
+              </div>
             </div>
           </div>
 
@@ -155,7 +159,7 @@
             </div>
           </div>
 
-          <!-- Цена -->
+          <!-- Цена (исправлено) -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Цена, ₽</label>
             <div class="price-range">
@@ -178,7 +182,6 @@
 
           <div class="shop-products__grid">
             <div v-for="product in filteredProducts" :key="product.id" class="product-card">
-              <!-- Ссылка на детальную страницу (вся карточка, кроме кнопки) -->
               <router-link :to="`/shop/${product.id}`" class="product-card__link">
                 <div class="product-card__image">
                   <img :src="product.image" :alt="product.name" />
@@ -189,7 +192,6 @@
                   <div class="product-card__price">{{ product.price }} ₽</div>
                 </div>
               </router-link>
-              <!-- Кнопка добавления в корзину -->
               <button class="product-card__cart" @click="addToCart(product)">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C16.4696 17 15.9609 17.2107 15.5858 17.5858C15.2107 17.9609 15 18.4696 15 19C15 19.5304 15.2107 20.0391 15.5858 20.4142C15.9609 20.7893 16.4696 21 17 21C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19C19 18.4696 18.7893 18.0391 18.4142 17.5858C17.9609 17.2107 17.5304 17 17 17ZM9 19C9 19.5304 8.78929 20.0391 8.41421 20.4142C8.03914 20.7893 7.53043 21 7 21C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19C5 18.4696 5.21071 17.9609 5.58579 17.5858C5.96086 17.2107 6.46957 17 7 17C7.53043 17 8.03914 17.2107 8.41421 17.5858C8.78929 17.9609 9 18.4696 9 19Z"/>
@@ -206,21 +208,57 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-// ---------- Тестовые данные ----------
-const collections = [
-  { name: 'Новинки', icon: 'new', color: '#FFD700' },
-  { name: 'Хиты продаж', icon: 'hit', color: '#FF5252' },
-  { name: 'Для начинающих', icon: 'beginner', color: '#4CAF50' },
-  { name: 'Премиум', icon: 'premium', color: '#9C27B0' },
-  { name: 'Акции', icon: 'sale', color: '#FF9800' },
-  { name: 'Оборудование', icon: 'equipment', color: '#607D8B' },
-  { name: 'Корма', icon: 'food', color: '#795548' },
-  { name: 'Декор', icon: 'decor', color: '#009688' },
+// ---------- Данные для карусели-слайдера ----------
+const carouselImages = [
+  {
+    url: 'https://via.placeholder.com/1200x400?text=Акция+на+аквариумы',
+    title: 'Скидки на аквариумы до 30%',
+    subtitle: 'Только до конца месяца'
+  },
+  {
+    url: 'https://via.placeholder.com/1200x400?text=Новые+корма+Tetra',
+    title: 'Новая линейка кормов Tetra',
+    subtitle: 'Сбалансированное питание для ваших рыб'
+  },
+  {
+    url: 'https://via.placeholder.com/1200x400?text=Оборудование+Eheim',
+    title: 'Фильтры Eheim со скидкой',
+    subtitle: 'Профессиональное оборудование'
+  },
+  {
+    url: 'https://via.placeholder.com/1200x400?text=Декор+для+аквариума',
+    title: 'Коллекция декора 2025',
+    subtitle: 'Создайте уникальный подводный мир'
+  }
 ]
 
+const currentSlide = ref(0)
+
+const nextSlide = () => {
+  if (currentSlide.value < carouselImages.length - 1) currentSlide.value++
+}
+
+const prevSlide = () => {
+  if (currentSlide.value > 0) currentSlide.value--
+}
+
+// ---------- Тестовые данные для категорий и брендов ----------
 const categories = ['Аквариумы', 'Рыбки', 'Корма', 'Оборудование', 'Декор', 'Лекарства']
-const brands = ['AquaEl', 'Tetra', 'Sera', 'JBL', 'Eheim', 'Fluval', 'Dennerle', 'Laguna']
-const colors = ['Красный', 'Синий', 'Зелёный', 'Жёлтый', 'Чёрный', 'Белый', 'Прозрачный']
+
+// Связь категория -> бренды
+const categoryBrands: Record<string, string[]> = {
+  'Аквариумы': ['AquaEl', 'Fluval', 'Juwel', 'Tetra'],
+  'Рыбки': ['Laguna', 'Tetra', 'Sera'],
+  'Корма': ['Tetra', 'Sera', 'JBL', 'AquaEl'],
+  'Оборудование': ['Eheim', 'JBL', 'AquaEl', 'Fluval', 'Dennerle'],
+  'Декор': ['Dennerle', 'Sera', 'JBL'],
+  'Лекарства': ['Sera', 'Tetra', 'JBL']
+}
+
+// Все возможные бренды (для случая, когда категория не выбрана)
+const allBrands = Array.from(new Set(Object.values(categoryBrands).flat()))
+
+const colors = ['Красный', 'Синий', 'Зелёный', 'Жёлтый', 'Чёрный', 'Белый']
 const weightRanges = [
   { label: 'до 1 кг', value: 'lt1' },
   { label: '1-5 кг', value: '1-5' },
@@ -376,10 +414,9 @@ const products: Product[] = [
   },
 ]
 
-// ---------- Состояние фильтров и сортировки ----------
-const selectedCollection = ref<{ name: string; icon: string; color: string } | null>(null)
+// ---------- Состояние фильтров ----------
+const selectedCategory = ref<string | null>(null)
 const sortBy = ref('new')
-const selectedCategories = ref<string[]>([])
 const selectedBrands = ref<string[]>([])
 const selectedColors = ref<string[]>([])
 const selectedWeights = ref<string[]>([])
@@ -390,20 +427,23 @@ const dimensions = ref({
 })
 const priceRange = ref({ min: null as number | null, max: null as number | null })
 
-// ---------- Методы ----------
-const selectCollection = (collection: (typeof collections)[0]) => {
-  selectedCollection.value = collection.name === selectedCollection.value?.name ? null : collection
-}
+// ---------- Computed: бренды, доступные для выбранной категории ----------
+const filteredBrands = computed(() => {
+  if (selectedCategory.value) {
+    return categoryBrands[selectedCategory.value] || []
+  }
+  return allBrands
+})
 
+// ---------- Методы ----------
 const resetFilters = () => {
-  selectedCategories.value = []
+  selectedCategory.value = null
   selectedBrands.value = []
   selectedColors.value = []
   selectedWeights.value = []
   dimensions.value = { width: { min: null, max: null }, height: { min: null, max: null }, length: { min: null, max: null } }
   priceRange.value = { min: null, max: null }
   sortBy.value = 'new'
-  selectedCollection.value = null
 }
 
 const addToCart = (product: Product) => {
@@ -414,15 +454,22 @@ const addToCart = (product: Product) => {
 const filteredProducts = computed(() => {
   let result = [...products]
 
-  if (selectedCategories.value.length) {
-    result = result.filter(p => selectedCategories.value.includes(p.category))
+  // Фильтр по категории (радио)
+  if (selectedCategory.value) {
+    result = result.filter(p => p.category === selectedCategory.value)
   }
+
+  // Фильтр по брендам
   if (selectedBrands.value.length) {
     result = result.filter(p => selectedBrands.value.includes(p.brand))
   }
+
+  // Фильтр по цветам
   if (selectedColors.value.length) {
     result = result.filter(p => selectedColors.value.includes(p.color))
   }
+
+  // Фильтр по весу
   if (selectedWeights.value.length) {
     result = result.filter(p => {
       return selectedWeights.value.some(range => {
@@ -434,15 +481,20 @@ const filteredProducts = computed(() => {
       })
     })
   }
+
+  // Фильтр по габаритам
   if (dimensions.value.width.min !== null) result = result.filter(p => p.width >= dimensions.value.width.min!)
   if (dimensions.value.width.max !== null) result = result.filter(p => p.width <= dimensions.value.width.max!)
   if (dimensions.value.height.min !== null) result = result.filter(p => p.height >= dimensions.value.height.min!)
   if (dimensions.value.height.max !== null) result = result.filter(p => p.height <= dimensions.value.height.max!)
   if (dimensions.value.length.min !== null) result = result.filter(p => p.length >= dimensions.value.length.min!)
   if (dimensions.value.length.max !== null) result = result.filter(p => p.length <= dimensions.value.length.max!)
+
+  // Фильтр по цене
   if (priceRange.value.min !== null) result = result.filter(p => p.price >= priceRange.value.min!)
   if (priceRange.value.max !== null) result = result.filter(p => p.price <= priceRange.value.max!)
 
+  // Сортировка
   switch (sortBy.value) {
     case 'new':
       result = result.sort((a, b) => (a.isNew === b.isNew ? 0 : a.isNew ? -1 : 1))
@@ -570,7 +622,7 @@ input, select, textarea, button {
   }
 }
 
-// Карусель подборок
+// Карусель-слайдер (одно большое изображение)
 .shop-carousel {
   margin-bottom: 40px;
   
@@ -580,94 +632,113 @@ input, select, textarea, button {
     color: $text-dark;
     margin-bottom: 20px;
   }
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  border-radius: 24px;
+  overflow: hidden;
+  @include glass-effect;
+  padding: 0; // убираем внутренние отступы
+}
+
+.carousel-slide {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.3s ease;
+}
+
+.carousel-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}
+
+.carousel-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.carousel-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(5px);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  @include smooth-transition;
   
-  &__track {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    scrollbar-width: thin;
-    scrollbar-color: $primary-blue $light-grey;
-    
-    &::-webkit-scrollbar {
-      height: 6px;
-    }
-    &::-webkit-scrollbar-track {
-      background: $light-grey;
-      border-radius: 10px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: $primary-blue;
-      border-radius: 10px;
-    }
+  &:hover:not(:disabled) {
+    background: rgba(255,255,255,0.5);
+    transform: translateY(-50%) scale(1.1);
   }
   
-  &__item {
-    @include smooth-transition;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 20px 24px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    min-width: 140px;
-    
-    --collection-color: #173DED; // fallback
-    
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-      
-      .shop-carousel__item-icon {
-        border-color: var(--collection-color);
-        box-shadow: 0 0 15px var(--collection-color);
-      }
-    }
-    
-    &.active {
-      background: $blue-gradient;
-      border-color: transparent;
-      
-      .shop-carousel__item-name {
-        color: white;
-      }
-      
-      .shop-carousel__item-icon {
-        background: rgba(255,255,255,0.2);
-        border-color: white;
-        box-shadow: 0 0 20px white;
-      }
-    }
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
   
-  &__item-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.5);
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    transition: all 0.3s ease;
-    color: var(--collection-color);
-    
-    svg {
-      width: 30px;
-      height: 30px;
-      stroke: currentColor;
-    }
+  svg {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
   }
   
-  &__item-name {
-    font-weight: 600;
-    color: $text-dark;
-    white-space: nowrap;
+  &--left {
+    left: 20px;
+  }
+  
+  &--right {
+    right: 20px;
+  }
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $light-grey;
+  cursor: pointer;
+  @include smooth-transition;
+  
+  &.active {
+    background: $primary-blue;
+    transform: scale(1.3);
+  }
+  
+  &:hover {
+    background: $primary-blue;
+    opacity: 0.7;
   }
 }
 
@@ -728,6 +799,28 @@ input, select, textarea, button {
     }
   }
   
+  // Стили для радио-кнопок (категории)
+  &__radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: $text-medium;
+    
+    input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: $primary-blue;
+      cursor: pointer;
+    }
+    
+    &:hover {
+      color: $primary-blue;
+    }
+  }
+  
+  // Стили для чекбоксов
   &__checkbox {
     display: flex;
     align-items: center;
@@ -775,6 +868,13 @@ input, select, textarea, button {
       border-color: $primary-blue;
       box-shadow: 0 0 0 2px rgba($primary-blue, 0.3);
     }
+  }
+  
+  &__empty {
+    font-size: 0.9rem;
+    color: $text-light;
+    font-style: italic;
+    padding: 5px 0;
   }
   
   &__dimensions {
@@ -845,9 +945,12 @@ input, select, textarea, button {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%; // контейнер занимает всю ширину
   
   input {
     flex: 1;
+    min-width: 0;  // позволяет инпутам сжиматься
+    width: 100%;   // занимает доступное пространство
     padding: 10px 12px;
     border: 1px solid $light-grey;
     border-radius: 12px;
@@ -862,6 +965,7 @@ input, select, textarea, button {
   
   span {
     color: $text-light;
+    flex-shrink: 0;
   }
 }
 
@@ -927,7 +1031,7 @@ input, select, textarea, button {
 }
 
 .product-card {
-  position: relative; // для позиционирования кнопки
+  position: relative;
   @include glass-effect;
   border-radius: 24px;
   overflow: hidden;
@@ -942,7 +1046,6 @@ input, select, textarea, button {
     display: block;
     text-decoration: none;
     color: inherit;
-    // Занимает всё пространство карточки, но кнопка перекрывается благодаря абсолютному позиционированию
   }
   
   &__image {
@@ -1002,7 +1105,7 @@ input, select, textarea, button {
     justify-content: center;
     cursor: pointer;
     @include smooth-transition;
-    z-index: 2; // выше ссылки
+    z-index: 2;
     
     &:hover {
       transform: scale(1.15);
@@ -1025,6 +1128,14 @@ input, select, textarea, button {
   
   .shop-filters {
     padding: 25px;
+  }
+  
+  .carousel-container {
+    height: 350px;
+  }
+  
+  .carousel-title {
+    font-size: 1.8rem;
   }
 }
 
@@ -1052,27 +1163,40 @@ input, select, textarea, button {
   .shop-section {
     padding: 60px 1.5rem;
   }
+  
+  .carousel-container {
+    height: 300px;
+  }
+  
+  .carousel-title {
+    font-size: 1.5rem;
+  }
+  
+  .carousel-subtitle {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .shop-carousel__item {
-    min-width: 120px;
-    padding: 15px 18px;
-    
-    &-icon {
-      width: 50px;
-      height: 50px;
-      
-      svg {
-        width: 25px;
-        height: 25px;
-      }
-    }
-  }
-  
   .shop-products__grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
+  }
+  
+  .carousel-container {
+    height: 250px;
+  }
+  
+  .carousel-overlay {
+    padding: 20px;
+  }
+  
+  .carousel-title {
+    font-size: 1.3rem;
+  }
+  
+  .carousel-subtitle {
+    font-size: 0.9rem;
   }
 }
 
@@ -1099,9 +1223,35 @@ input, select, textarea, button {
   .shop-filters__dimensions .dimension-row .dimension-inputs input {
     width: 50px;
   }
+  
+  .carousel-container {
+    height: 200px;
+  }
+  
+  .carousel-arrow {
+    width: 36px;
+    height: 36px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  .carousel-overlay {
+    padding: 15px;
+  }
+  
+  .carousel-title {
+    font-size: 1.1rem;
+  }
+  
+  .carousel-subtitle {
+    font-size: 0.8rem;
+  }
 }
 
-// Дополнительный декор (без ярких кругов)
+// Дополнительный декор
 .department::before {
   content: '';
   position: absolute;

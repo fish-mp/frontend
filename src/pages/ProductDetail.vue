@@ -358,7 +358,6 @@ const products: Product[] = [
 ]
 
 const route = useRoute()
-const router = useRouter()
 const productId = computed(() => Number(route.params.id))
 
 const product = ref<Product | null>(null)
