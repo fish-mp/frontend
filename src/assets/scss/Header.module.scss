@@ -888,3 +888,16 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 body {
   overflow-x: hidden;
 }
+
+.userProfileLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
