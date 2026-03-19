@@ -81,6 +81,16 @@ export const router = createRouter({
       component: NotFound,
     },
     {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('../pages/CartView.vue'),
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../pages/ProfileView.vue'),
+    },
+    {
   path: "/shop/:id",
   name: "ProductDetail",
   component: () => import("../pages/ProductDetail.vue"),

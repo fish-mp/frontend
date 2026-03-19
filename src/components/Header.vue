@@ -143,10 +143,10 @@
           </template>
           <template v-else>
             <div :class="styles.userProfile">
-              <div :class="styles.userAvatar">
-                {{ userInitials }}
-              </div>
-              <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
+              <router-link to="/profile" :class="styles.userProfileLink" @click="closeMobileNav">
+                <div :class="styles.userAvatar">{{ userInitials }}</div>
+                <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
+              </router-link>
               <button :class="[styles.btn, styles.btnLogout]" @click="handleLogout">
                 <span :class="styles.btnText">Выйти</span>
               </button>
@@ -169,10 +169,10 @@
         </template>
         <template v-else>
           <div :class="styles.userProfile">
-            <div :class="styles.userAvatar">
-              {{ userInitials }}
-            </div>
-            <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
+            <router-link to="/profile" :class="styles.userProfileLink">
+              <div :class="styles.userAvatar">{{ userInitials }}</div>
+              <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
+            </router-link>
             <button :class="[styles.btn, styles.btnLogout]" @click="auth.logout()">
               <span :class="styles.btnText">Выйти</span>
             </button>

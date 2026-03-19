@@ -203,10 +203,20 @@
       </div>
     </div>
   </section>
+
+  <router-link to="/cart" class="cart-fab">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C16.4696 17 15.9609 17.2107 15.5858 17.5858C15.2107 17.9609 15 18.4696 15 19C15 19.5304 15.2107 20.0391 15.5858 20.4142C15.9609 20.7893 16.4696 21 17 21C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19C19 18.4696 18.7893 18.0391 18.4142 17.5858C17.9609 17.2107 17.5304 17 17 17ZM9 19C9 19.5304 8.78929 20.0391 8.41421 20.4142C8.03914 20.7893 7.53043 21 7 21C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19C5 18.4696 5.21071 18.0391 5.58579 17.5858C5.96086 17.2107 6.46957 17 7 17C7.53043 17 8.03914 17.2107 8.41421 17.5858C8.78929 17.9609 9 18.4696 9 19Z"/>
+    </svg>
+    <span v-if="cartStore.totalItems > 0" class="cart-badge">{{ cartStore.totalItems }}</span>
+  </router-link>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useCartStore } from '../stores/cart.ts'
+
+const cartStore = useCartStore()
 
 // ---------- Данные для карусели-слайдера ----------
 const carouselImages = [
@@ -447,7 +457,7 @@ const resetFilters = () => {
 }
 
 const addToCart = (product: Product) => {
-  alert(`Товар "${product.name}" добавлен в корзину (демо)`)
+  cartStore.addToCart(product)
 }
 
 // ---------- Фильтрация и сортировка ----------
@@ -1263,5 +1273,49 @@ input, select, textarea, button {
     radial-gradient(circle at 20% 80%, rgba(23, 61, 237, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(77, 124, 254, 0.05) 0%, transparent 50%);
   pointer-events: none;
+}
+
+.cart-fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: $blue-gradient;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba($primary-blue, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1000;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba($primary-blue, 0.6);
+  }
+
+  svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cart-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff4757;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    height: 24px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
 }
 </style>
