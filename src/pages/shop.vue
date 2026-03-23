@@ -10,7 +10,7 @@
 
   <section class="shop-section">
     <div class="shop-section__wrapper">
-      <!-- Карусель-слайдер (одно большое изображение) -->
+      <!-- Карусель-слайдер (тестовые изображения, можно заменить на реальные) -->
       <div class="shop-carousel">
         <h2 class="shop-carousel__title">Актуальное</h2>
         <div class="carousel-container">
@@ -84,9 +84,9 @@
           <div class="shop-filters__group">
             <label class="shop-filters__label">Категория</label>
             <div class="shop-filters__options">
-              <label v-for="cat in categories" :key="cat" class="shop-filters__radio">
-                <input type="radio" :value="cat" v-model="selectedCategory" />
-                <span>{{ cat }}</span>
+              <label v-for="cat in categories" :key="cat.id" class="shop-filters__radio">
+                <input type="radio" :value="cat.id" v-model="selectedCategoryId" />
+                <span>{{ cat.name }}</span>
               </label>
             </div>
           </div>
@@ -95,9 +95,9 @@
           <div class="shop-filters__group">
             <label class="shop-filters__label">Бренд</label>
             <div class="shop-filters__options">
-              <label v-for="brand in filteredBrands" :key="brand" class="shop-filters__checkbox">
-                <input type="checkbox" :value="brand" v-model="selectedBrands" />
-                <span>{{ brand }}</span>
+              <label v-for="brand in filteredBrands" :key="brand.id" class="shop-filters__checkbox">
+                <input type="checkbox" :value="brand.id" v-model="selectedBrandIds" />
+                <span>{{ brand.name }}</span>
               </label>
               <div v-if="filteredBrands.length === 0" class="shop-filters__empty">
                 Нет брендов для выбранной категории
@@ -159,7 +159,7 @@
             </div>
           </div>
 
-          <!-- Цена (исправлено) -->
+          <!-- Цена -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Цена, ₽</label>
             <div class="price-range">
@@ -180,15 +180,22 @@
             <span class="shop-products__count">Найдено: {{ filteredProducts.length }}</span>
           </div>
 
-          <div class="shop-products__grid">
+          <div v-if="productStore.loading" class="shop-products__loading">
+            <div class="loading-spinner"></div>
+            <p>Загрузка товаров...</p>
+          </div>
+          <div v-else-if="productStore.error" class="shop-products__error">
+            <p>{{ productStore.error }}</p>
+          </div>
+          <div v-else class="shop-products__grid">
             <div v-for="product in filteredProducts" :key="product.id" class="product-card">
               <router-link :to="`/shop/${product.id}`" class="product-card__link">
                 <div class="product-card__image">
-                  <img :src="product.image" :alt="product.name" />
+                  <img :src="getMainImageUrl(product)" :alt="product.name" />
                 </div>
                 <div class="product-card__info">
                   <h3 class="product-card__name">{{ product.name }}</h3>
-                  <p class="product-card__category">{{ product.category }} • {{ product.brand }}</p>
+                  <p class="product-card__category">{{ product.category?.name || product.category_name }} • {{ product.brand_name }}</p>
                   <div class="product-card__price">{{ product.price }} ₽</div>
                 </div>
               </router-link>
@@ -203,231 +210,31 @@
       </div>
     </div>
   </section>
-
-  <router-link to="/cart" class="cart-fab">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C16.4696 17 15.9609 17.2107 15.5858 17.5858C15.2107 17.9609 15 18.4696 15 19C15 19.5304 15.2107 20.0391 15.5858 20.4142C15.9609 20.7893 16.4696 21 17 21C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19C19 18.4696 18.7893 18.0391 18.4142 17.5858C17.9609 17.2107 17.5304 17 17 17ZM9 19C9 19.5304 8.78929 20.0391 8.41421 20.4142C8.03914 20.7893 7.53043 21 7 21C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19C5 18.4696 5.21071 18.0391 5.58579 17.5858C5.96086 17.2107 6.46957 17 7 17C7.53043 17 8.03914 17.2107 8.41421 17.5858C8.78929 17.9609 9 18.4696 9 19Z"/>
-    </svg>
-    <span v-if="cartStore.totalItems > 0" class="cart-badge">{{ cartStore.totalItems }}</span>
-  </router-link>
 </template>
-
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useCartStore } from '../stores/cart.ts'
+import { ref, computed, onMounted } from 'vue'
+import { useProductStore } from '../stores/product'
+import { useAuthStore } from '../stores/auth'
+import type { Product } from '../types/Product'
 
-const cartStore = useCartStore()
+const productStore = useProductStore()
+const authStore = useAuthStore()
 
 // ---------- Данные для карусели-слайдера ----------
 const carouselImages = [
-  {
-    url: 'https://via.placeholder.com/1200x400?text=Акция+на+аквариумы',
-    title: 'Скидки на аквариумы до 30%',
-    subtitle: 'Только до конца месяца'
-  },
-  {
-    url: 'https://via.placeholder.com/1200x400?text=Новые+корма+Tetra',
-    title: 'Новая линейка кормов Tetra',
-    subtitle: 'Сбалансированное питание для ваших рыб'
-  },
-  {
-    url: 'https://via.placeholder.com/1200x400?text=Оборудование+Eheim',
-    title: 'Фильтры Eheim со скидкой',
-    subtitle: 'Профессиональное оборудование'
-  },
-  {
-    url: 'https://via.placeholder.com/1200x400?text=Декор+для+аквариума',
-    title: 'Коллекция декора 2025',
-    subtitle: 'Создайте уникальный подводный мир'
-  }
+  { url: 'https://via.placeholder.com/1200x400?text=Акция+на+аквариумы', title: 'Скидки на аквариумы до 30%', subtitle: 'Только до конца месяца' },
+  { url: 'https://via.placeholder.com/1200x400?text=Новые+корма+Tetra', title: 'Новая линейка кормов Tetra', subtitle: 'Сбалансированное питание для ваших рыб' },
+  { url: 'https://via.placeholder.com/1200x400?text=Оборудование+Eheim', title: 'Фильтры Eheim со скидкой', subtitle: 'Профессиональное оборудование' },
+  { url: 'https://via.placeholder.com/1200x400?text=Декор+для+аквариума', title: 'Коллекция декора 2025', subtitle: 'Создайте уникальный подводный мир' }
 ]
-
 const currentSlide = ref(0)
+const nextSlide = () => { if (currentSlide.value < carouselImages.length - 1) currentSlide.value++ }
+const prevSlide = () => { if (currentSlide.value > 0) currentSlide.value-- }
 
-const nextSlide = () => {
-  if (currentSlide.value < carouselImages.length - 1) currentSlide.value++
-}
-
-const prevSlide = () => {
-  if (currentSlide.value > 0) currentSlide.value--
-}
-
-// ---------- Тестовые данные для категорий и брендов ----------
-const categories = ['Аквариумы', 'Рыбки', 'Корма', 'Оборудование', 'Декор', 'Лекарства']
-
-// Связь категория -> бренды
-const categoryBrands: Record<string, string[]> = {
-  'Аквариумы': ['AquaEl', 'Fluval', 'Juwel', 'Tetra'],
-  'Рыбки': ['Laguna', 'Tetra', 'Sera'],
-  'Корма': ['Tetra', 'Sera', 'JBL', 'AquaEl'],
-  'Оборудование': ['Eheim', 'JBL', 'AquaEl', 'Fluval', 'Dennerle'],
-  'Декор': ['Dennerle', 'Sera', 'JBL'],
-  'Лекарства': ['Sera', 'Tetra', 'JBL']
-}
-
-// Все возможные бренды (для случая, когда категория не выбрана)
-const allBrands = Array.from(new Set(Object.values(categoryBrands).flat()))
-
-const colors = ['Красный', 'Синий', 'Зелёный', 'Жёлтый', 'Чёрный', 'Белый']
-const weightRanges = [
-  { label: 'до 1 кг', value: 'lt1' },
-  { label: '1-5 кг', value: '1-5' },
-  { label: '5-10 кг', value: '5-10' },
-  { label: 'более 10 кг', value: 'gt10' },
-]
-
-interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-  category: string
-  brand: string
-  color: string
-  weight: number
-  width: number
-  height: number
-  length: number
-  isNew: boolean
-  isPopular: boolean
-  rating: number
-}
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'Аквариум AquaEl 100л',
-    price: 8900,
-    image: 'https://via.placeholder.com/300x200?text=Аквариум',
-    category: 'Аквариумы',
-    brand: 'AquaEl',
-    color: 'Прозрачный',
-    weight: 15,
-    width: 80,
-    height: 40,
-    length: 50,
-    isNew: true,
-    isPopular: false,
-    rating: 4.5,
-  },
-  {
-    id: 2,
-    name: 'Корм TetraMin хлопья',
-    price: 650,
-    image: 'https://via.placeholder.com/300x200?text=Корм+TetraMin',
-    category: 'Корма',
-    brand: 'Tetra',
-    color: 'Красный',
-    weight: 0.25,
-    width: 5,
-    height: 10,
-    length: 5,
-    isNew: false,
-    isPopular: true,
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: 'Фильтр Eheim Classic',
-    price: 4200,
-    image: 'https://via.placeholder.com/300x200?text=Фильтр+Eheim',
-    category: 'Оборудование',
-    brand: 'Eheim',
-    color: 'Чёрный',
-    weight: 2.3,
-    width: 15,
-    height: 25,
-    length: 15,
-    isNew: false,
-    isPopular: true,
-    rating: 4.8,
-  },
-  {
-    id: 4,
-    name: 'Грунт Sera гравий 5кг',
-    price: 890,
-    image: 'https://via.placeholder.com/300x200?text=Грунт+Sera',
-    category: 'Декор',
-    brand: 'Sera',
-    color: 'Коричневый',
-    weight: 5,
-    width: 20,
-    height: 5,
-    length: 30,
-    isNew: true,
-    isPopular: false,
-    rating: 4.2,
-  },
-  {
-    id: 5,
-    name: 'Рыбка Петушок синий',
-    price: 350,
-    image: 'https://via.placeholder.com/300x200?text=Петушок',
-    category: 'Рыбки',
-    brand: 'Laguna',
-    color: 'Синий',
-    weight: 0.05,
-    width: 2,
-    height: 3,
-    length: 5,
-    isNew: true,
-    isPopular: true,
-    rating: 4.9,
-  },
-  {
-    id: 6,
-    name: 'Обогреватель JBL 100W',
-    price: 2100,
-    image: 'https://via.placeholder.com/300x200?text=Обогреватель+JBL',
-    category: 'Оборудование',
-    brand: 'JBL',
-    color: 'Белый',
-    weight: 0.8,
-    width: 5,
-    height: 25,
-    length: 5,
-    isNew: false,
-    isPopular: false,
-    rating: 4.4,
-  },
-  {
-    id: 7,
-    name: 'Декор "Коралл"',
-    price: 750,
-    image: 'https://via.placeholder.com/300x200?text=Коралл',
-    category: 'Декор',
-    brand: 'Dennerle',
-    color: 'Красный',
-    weight: 1.2,
-    width: 15,
-    height: 20,
-    length: 15,
-    isNew: true,
-    isPopular: false,
-    rating: 4.0,
-  },
-  {
-    id: 8,
-    name: 'Аквариум Fluval 200л',
-    price: 18500,
-    image: 'https://via.placeholder.com/300x200?text=Fluval+200',
-    category: 'Аквариумы',
-    brand: 'Fluval',
-    color: 'Прозрачный',
-    weight: 28,
-    width: 100,
-    height: 50,
-    length: 60,
-    isNew: true,
-    isPopular: true,
-    rating: 5,
-  },
-]
-
-// ---------- Состояние фильтров ----------
-const selectedCategory = ref<string | null>(null)
+// ---------- Фильтры и сортировка ----------
 const sortBy = ref('new')
-const selectedBrands = ref<string[]>([])
+const selectedCategoryId = ref<number | null>(null)
+const selectedBrandIds = ref<number[]>([])
 const selectedColors = ref<string[]>([])
 const selectedWeights = ref<string[]>([])
 const dimensions = ref({
@@ -437,80 +244,99 @@ const dimensions = ref({
 })
 const priceRange = ref({ min: null as number | null, max: null as number | null })
 
-// ---------- Computed: бренды, доступные для выбранной категории ----------
+// ---------- Статические данные для фильтров ----------
+const colors = ['Красный', 'Синий', 'Зелёный', 'Жёлтый', 'Чёрный', 'Белый', 'Прозрачный']
+const weightRanges = [
+  { label: 'до 1 кг', value: 'lt1' },
+  { label: '1-5 кг', value: '1-5' },
+  { label: '5-10 кг', value: '5-10' },
+  { label: 'более 10 кг', value: 'gt10' },
+]
+
+// ---------- Данные из API ----------
+const categories = computed(() => productStore.categories)
+const brands = computed(() => productStore.brands)
+const products = computed(() => productStore.products)
+
 const filteredBrands = computed(() => {
-  if (selectedCategory.value) {
-    return categoryBrands[selectedCategory.value] || []
-  }
-  return allBrands
+  if (!selectedCategoryId.value) return brands.value
+  return brands.value
 })
 
-// ---------- Методы ----------
-const resetFilters = () => {
-  selectedCategory.value = null
-  selectedBrands.value = []
-  selectedColors.value = []
-  selectedWeights.value = []
-  dimensions.value = { width: { min: null, max: null }, height: { min: null, max: null }, length: { min: null, max: null } }
-  priceRange.value = { min: null, max: null }
-  sortBy.value = 'new'
+const getMainImageUrl = (product: Product) => {
+  if (product.main_image?.image) {
+    let url = product.main_image.image
+    if (url.startsWith('/media')) url = import.meta.env.VITE_BACKEND_URL + url
+    return url
+  }
+  return 'https://via.placeholder.com/300x200?text=Нет+фото'
 }
 
-const addToCart = (product: Product) => {
-  cartStore.addToCart(product)
-}
-
-// ---------- Фильтрация и сортировка ----------
 const filteredProducts = computed(() => {
-  let result = [...products]
+  let result = [...products.value]
 
-  // Фильтр по категории (радио)
-  if (selectedCategory.value) {
-    result = result.filter(p => p.category === selectedCategory.value)
+  // Фильтр по категории
+  if (selectedCategoryId.value) {
+    result = result.filter(p => p.category?.id === selectedCategoryId.value || p.category_id === selectedCategoryId.value)
   }
-
   // Фильтр по брендам
-  if (selectedBrands.value.length) {
-    result = result.filter(p => selectedBrands.value.includes(p.brand))
+  if (selectedBrandIds.value.length) {
+    result = result.filter(p => {
+      const brandId = p.brand?.id ?? p.brand_id
+      return brandId !== undefined && selectedBrandIds.value.includes(brandId)
+    })
   }
-
-  // Фильтр по цветам
+  // Фильтр по цвету
   if (selectedColors.value.length) {
-    result = result.filter(p => selectedColors.value.includes(p.color))
+    result = result.filter(p => p.color && selectedColors.value.includes(p.color))
   }
-
   // Фильтр по весу
   if (selectedWeights.value.length) {
     result = result.filter(p => {
+      if (p.weight === undefined) return false
       return selectedWeights.value.some(range => {
-        if (range === 'lt1') return p.weight < 1
-        if (range === '1-5') return p.weight >= 1 && p.weight <= 5
-        if (range === '5-10') return p.weight >= 5 && p.weight <= 10
-        if (range === 'gt10') return p.weight > 10
+        if (range === 'lt1') return p.weight! < 1
+        if (range === '1-5') return p.weight! >= 1 && p.weight! <= 5
+        if (range === '5-10') return p.weight! >= 5 && p.weight! <= 10
+        if (range === 'gt10') return p.weight! > 10
         return false
       })
     })
   }
-
   // Фильтр по габаритам
-  if (dimensions.value.width.min !== null) result = result.filter(p => p.width >= dimensions.value.width.min!)
-  if (dimensions.value.width.max !== null) result = result.filter(p => p.width <= dimensions.value.width.max!)
-  if (dimensions.value.height.min !== null) result = result.filter(p => p.height >= dimensions.value.height.min!)
-  if (dimensions.value.height.max !== null) result = result.filter(p => p.height <= dimensions.value.height.max!)
-  if (dimensions.value.length.min !== null) result = result.filter(p => p.length >= dimensions.value.length.min!)
-  if (dimensions.value.length.max !== null) result = result.filter(p => p.length <= dimensions.value.length.max!)
-
+  if (dimensions.value.width.min !== null) {
+    result = result.filter(p => p.width !== undefined && p.width >= dimensions.value.width.min!)
+  }
+  if (dimensions.value.width.max !== null) {
+    result = result.filter(p => p.width !== undefined && p.width <= dimensions.value.width.max!)
+  }
+  if (dimensions.value.height.min !== null) {
+    result = result.filter(p => p.height !== undefined && p.height >= dimensions.value.height.min!)
+  }
+  if (dimensions.value.height.max !== null) {
+    result = result.filter(p => p.height !== undefined && p.height <= dimensions.value.height.max!)
+  }
+  if (dimensions.value.length.min !== null) {
+    result = result.filter(p => p.length !== undefined && p.length >= dimensions.value.length.min!)
+  }
+  if (dimensions.value.length.max !== null) {
+    result = result.filter(p => p.length !== undefined && p.length <= dimensions.value.length.max!)
+  }
   // Фильтр по цене
-  if (priceRange.value.min !== null) result = result.filter(p => p.price >= priceRange.value.min!)
-  if (priceRange.value.max !== null) result = result.filter(p => p.price <= priceRange.value.max!)
+  if (priceRange.value.min !== null) {
+    result = result.filter(p => p.price >= priceRange.value.min!)
+  }
+  if (priceRange.value.max !== null) {
+    result = result.filter(p => p.price <= priceRange.value.max!)
+  }
 
   // Сортировка
   switch (sortBy.value) {
     case 'new':
-      result = result.sort((a, b) => (a.isNew === b.isNew ? 0 : a.isNew ? -1 : 1))
+      result = result.sort((a, b) => (a.is_new === b.is_new ? 0 : a.is_new ? -1 : 1))
       break
     case 'popular':
-      result = result.sort((a, b) => b.rating - a.rating)
+      result = result.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0))
       break
     case 'priceAsc':
       result = result.sort((a, b) => a.price - b.price)
@@ -519,8 +345,36 @@ const filteredProducts = computed(() => {
       result = result.sort((a, b) => b.price - a.price)
       break
   }
-
   return result
+})
+
+const resetFilters = () => {
+  selectedCategoryId.value = null
+  selectedBrandIds.value = []
+  selectedColors.value = []
+  selectedWeights.value = []
+  dimensions.value = { width: { min: null, max: null }, height: { min: null, max: null }, length: { min: null, max: null } }
+  priceRange.value = { min: null, max: null }
+  sortBy.value = 'new'
+}
+
+const addToCart = async (product: Product) => {
+  if (!authStore.isAuthenticated) {
+    alert('Для добавления в корзину необходимо авторизоваться')
+    return
+  }
+  try {
+    await productStore.addToCart(product.id, 1)
+    alert(`Товар "${product.name}" добавлен в корзину`)
+  } catch (err) {
+    alert('Ошибка при добавлении в корзину')
+  }
+}
+
+onMounted(async () => {
+  await productStore.fetchProducts()
+  await productStore.fetchCategories()
+  await productStore.fetchBrands()
 })
 </script>
 
