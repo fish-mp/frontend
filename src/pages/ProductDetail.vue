@@ -1,20 +1,18 @@
 <template>
   <section class="product-detail">
-    <!-- Фоновые элементы (без ярких кругов) -->
     <div class="product-detail__bg"></div>
 
     <div class="product-detail__wrapper" v-if="product">
-      <!-- Хлебные крошки -->
       <nav class="product-detail__breadcrumbs">
         <router-link to="/shop">Магазин</router-link>
         <span>/</span>
-        <span>{{ product.category }}</span>
+        <span>{{ product.category?.name || product.category_name }}</span>
         <span>/</span>
         <span>{{ product.name }}</span>
       </nav>
 
       <div class="product-detail__main">
-        <!-- Левая колонка: галерея -->
+        <!-- Галерея -->
         <div class="product-detail__gallery">
           <div class="product-detail__main-image">
             <img :src="currentImage" :alt="product.name" />
@@ -24,15 +22,15 @@
               v-for="(img, idx) in product.images"
               :key="idx"
               class="product-detail__thumbnail"
-              :class="{ active: currentImage === img }"
-              @click="currentImage = img"
+              :class="{ active: currentImage === getImageUrl(img.image) }"
+              @click="currentImage = getImageUrl(img.image)"
             >
-              <img :src="img" :alt="`${product.name} - ${idx + 1}`" />
+              <img :src="getImageUrl(img.image)" :alt="`${product.name} - ${idx + 1}`" />
             </button>
           </div>
         </div>
 
-        <!-- Правая колонка: информация -->
+        <!-- Информация -->
         <div class="product-detail__info">
           <h1 class="product-detail__title">{{ product.name }}</h1>
           
@@ -42,24 +40,24 @@
                 v-for="star in 5"
                 :key="star"
                 class="star"
-                :class="{ filled: star <= (userRating || product.rating) }"
+                :class="{ filled: star <= (userRating || product.average_rating) }"
                 @click="setRating(star)"
               >
                 ★
               </span>
             </div>
-            <span class="rating-value">{{ product.rating.toFixed(1) }} / 5</span>
-            <span class="rating-count">({{ product.reviews || 0 }} отзывов)</span>
+            <span class="rating-value">{{ product.average_rating.toFixed(1) }} / 5</span>
+            <span class="rating-count">({{ product.reviews_count || 0 }} отзывов)</span>
           </div>
 
           <div class="product-detail__price">{{ product.price }} ₽</div>
 
-          <div class="product-detail__stock" :class="{ 'in-stock': product.stock > 0, 'out-of-stock': product.stock === 0 }">
-            {{ product.stock > 0 ? 'В наличии' : 'Нет в наличии' }}
+          <div class="product-detail__stock" :class="{ 'in-stock': product.is_in_stock, 'out-of-stock': !product.is_in_stock }">
+            {{ product.is_in_stock ? 'В наличии' : 'Нет в наличии' }}
           </div>
 
           <div class="product-detail__actions">
-            <button class="product-detail__cart btn btn--primary" @click="addToCart" :disabled="product.stock === 0">
+            <button class="product-detail__cart btn btn--primary" @click="addToCart" :disabled="!product.is_in_stock">
               <span class="btn-text">В корзину</span>
             </button>
           </div>
@@ -69,31 +67,23 @@
             <dl class="specs-list">
               <div class="specs-item">
                 <dt>Категория</dt>
-                <dd>{{ product.category }}</dd>
+                <dd>{{ product.category?.name || product.category_name }}</dd>
               </div>
               <div class="specs-item">
                 <dt>Бренд</dt>
-                <dd>{{ product.brand }}</dd>
+                <dd>{{ product.brand?.name || product.brand_name }}</dd>
               </div>
-              <div class="specs-item">
+              <div class="specs-item" v-if="product.color">
                 <dt>Цвет</dt>
                 <dd>{{ product.color }}</dd>
               </div>
-              <div class="specs-item">
+              <div class="specs-item" v-if="product.weight">
                 <dt>Вес</dt>
                 <dd>{{ product.weight }} кг</dd>
               </div>
-              <div class="specs-item">
+              <div class="specs-item" v-if="product.width && product.height && product.length">
                 <dt>Габариты (Ш×В×Г)</dt>
                 <dd>{{ product.width }} × {{ product.height }} × {{ product.length }} см</dd>
-              </div>
-              <div class="specs-item" v-if="product.material">
-                <dt>Материал</dt>
-                <dd>{{ product.material }}</dd>
-              </div>
-              <div class="specs-item" v-if="product.volume">
-                <dt>Объём</dt>
-                <dd>{{ product.volume }} л</dd>
               </div>
             </dl>
           </div>
@@ -112,7 +102,7 @@
           <div v-for="item in similarProducts" :key="item.id" class="similar-card">
             <router-link :to="`/shop/${item.id}`" class="similar-card__link">
               <div class="similar-card__image">
-                <img :src="item.image" :alt="item.name" />
+                <img :src="getMainImageUrl(item)" :alt="item.name" />
               </div>
               <div class="similar-card__info">
                 <h4 class="similar-card__name">{{ item.name }}</h4>
@@ -125,7 +115,7 @@
     </div>
 
     <!-- Загрузка / не найдено -->
-    <div v-else-if="isLoading" class="product-detail__loading">
+    <div v-else-if="productStore.loading" class="product-detail__loading">
       <div class="loading-spinner"></div>
       <p>Загрузка товара…</p>
     </div>
@@ -140,272 +130,100 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-
-// ---------- Тестовые данные (копируем из shop.vue с дополнениями) ----------
-interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-  images?: string[] // для галереи
-  category: string
-  brand: string
-  color: string
-  weight: number
-  width: number
-  height: number
-  length: number
-  material?: string
-  volume?: number
-  description: string
-  rating: number
-  reviews?: number
-  stock: number
-  isNew: boolean
-  isPopular: boolean
-}
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'Аквариум AquaEl 100л',
-    price: 8900,
-    image: 'https://via.placeholder.com/600x400?text=Аквариум+100л',
-    images: [
-      'https://via.placeholder.com/600x400?text=Аквариум+100л+1',
-      'https://via.placeholder.com/600x400?text=Аквариум+100л+2',
-      'https://via.placeholder.com/600x400?text=Аквариум+100л+3',
-    ],
-    category: 'Аквариумы',
-    brand: 'AquaEl',
-    color: 'Прозрачный',
-    weight: 15,
-    width: 80,
-    height: 40,
-    length: 50,
-    volume: 100,
-    description: 'Просторный аквариум объёмом 100 литров. Изготовлен из высококачественного стекла, имеет укреплённые швы. Подходит для содержания пресноводных и морских рыб.',
-    rating: 4.5,
-    reviews: 12,
-    stock: 5,
-    isNew: true,
-    isPopular: false,
-  },
-  {
-    id: 2,
-    name: 'Корм TetraMin хлопья',
-    price: 650,
-    image: 'https://via.placeholder.com/600x400?text=TetraMin',
-    images: [
-      'https://via.placeholder.com/600x400?text=TetraMin+1',
-      'https://via.placeholder.com/600x400?text=TetraMin+2',
-    ],
-    category: 'Корма',
-    brand: 'Tetra',
-    color: 'Красный',
-    weight: 0.25,
-    width: 5,
-    height: 10,
-    length: 5,
-    description: 'Сбалансированный корм в виде хлопьев для всех видов тропических рыб. Содержит все необходимые витамины и микроэлементы.',
-    rating: 5,
-    reviews: 34,
-    stock: 20,
-    isNew: false,
-    isPopular: true,
-  },
-  {
-    id: 3,
-    name: 'Фильтр Eheim Classic',
-    price: 4200,
-    image: 'https://via.placeholder.com/600x400?text=Eheim+Classic',
-    images: [
-      'https://via.placeholder.com/600x400?text=Eheim+Classic+1',
-      'https://via.placeholder.com/600x400?text=Eheim+Classic+2',
-      'https://via.placeholder.com/600x400?text=Eheim+Classic+3',
-    ],
-    category: 'Оборудование',
-    brand: 'Eheim',
-    color: 'Чёрный',
-    weight: 2.3,
-    width: 15,
-    height: 25,
-    length: 15,
-    description: 'Надёжный внешний фильтр для аквариумов до 250 литров. Обеспечивает механическую, биологическую и химическую фильтрацию.',
-    rating: 4.8,
-    reviews: 8,
-    stock: 3,
-    isNew: false,
-    isPopular: true,
-  },
-  {
-    id: 4,
-    name: 'Грунт Sera гравий 5кг',
-    price: 890,
-    image: 'https://via.placeholder.com/600x400?text=Грунт+Sera',
-    images: [
-      'https://via.placeholder.com/600x400?text=Грунт+Sera+1',
-      'https://via.placeholder.com/600x400?text=Грунт+Sera+2',
-    ],
-    category: 'Декор',
-    brand: 'Sera',
-    color: 'Коричневый',
-    weight: 5,
-    width: 20,
-    height: 5,
-    length: 30,
-    description: 'Натуральный грунт для аквариума, фракция 2-4 мм. Не влияет на параметры воды, подходит для растений.',
-    rating: 4.2,
-    reviews: 6,
-    stock: 15,
-    isNew: true,
-    isPopular: false,
-  },
-  {
-    id: 5,
-    name: 'Рыбка Петушок синий',
-    price: 350,
-    image: 'https://via.placeholder.com/600x400?text=Петушок',
-    images: [
-      'https://via.placeholder.com/600x400?text=Петушок+1',
-      'https://via.placeholder.com/600x400?text=Петушок+2',
-    ],
-    category: 'Рыбки',
-    brand: 'Laguna',
-    color: 'Синий',
-    weight: 0.05,
-    width: 2,
-    height: 3,
-    length: 5,
-    description: 'Яркий самец петушка (Betta splendens). Содержать поодиночке или с мирными рыбками.',
-    rating: 4.9,
-    reviews: 22,
-    stock: 7,
-    isNew: true,
-    isPopular: true,
-  },
-  {
-    id: 6,
-    name: 'Обогреватель JBL 100W',
-    price: 2100,
-    image: 'https://via.placeholder.com/600x400?text=Обогреватель+JBL',
-    images: [
-      'https://via.placeholder.com/600x400?text=Обогреватель+JBL+1',
-      'https://via.placeholder.com/600x400?text=Обогреватель+JBL+2',
-    ],
-    category: 'Оборудование',
-    brand: 'JBL',
-    color: 'Белый',
-    weight: 0.8,
-    width: 5,
-    height: 25,
-    length: 5,
-    description: 'Погружной обогреватель с терморегулятором для аквариумов 80-150 л. Точная настройка температуры.',
-    rating: 4.4,
-    reviews: 5,
-    stock: 0,
-    isNew: false,
-    isPopular: false,
-  },
-  {
-    id: 7,
-    name: 'Декор "Коралл"',
-    price: 750,
-    image: 'https://via.placeholder.com/600x400?text=Коралл',
-    images: [
-      'https://via.placeholder.com/600x400?text=Коралл+1',
-      'https://via.placeholder.com/600x400?text=Коралл+2',
-    ],
-    category: 'Декор',
-    brand: 'Dennerle',
-    color: 'Красный',
-    weight: 1.2,
-    width: 15,
-    height: 20,
-    length: 15,
-    description: 'Искусственный коралл из безопасного полимера. Создаёт естественный ландшафт в аквариуме.',
-    rating: 4.0,
-    reviews: 3,
-    stock: 12,
-    isNew: true,
-    isPopular: false,
-  },
-  {
-    id: 8,
-    name: 'Аквариум Fluval 200л',
-    price: 18500,
-    image: 'https://via.placeholder.com/600x400?text=Fluval+200',
-    images: [
-      'https://via.placeholder.com/600x400?text=Fluval+200+1',
-      'https://via.placeholder.com/600x400?text=Fluval+200+2',
-      'https://via.placeholder.com/600x400?text=Fluval+200+3',
-    ],
-    category: 'Аквариумы',
-    brand: 'Fluval',
-    color: 'Прозрачный',
-    weight: 28,
-    width: 100,
-    height: 50,
-    length: 60,
-    volume: 200,
-    description: 'Панорамный аквариум Fluval с высококачественным стеклом и усиленным каркасом. В комплекте крышка с освещением.',
-    rating: 5,
-    reviews: 10,
-    stock: 2,
-    isNew: true,
-    isPopular: true,
-  },
-]
+import { useProductStore } from '../stores/product'
+import { useAuthStore } from '../stores/auth'
+import type { ProductDetail, ProductImage, Product } from '../types/Product'
 
 const route = useRoute()
-const productId = computed(() => Number(route.params.id))
+const productStore = useProductStore()
+const authStore = useAuthStore()
 
-const product = ref<Product | null>(null)
-const isLoading = ref(true)
+const productId = computed(() => route.params.id as string)
+const product = computed<ProductDetail | null>(() => productStore.currentProduct as ProductDetail | null)
 const currentImage = ref('')
-const userRating = ref<number | null>(null) // оценка пользователя
+const userRating = ref<number | null>(null)
+const ratingText = ref('')
 
-// Загрузка товара по id
-const loadProduct = () => {
-  isLoading.value = true
-  // Ищем в тестовых данных
-  const found = products.find(p => p.id === productId.value)
-  if (found) {
-    product.value = found
-    currentImage.value = found.image
-  } else {
-    product.value = null
-  }
-  isLoading.value = false
+// Вспомогательная функция для получения полного URL изображения
+const getImageUrl = (path: string): string => {
+  if (!path) return ''
+  if (path.startsWith('/media')) return import.meta.env.VITE_BACKEND_URL + path
+  if (path.startsWith('http')) return path
+  return path
 }
 
-onMounted(loadProduct)
+// Получение главного изображения для похожих товаров (тип Product)
+const getMainImageUrl = (item: Product): string => {
+  if (item.main_image && item.main_image.image) {
+    return getImageUrl(item.main_image.image)
+  }
+  return 'https://via.placeholder.com/300x200?text=Нет+фото'
+}
 
-// Похожие товары (по категории, исключая текущий)
-const similarProducts = computed(() => {
-  if (!product.value) return []
-  return products
-    .filter(p => p.category === product.value!.category && p.id !== product.value!.id)
+// Загрузка товара
+onMounted(async () => {
+  await productStore.fetchProductById(productId.value)
+  if (product.value) {
+    if (product.value.images && product.value.images.length) {
+      const mainImg = product.value.images.find((img: ProductImage) => img.is_main) || product.value.images[0]
+      currentImage.value = getImageUrl(mainImg.image)
+    } else if (product.value.main_image) {
+      currentImage.value = getImageUrl(product.value.main_image.image)
+    }
+  }
+})
+
+// Похожие товары (фильтруем по категории и исключаем текущий)
+const similarProducts = computed<Product[]>(() => {
+  const currentProduct = product.value
+  if (!currentProduct) return []
+  return productStore.products
+    .filter((p: Product) => {
+      // Сравниваем по category_id или category?.id
+      const currentCategoryId = currentProduct.category?.id || currentProduct.category_id
+      const productCategoryId = p.category?.id || p.category_id
+      return productCategoryId === currentCategoryId && p.id !== currentProduct.id
+    })
     .slice(0, 4)
 })
 
-// Установка рейтинга пользователем
-const setRating = (star: number) => {
-  userRating.value = star
-  // Здесь можно было бы отправить на сервер, пока просто локально
-  alert(`Вы поставили оценку ${star} звёзд (демо)`)
+// Установка рейтинга (отправка отзыва)
+const setRating = async (star: number) => {
+  if (!authStore.isAuthenticated) {
+    alert('Для оценки товара необходимо авторизоваться')
+    return
+  }
+  const currentProduct = product.value
+  if (!currentProduct) return
+  try {
+    await productStore.addReview(currentProduct.id, star, ratingText.value || '')
+    alert('Спасибо за вашу оценку!')
+    await productStore.fetchProductById(productId.value)
+    userRating.value = star
+  } catch (err) {
+    alert('Не удалось отправить оценку')
+  }
 }
 
 // Добавление в корзину
-const addToCart = () => {
-  if (product.value && product.value.stock > 0) {
-    alert(`Товар "${product.value.name}" добавлен в корзину (демо)`)
+const addToCart = async () => {
+  if (!authStore.isAuthenticated) {
+    alert('Для добавления в корзину необходимо авторизоваться')
+    return
+  }
+  const currentProduct = product.value
+  if (!currentProduct) return
+  try {
+    await productStore.addToCart(currentProduct.id, 1)
+    alert(`Товар "${currentProduct.name}" добавлен в корзину`)
+  } catch (err) {
+    alert('Ошибка при добавлении в корзину')
   }
 }
 </script>
 
 <style lang="scss" scoped>
-// Переменные (как в shop.vue)
+// Все стили остаются без изменений (как в предыдущем ответе)
 $pure-white: #ffffff;
 $soft-white: #fafbfc;
 $light-grey: #f0f4f8;
@@ -419,7 +237,6 @@ $success-color: #00BFA6;
 $warning-color: #FFB300;
 $error-color: #FF5252;
 
-// Глобальные стили для box-sizing
 input, select, textarea, button {
   box-sizing: border-box;
 }
@@ -494,7 +311,6 @@ input, select, textarea, button {
     margin-bottom: 60px;
   }
 
-  // Левая колонка: галерея
   &__gallery {
     @include glass-effect;
     border-radius: 24px;
@@ -548,7 +364,6 @@ input, select, textarea, button {
     }
   }
 
-  // Правая колонка: информация
   &__info {
     @include glass-effect;
     border-radius: 24px;
@@ -724,7 +539,6 @@ input, select, textarea, button {
     color: $text-medium;
   }
 
-  // Похожие товары
   &__similar {
     margin-top: 60px;
   }
@@ -794,7 +608,6 @@ input, select, textarea, button {
     }
   }
 
-  // Состояния загрузки / не найдено
   &__loading {
     text-align: center;
     padding: 80px 20px;
@@ -854,7 +667,6 @@ input, select, textarea, button {
   to { transform: rotate(360deg); }
 }
 
-// Адаптивность
 @media (max-width: 1200px) {
   .product-detail__main {
     gap: 40px;
