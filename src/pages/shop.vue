@@ -35,6 +35,13 @@
           <span v-for="(_, index) in carouselImages" :key="index" class="carousel-dot"
             :class="{ active: currentSlide === index }" @click="currentSlide = index"></span>
         </div>
+ <div class="beginner-banner">
+  <div class="beginner-banner__content">
+    <h3>🐟 Новичок в аквариумистике?</h3>
+    <p>Выбор аквариума, совместимость рыб, оборудование и запуск</p>
+  </div>
+  <router-link to="/beginner-guide" class="beginner-banner__btn">Руководство для новичков →</router-link>
+</div>
       </div>
 
       <!-- Основная часть: фильтры и товары -->
@@ -460,6 +467,64 @@ input, select, textarea, button {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// Баннер для новичков
+.beginner-banner {
+  margin: 2rem 0;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid $light-grey;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+    color: $text-medium;
+    font-size: 1rem;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: $primary-blue;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    &:hover {
+      background: darken($primary-blue, 8%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba($primary-blue, 0.3);
+    }
   }
 }
 

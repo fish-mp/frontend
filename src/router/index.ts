@@ -81,6 +81,11 @@ export const router = createRouter({
       component: NotFound,
     },
     {
+      path: "/beginner-guide",
+      name: "BeginnerGuide",
+      component: () => import("../pages/BeginnerGuide.vue"),
+    },
+    {
       path: '/cart',
       name: 'cart',
       component: () => import('../pages/CartView.vue'),
@@ -90,6 +95,7 @@ export const router = createRouter({
       name: 'profile',
       component: () => import('../pages/ProfileView.vue'),
     },
+    
     {
   path: "/shop/:id",
   name: "ProductDetail",
