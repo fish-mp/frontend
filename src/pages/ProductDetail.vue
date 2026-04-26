@@ -133,7 +133,7 @@ import { useRoute } from 'vue-router'
 import { useProductStore } from '../stores/product'
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
-import type { ProductDetail, ProductImage, Product, ColorValue } from '../types/Product'
+import type { ProductDetail, ProductImage, Product} from '../types/Product'
 import { getColorName } from '../types/Product'
 
 const route = useRoute()
