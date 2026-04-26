@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { Product,ProductDetail,Category,Brand} from "../types/Product";
+import type { Product, ProductDetail, Category, Brand } from "../types/Product";
 
 export const useProductStore = defineStore("product", () => {
   const products = ref<Product[]>([]);
@@ -88,21 +88,6 @@ export const useProductStore = defineStore("product", () => {
     }
   };
 
-  const addToCart = async (productId: string, quantity: number = 1) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/cart-items/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ product: productId, quantity }),
-      });
-      if (!response.ok) throw new Error("Не удалось добавить в корзину");
-      return await response.json();
-    } catch (e: any) {
-      throw e;
-    }
-  };
-
   return {
     products,
     currentProduct,
@@ -115,6 +100,5 @@ export const useProductStore = defineStore("product", () => {
     fetchBrands,
     fetchCategories,
     addReview,
-    addToCart,
   };
 });
