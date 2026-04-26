@@ -75,7 +75,7 @@
               </div>
               <div class="specs-item" v-if="product.color">
                 <dt>Цвет</dt>
-                <dd>{{ product.color }}</dd>
+                <dd>{{ getColorName(product.color) }}</dd>
               </div>
               <div class="specs-item" v-if="product.weight">
                 <dt>Вес</dt>
@@ -132,11 +132,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '../stores/product'
 import { useAuthStore } from '../stores/auth'
-import type { ProductDetail, ProductImage, Product } from '../types/Product'
+import { useCartStore } from '../stores/cart'
+import type { ProductDetail, ProductImage, Product, ColorValue } from '../types/Product'
+import { getColorName } from '../types/Product'
 
 const route = useRoute()
 const productStore = useProductStore()
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 
 const productId = computed(() => route.params.id as string)
 const product = computed<ProductDetail | null>(() => productStore.currentProduct as ProductDetail | null)
@@ -152,9 +155,9 @@ const getImageUrl = (path: string): string => {
   return path
 }
 
-// Получение главного изображения для похожих товаров (тип Product)
+// Получение главного изображения для похожих товаров
 const getMainImageUrl = (item: Product): string => {
-  if (item.main_image && item.main_image.image) {
+  if (item.main_image?.image) {
     return getImageUrl(item.main_image.image)
   }
   return 'https://via.placeholder.com/300x200?text=Нет+фото'
@@ -179,7 +182,6 @@ const similarProducts = computed<Product[]>(() => {
   if (!currentProduct) return []
   return productStore.products
     .filter((p: Product) => {
-      // Сравниваем по category_id или category?.id
       const currentCategoryId = currentProduct.category?.id || currentProduct.category_id
       const productCategoryId = p.category?.id || p.category_id
       return productCategoryId === currentCategoryId && p.id !== currentProduct.id
@@ -205,7 +207,7 @@ const setRating = async (star: number) => {
   }
 }
 
-// Добавление в корзину
+// Добавление в корзину (используем cartStore)
 const addToCart = async () => {
   if (!authStore.isAuthenticated) {
     alert('Для добавления в корзину необходимо авторизоваться')
@@ -214,14 +216,13 @@ const addToCart = async () => {
   const currentProduct = product.value
   if (!currentProduct) return
   try {
-    await productStore.addToCart(currentProduct.id, 1)
+    await cartStore.addToCart(currentProduct.id, 1)
     alert(`Товар "${currentProduct.name}" добавлен в корзину`)
   } catch (err) {
     alert('Ошибка при добавлении в корзину')
   }
 }
 </script>
-
 <style lang="scss" scoped>
 // Все стили остаются без изменений (как в предыдущем ответе)
 $pure-white: #ffffff;

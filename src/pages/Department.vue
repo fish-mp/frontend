@@ -12,25 +12,6 @@
           </router-link>
           <h1 class="staff-hero__title">Наши преподаватели</h1>
           <p class="staff-hero__subtitle">Профессионалы с многолетним опытом работы и научными достижениями</p>
-
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-card__number">18+</div>
-              <div class="stat-card__label">Лет средний стаж</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__number">95%</div>
-              <div class="stat-card__label">Докторов и кандидатов наук</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__number">50+</div>
-              <div class="stat-card__label">Научных публикаций</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-card__number">100%</div>
-              <div class="stat-card__label">Практикующих специалистов</div>
-            </div>
-          </div>
         </div>
         <div class="staff-hero__decoration">
           <div class="decoration-circle decoration-circle--1"></div>

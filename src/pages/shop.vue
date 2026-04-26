@@ -10,49 +10,30 @@
 
   <section class="shop-section">
     <div class="shop-section__wrapper">
-      <!-- Карусель-слайдер (тестовые изображения, можно заменить на реальные) -->
+      <!-- Карусель-слайдер -->
       <div class="shop-carousel">
         <h2 class="shop-carousel__title">Актуальное</h2>
         <div class="carousel-container">
-          <button 
-            class="carousel-arrow carousel-arrow--left" 
-            @click="prevSlide" 
-            :disabled="currentSlide === 0"
-          >
+          <button class="carousel-arrow carousel-arrow--left" @click="prevSlide" :disabled="currentSlide === 0">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
-          
-          <div 
-            class="carousel-slide" 
-            :style="{ backgroundImage: `url(${carouselImages[currentSlide].url})` }"
-          >
+          <div class="carousel-slide" :style="{ backgroundImage: `url(${carouselImages[currentSlide].url})` }">
             <div class="carousel-overlay">
               <h3 class="carousel-title">{{ carouselImages[currentSlide].title }}</h3>
               <p class="carousel-subtitle">{{ carouselImages[currentSlide].subtitle }}</p>
             </div>
           </div>
-          
-          <button 
-            class="carousel-arrow carousel-arrow--right" 
-            @click="nextSlide" 
-            :disabled="currentSlide === carouselImages.length - 1"
-          >
+          <button class="carousel-arrow carousel-arrow--right" @click="nextSlide" :disabled="currentSlide === carouselImages.length - 1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </button>
         </div>
-        
         <div class="carousel-dots">
-          <span
-            v-for="(_, index) in carouselImages"
-            :key="index"
-            class="carousel-dot"
-            :class="{ active: currentSlide === index }"
-            @click="currentSlide = index"
-          ></span>
+          <span v-for="(_, index) in carouselImages" :key="index" class="carousel-dot"
+            :class="{ active: currentSlide === index }" @click="currentSlide = index"></span>
         </div>
       </div>
 
@@ -91,7 +72,7 @@
             </div>
           </div>
 
-          <!-- Бренд (зависит от выбранной категории) -->
+          <!-- Бренд -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Бренд</label>
             <div class="shop-filters__options">
@@ -211,14 +192,17 @@
     </div>
   </section>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useProductStore } from '../stores/product'
 import { useAuthStore } from '../stores/auth'
+import { useCartStore } from '../stores/cart'
 import type { Product } from '../types/Product'
 
 const productStore = useProductStore()
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 
 // ---------- Данные для карусели-слайдера ----------
 const carouselImages = [
@@ -244,7 +228,6 @@ const dimensions = ref({
 })
 const priceRange = ref({ min: null as number | null, max: null as number | null })
 
-// ---------- Статические данные для фильтров ----------
 const colors = ['Красный', 'Синий', 'Зелёный', 'Жёлтый', 'Чёрный', 'Белый', 'Прозрачный']
 const weightRanges = [
   { label: 'до 1 кг', value: 'lt1' },
@@ -272,6 +255,12 @@ const getMainImageUrl = (product: Product) => {
   return 'https://via.placeholder.com/300x200?text=Нет+фото'
 }
 
+// Вспомогательная функция для безопасного получения названия цвета
+const getColorName = (color: any): string | undefined => {
+  if (!color) return undefined
+  return typeof color === 'object' ? color.name : color
+}
+
 const filteredProducts = computed(() => {
   let result = [...products.value]
 
@@ -286,9 +275,12 @@ const filteredProducts = computed(() => {
       return brandId !== undefined && selectedBrandIds.value.includes(brandId)
     })
   }
-  // Фильтр по цвету
+  // Фильтр по цвету (исправлено)
   if (selectedColors.value.length) {
-    result = result.filter(p => p.color && selectedColors.value.includes(p.color))
+    result = result.filter(p => {
+      const colName = getColorName(p.color)
+      return colName && selectedColors.value.includes(colName)
+    })
   }
   // Фильтр по весу
   if (selectedWeights.value.length) {
@@ -364,7 +356,7 @@ const addToCart = async (product: Product) => {
     return
   }
   try {
-    await productStore.addToCart(product.id, 1)
+    await cartStore.addToCart(product.id, 1)
     alert(`Товар "${product.name}" добавлен в корзину`)
   } catch (err) {
     alert('Ошибка при добавлении в корзину')

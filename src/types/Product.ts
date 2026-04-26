@@ -17,6 +17,9 @@ export interface ProductImage {
   is_main: boolean;
 }
 
+// Помощник для извлечения названия цвета из строки или объекта
+export type ColorValue = string | { id: string; name: string };
+
 export interface Product {
   id: string; // UUID
   name: string;
@@ -32,13 +35,11 @@ export interface Product {
   average_rating: number;
   is_in_stock: boolean;
   is_new?: boolean;
-  // Дополнительные поля, которые могут быть в API
   weight?: number;
   width?: number;
   height?: number;
   length?: number;
-  color?: string;
-  // Добавляем недостающие поля, которые приходят из API
+  color?: ColorValue;
   category_name?: string;
   reviews_count?: number;
 }
@@ -47,3 +48,9 @@ export interface ProductDetail extends Product {
   description: string;
   images: ProductImage[];
 }
+
+
+export const getColorName = (color: ColorValue | undefined): string | undefined => {
+  if (!color) return undefined;
+  return typeof color === 'object' ? color.name : color;
+};
