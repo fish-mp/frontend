@@ -3,47 +3,50 @@
     <div class="cart__wrapper">
       <h1 class="cart__title">Корзина</h1>
 
-      <div v-if="cartStore.items.length === 0" class="cart__empty">
+      <div v-if="cartStore.loading" class="cart__loading">
+        <div class="loading-spinner"></div>
+        <p>Загрузка корзины...</p>
+      </div>
+
+      <div v-else-if="cartStore.items.length === 0" class="cart__empty">
         <p>Корзина пуста</p>
         <router-link to="/shop" class="cart__continue">Продолжить покупки</router-link>
       </div>
 
       <div v-else class="cart__content">
         <div class="cart__items">
-          <div v-for="item in cartStore.items" :key="item.product.id" class="cart-item">
-            <img :src="item.product.image" :alt="item.product.name" class="cart-item__image">
+          <div v-for="item in cartStore.items" :key="item.id" class="cart-item">
+            <img :src="getProductImage(item.product)" alt="" class="cart-item__image" />
             <div class="cart-item__info">
               <h3 class="cart-item__name">{{ item.product.name }}</h3>
               <p class="cart-item__price">{{ item.product.price }} ₽</p>
             </div>
             <div class="cart-item__quantity">
-              <button @click="decrementQuantity(item.product.id, item.quantity)" class="quantity-btn">−</button>
+              <button @click="updateQuantity(item, item.quantity - 1)" :disabled="cartStore.loading">−</button>
               <span class="quantity-value">{{ item.quantity }}</span>
-              <button @click="incrementQuantity(item.product.id)" class="quantity-btn">+</button>
+              <button @click="updateQuantity(item, item.quantity + 1)" :disabled="cartStore.loading">+</button>
             </div>
-            <div class="cart-item__total">
-              {{ item.product.price * item.quantity }} ₽
-            </div>
-            <button @click="removeItem(item.product.id)" class="cart-item__remove">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M3 6H21M19 6V20C19 21.1 18.1 22 17 22H7C5.9 22 5 21.1 5 20V6M8 6V4C8 2.9 8.9 2 10 2H14C15.1 2 16 2.9 16 4V6M10 11V17M14 11V17"/>
-              </svg>
-            </button>
+            <div class="cart-item__total">{{ item.product.price * item.quantity }} ₽</div>
+            <button @click="removeItem(item.id)" :disabled="cartStore.loading">🗑️</button>
           </div>
         </div>
 
         <div class="cart-summary">
-          <h3 class="cart-summary__title">Итого</h3>
+          <h3>Итого</h3>
           <div class="cart-summary__row">
             <span>Товаров:</span>
-            <span>{{ cartStore.totalItems }} шт.</span>
+            <span>{{ cartStore.totalItems() }} шт.</span>
           </div>
           <div class="cart-summary__row cart-summary__total">
             <span>Общая стоимость:</span>
-            <span>{{ cartStore.totalPrice }} ₽</span>
+            <span>{{ cartStore.totalPrice() }} ₽</span>
           </div>
-          <button class="cart-summary__checkout" @click="checkout">Оформить заказ</button>
-          <button class="cart-summary__clear" @click="clearCart">Очистить корзину</button>
+          <button class="cart-summary__checkout" @click="handleCheckout" :disabled="cartStore.loading">
+            Оформить заказ
+          </button>
+          <button class="cart-summary__clear" @click="clearCart" :disabled="cartStore.loading">
+            Очистить корзину
+          </button>
         </div>
       </div>
     </div>
@@ -51,34 +54,48 @@
 </template>
 
 <script setup lang="ts">
-import { useCartStore } from '../stores/cart'
+import { onMounted } from 'vue'
+import { useCartStore, type CartItemResponse } from '../stores/cart'
+import { useRouter } from 'vue-router'
 
 const cartStore = useCartStore()
+const router = useRouter()
 
-const incrementQuantity = (productId: number) => {
-  const item = cartStore.items.find(i => i.product.id === productId)
-  if (item) cartStore.updateQuantity(productId, item.quantity + 1)
+const getProductImage = (product: any) => {
+  if (product.main_image?.image) return product.main_image.image
+  if (product.image) return product.image
+  return 'https://via.placeholder.com/300x200?text=Нет+фото'
 }
 
-const decrementQuantity = (productId: number, currentQty: number) => {
-  if (currentQty > 1) {
-    cartStore.updateQuantity(productId, currentQty - 1)
+onMounted(() => {
+  cartStore.fetchCart()
+})
+
+const updateQuantity = (item: CartItemResponse, newQty: number) => {
+  if (newQty <= 0) {
+    cartStore.removeFromCart(item.id)
   } else {
-    cartStore.removeFromCart(productId)
+    cartStore.updateQuantity(item.id, newQty)
   }
 }
 
-const removeItem = (productId: number) => {
-  cartStore.removeFromCart(productId)
+const removeItem = (itemId: number) => cartStore.removeFromCart(itemId)
+
+const clearCart = async () => {
+  if (confirm('Вы уверены, что хотите очистить корзину?')) {
+    await cartStore.clearCart()
+  }
 }
 
-const clearCart = () => {
-  cartStore.clearCart()
-}
-
-const checkout = () => {
-  // Здесь будет отправка заказа на сервер
-  alert('Функция оформления заказа будет подключена позже')
+const handleCheckout = async () => {
+  if (cartStore.items.length === 0) return
+  try {
+    await cartStore.createOrder()
+    alert('Спасибо за заказ! С вами свяжется менеджер после уточнения наличия товара на складе.')
+    router.push('/shop')
+  } catch (err) {
+    alert('Не удалось оформить заказ. Попробуйте позже.')
+  }
 }
 </script>
 
