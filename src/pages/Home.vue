@@ -1658,7 +1658,7 @@ const createStars = () => {
   &.neon-fish {
     top: 65%;
     right: -80px;
-    animation: fishSwimReverse 30s linear infinite 3s;
+   animation: fishSwim 35s linear infinite 6s;
     color: #00E5FF;
     
     .fish-body {
@@ -1789,7 +1789,7 @@ const createStars = () => {
   &.angel-fish {
     top: 75%;
     right: -70px;
-    animation: fishSwimReverse 28s linear infinite 4s;
+    animation: fishSwim 35s linear infinite 6s;
     color: #536DFE;
     
     .fish-body {
@@ -2020,19 +2020,7 @@ const createStars = () => {
   animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
   position: relative;
   
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 4px;
-    background: linear-gradient(90deg, #00e5ff, #0091ea, #0066cc);
-    border-radius: 2px;
-    animation: widthGrow 1.2s ease-out 1s both, colorShift 4s ease-in-out infinite 2s;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.7);
-  }
+
 }
 
 .department__description {
@@ -2132,37 +2120,35 @@ const createStars = () => {
 
 @keyframes fishSwim {
   0% {
-    transform: translateX(-100px) translateY(0) rotateY(0deg);
+    transform: translateX(-100px) translateY(0);
+    opacity: 0;
   }
-  25% {
-    transform: translateX(25vw) translateY(-30px) rotateY(0deg);
+  10% {
+    opacity: 1;
   }
-  50% {
-    transform: translateX(50vw) translateY(20px) rotateY(0deg);
-  }
-  75% {
-    transform: translateX(75vw) translateY(-10px) rotateY(0deg);
+  90% {
+    opacity: 1;
   }
   100% {
-    transform: translateX(100vw) translateY(0) rotateY(0deg);
+    transform: translateX(120vw) translateY(0);
+    opacity: 0;
   }
 }
 
 @keyframes fishSwimReverse {
   0% {
     transform: translateX(100vw) translateY(0) scaleX(-1);
+    opacity: 0;
   }
-  25% {
-    transform: translateX(75vw) translateY(-30px) scaleX(-1);
+  10% {
+    opacity: 1;
   }
-  50% {
-    transform: translateX(50vw) translateY(20px) scaleX(-1);
-  }
-  75% {
-    transform: translateX(25vw) translateY(-10px) scaleX(-1);
+  90% {
+    opacity: 1;
   }
   100% {
-    transform: translateX(-100px) translateY(0) scaleX(-1);
+    transform: translateX(-120vw) translateY(0) scaleX(-1);
+    opacity: 0;
   }
 }
 
@@ -2177,8 +2163,20 @@ const createStars = () => {
 }
 
 @keyframes shoalSwim {
-  0% { transform: translateX(-100px); }
-  100% { transform: translateX(100vw); }
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120vw);
+    opacity: 0;
+  }
 }
 
 @keyframes fishSwimSmall {
@@ -2491,6 +2489,7 @@ const createStars = () => {
   .neon-fish {
     display: none;
   }
+
   
   .planet-container {
     &.planet-1,

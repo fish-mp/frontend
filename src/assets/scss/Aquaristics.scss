@@ -210,18 +210,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
 .department__title {
   position: relative;
   
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 3px;
-    background: $blue-gradient;
-    border-radius: 2px;
-    animation: widthGrow 1s ease-out 0.5s both;
-  }
+
 }
 
 @keyframes widthGrow {
