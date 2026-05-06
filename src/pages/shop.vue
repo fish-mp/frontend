@@ -339,7 +339,6 @@ const addToCart = async (product: Product) => {
 
 const selectCollection = (collection: any) => {
   console.log('Выбрана подборка:', collection.name)
-  // здесь можно добавить фильтрацию товаров по коллекции
 }
 
 onMounted(async () => {
@@ -760,6 +759,11 @@ input, select, textarea, button {
     transform: translateY(-8px);
     box-shadow: 0 25px 40px rgba(0, 0, 0, 0.15);
   }
+  &__link {
+    display: block;
+    text-decoration: none !important;     /* убираем подчёркивание */
+    color: inherit;
+  }
   &__image {
     height: 200px;
     overflow: hidden;
@@ -783,6 +787,8 @@ input, select, textarea, button {
     height: 46px;
     border-radius: 50%;
     background: $blue-gradient;
+    border: none;                 /* убираем лишний бордер */
+    outline: none;               /* убираем обводку */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -790,6 +796,10 @@ input, select, textarea, button {
     @include smooth-transition;
     z-index: 2;
     &:hover { transform: scale(1.15); }
+    svg {
+      width: 22px;
+      height: 22px;
+    }
   }
 }
 
