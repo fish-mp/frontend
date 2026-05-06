@@ -57,6 +57,22 @@
           </div>
 
           <div class="product-detail__actions">
+            <!-- Кнопка "В избранное" -->
+            <button 
+              class="product-detail__favorite btn btn--secondary" 
+              @click="toggleFavorite"
+              :disabled="favoritesStore.loading"
+            >
+              <svg v-if="isFavorite" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span>{{ isFavorite ? 'В избранном' : 'В избранное' }}</span>
+            </button>
+
+            <!-- Кнопка "В корзину" -->
             <button class="product-detail__cart btn btn--primary" @click="addToCart" :disabled="!product.is_in_stock">
               <span class="btn-text">В корзину</span>
             </button>
@@ -133,13 +149,15 @@ import { useRoute } from 'vue-router'
 import { useProductStore } from '../stores/product'
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
-import type { ProductDetail, ProductImage, Product} from '../types/Product'
+import { useFavoritesStore } from '../stores/favorites'
+import type { ProductDetail, ProductImage, Product } from '../types/Product'
 import { getColorName } from '../types/Product'
 
 const route = useRoute()
 const productStore = useProductStore()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
+const favoritesStore = useFavoritesStore()
 
 const productId = computed(() => route.params.id as string)
 const product = computed<ProductDetail | null>(() => productStore.currentProduct as ProductDetail | null)
@@ -174,6 +192,11 @@ onMounted(async () => {
       currentImage.value = getImageUrl(product.value.main_image.image)
     }
   }
+
+  // Если пользователь авторизован, загружаем список избранного
+  if (authStore.isAuthenticated) {
+    await favoritesStore.fetchFavorites()
+  }
 })
 
 // Похожие товары (фильтруем по категории и исключаем текущий)
@@ -207,7 +230,7 @@ const setRating = async (star: number) => {
   }
 }
 
-// Добавление в корзину (используем cartStore)
+// Добавление в корзину
 const addToCart = async () => {
   if (!authStore.isAuthenticated) {
     alert('Для добавления в корзину необходимо авторизоваться')
@@ -222,7 +245,38 @@ const addToCart = async () => {
     alert('Ошибка при добавлении в корзину')
   }
 }
+
+// Логика избранного
+const isFavorite = computed(() => {
+  if (!product.value) return false
+  return favoritesStore.isFavorite(product.value.id)
+})
+
+const toggleFavorite = async () => {
+  if (!authStore.isAuthenticated) {
+    alert('Для добавления в избранное необходимо авторизоваться')
+    return
+  }
+  const currentProduct = product.value
+  if (!currentProduct) return
+
+  try {
+    if (isFavorite.value) {
+      const favId = favoritesStore.getFavoriteId(currentProduct.id)
+      if (favId) {
+        await favoritesStore.removeFromFavorites(favId)
+        alert('Товар удалён из избранного')
+      }
+    } else {
+      await favoritesStore.addToFavorites(currentProduct.id)
+      alert('Товар добавлен в избранное')
+    }
+  } catch (err) {
+    alert('Ошибка при изменении избранного')
+  }
+}
 </script>
+
 <style lang="scss" scoped>
 // Все стили остаются без изменений (как в предыдущем ответе)
 $pure-white: #ffffff;
@@ -438,7 +492,35 @@ input, select, textarea, button {
   }
 
   &__actions {
+    display: flex;
+    gap: 1rem;
     margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  &__favorite {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 2px solid $primary-blue;
+    color: $primary-blue;
+    padding: 0.75rem 1.5rem;
+    border-radius: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: $primary-blue;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   &__cart {
