@@ -217,8 +217,10 @@
                 </div>
               </router-link>
               <button class="product-card__cart" @click="addToCart(product)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C16.4696 17 15.9609 17.2107 15.5858 17.5858C15.2107 17.9609 15 18.4696 15 19C15 19.5304 15.2107 20.0391 15.5858 20.4142C15.9609 20.7893 16.4696 21 17 21C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19C19 18.4696 18.7893 18.0391 18.4142 17.5858C17.9609 17.2107 17.5304 17 17 17ZM9 19C9 19.5304 8.78929 20.0391 8.41421 20.4142C8.03914 20.7893 7.53043 21 7 21C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19C5 18.4696 5.21071 17.9609 5.58579 17.5858C5.96086 17.2107 6.46957 17 7 17C7.53043 17 8.03914 17.2107 8.41421 17.5858C8.78929 17.9609 9 18.4696 9 19Z"/>
+                <!-- Новая красивая белая иконка корзины -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
+                  <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                  <path d="M0 0h24v24H0z" fill="none"/>
                 </svg>
               </button>
             </div>
@@ -761,7 +763,7 @@ input, select, textarea, button {
   }
   &__link {
     display: block;
-    text-decoration: none !important;     /* убираем подчёркивание */
+    text-decoration: none;
     color: inherit;
   }
   &__image {
@@ -787,8 +789,8 @@ input, select, textarea, button {
     height: 46px;
     border-radius: 50%;
     background: $blue-gradient;
-    border: none;                 /* убираем лишний бордер */
-    outline: none;               /* убираем обводку */
+    border: none;
+    outline: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -797,8 +799,9 @@ input, select, textarea, button {
     z-index: 2;
     &:hover { transform: scale(1.15); }
     svg {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
   }
 }
