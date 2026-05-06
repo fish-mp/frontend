@@ -177,14 +177,7 @@
           </div>
 
           <!-- Цена -->
-          <div class="shop-filters__group">
-            <label class="shop-filters__label">Цена, ₽</label>
-            <div class="price-range">
-              <input type="number" v-model.number="priceMin" placeholder="от" min="0" />
-              <span>—</span>
-              <input type="number" v-model.number="priceMax" placeholder="до" min="0" />
-            </div>
-          </div>
+       
 
           <!-- Кнопка сброса -->
           <button class="shop-filters__reset" @click="resetFilters">Сбросить фильтры</button>
