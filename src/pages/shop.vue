@@ -10,40 +10,57 @@
 
   <section class="shop-section">
     <div class="shop-section__wrapper">
-      <div class="shop-carousel">
-        <h2 class="shop-carousel__title">Актуальное</h2>
+      <!-- Карусель подборок (коллекций) из API -->
+      <div class="shop-carousel" v-if="productStore.collections.length">
+        <h2 class="shop-carousel__title">Популярные подборки</h2>
         <div class="carousel-container">
-          <button class="carousel-arrow carousel-arrow--left" @click="prevSlide" :disabled="currentSlide === 0">
+          <button class="carousel-arrow carousel-arrow--left" @click="prevCollectionSlide" :disabled="currentCollectionSlide === 0">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
-          <div class="carousel-slide" :style="{ backgroundImage: `url(${carouselImages[currentSlide].url})` }">
-            <div class="carousel-overlay">
-              <h3 class="carousel-title">{{ carouselImages[currentSlide].title }}</h3>
-              <p class="carousel-subtitle">{{ carouselImages[currentSlide].subtitle }}</p>
+          <div class="carousel-track" :style="{ transform: `translateX(-${currentCollectionSlide * 100}%)` }">
+            <div
+              v-for="collection in productStore.collections"
+              :key="collection.id"
+              class="carousel-slide"
+              @click="selectCollection(collection)"
+            >
+              <img
+                v-if="collection.cover_image"
+                :src="getFullImageUrl(collection.cover_image)"
+                :alt="collection.name"
+                class="carousel-image"
+              />
+              <div v-else class="carousel-placeholder">
+                <span>📦</span>
+                <p>{{ collection.name }}</p>
+              </div>
+              <div class="carousel-overlay">
+                <h3 class="carousel-title">{{ collection.name }}</h3>
+              </div>
             </div>
           </div>
-          <button class="carousel-arrow carousel-arrow--right" @click="nextSlide" :disabled="currentSlide === carouselImages.length - 1">
+          <button class="carousel-arrow carousel-arrow--right" @click="nextCollectionSlide" :disabled="currentCollectionSlide === productStore.collections.length - 1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </button>
         </div>
         <div class="carousel-dots">
-          <span v-for="(_, index) in carouselImages" :key="index" class="carousel-dot"
-            :class="{ active: currentSlide === index }" @click="currentSlide = index"></span>
-        </div>
-        <div class="beginner-banner">
-          <div class="beginner-banner__content">
-            <h3>🐟 Новичок в аквариумистике?</h3>
-            <p>Выбор аквариума, совместимость рыб, оборудование и запуск</p>
-          </div>
-          <router-link to="/beginner-guide" class="beginner-banner__btn">Руководство для новичков →</router-link>
+          <span
+            v-for="(_, index) in productStore.collections"
+            :key="index"
+            class="carousel-dot"
+            :class="{ active: currentCollectionSlide === index }"
+            @click="currentCollectionSlide = index"
+          ></span>
         </div>
       </div>
 
+      <!-- Основная часть: фильтры и товары -->
       <div class="shop-layout">
+        <!-- Левая колонка фильтров -->
         <aside class="shop-filters">
           <h3 class="shop-filters__title">Фильтры</h3>
 
@@ -51,7 +68,7 @@
           <div class="shop-filters__group">
             <label class="shop-filters__label">Сортировка</label>
             <div class="select-wrapper">
-              <select v-model="sortBy">
+              <select v-model="sortBy" class="filter-select">
                 <option value="-created_at">Новые</option>
                 <option value="-average_rating">Популярные</option>
                 <option value="price">Дешевле</option>
@@ -65,7 +82,7 @@
             </div>
           </div>
 
-          <!-- Категория -->
+          <!-- Категория (радио-кнопки) -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Категория</label>
             <div class="shop-filters__options">
@@ -87,15 +104,25 @@
             </div>
           </div>
 
-          <!-- Цвет -->
+          <!-- Цвет (выпадающий список) -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Цвет</label>
-            <div class="shop-filters__options shop-filters__colors">
-              <label v-for="color in productColors" :key="color.id" class="shop-filters__color">
-                <input type="checkbox" :value="color.id" v-model="selectedColorIds" />
-                <span class="color-dot" :style="{ backgroundColor: color.name }"></span>
-                <span>{{ color.name }}</span>
-              </label>
+            <div class="select-wrapper">
+              <select v-model="selectedColorId" class="filter-select">
+                <option value="">Все цвета</option>
+                <option
+                  v-for="color in productColors"
+                  :key="color.id"
+                  :value="color.id"
+                >
+                  {{ color.name }}
+                </option>
+              </select>
+              <div class="select-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -109,7 +136,7 @@
             </div>
           </div>
 
-          <!-- Габариты -->
+          <!-- Размеры (габариты) -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Габариты, см</label>
             <div class="shop-filters__dimensions">
@@ -150,9 +177,11 @@
             </div>
           </div>
 
+          <!-- Кнопка сброса -->
           <button class="shop-filters__reset" @click="resetFilters">Сбросить фильтры</button>
         </aside>
 
+        <!-- Правая колонка с товарами -->
         <main class="shop-products">
           <div class="shop-products__header">
             <h2 class="shop-products__title">Товары</h2>
@@ -202,22 +231,20 @@ const productStore = useProductStore()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 
-// ---------- Карусель ----------
-const carouselImages = [
-  { url: 'https://via.placeholder.com/1200x400?text=Акция+на+аквариумы', title: 'Скидки на аквариумы до 30%', subtitle: 'Только до конца месяца' },
-  { url: 'https://via.placeholder.com/1200x400?text=Новые+корма+Tetra', title: 'Новая линейка кормов Tetra', subtitle: 'Сбалансированное питание для ваших рыб' },
-  { url: 'https://via.placeholder.com/1200x400?text=Оборудование+Eheim', title: 'Фильтры Eheim со скидкой', subtitle: 'Профессиональное оборудование' },
-  { url: 'https://via.placeholder.com/1200x400?text=Декор+для+аквариума', title: 'Коллекция декора 2025', subtitle: 'Создайте уникальный подводный мир' }
-]
-const currentSlide = ref(0)
-const nextSlide = () => { if (currentSlide.value < carouselImages.length - 1) currentSlide.value++ }
-const prevSlide = () => { if (currentSlide.value > 0) currentSlide.value-- }
+// ---------- Карусель коллекций ----------
+const currentCollectionSlide = ref(0)
+const prevCollectionSlide = () => {
+  if (currentCollectionSlide.value > 0) currentCollectionSlide.value--
+}
+const nextCollectionSlide = () => {
+  if (currentCollectionSlide.value < productStore.collections.length - 1) currentCollectionSlide.value++
+}
 
-// ---------- Фильтры ----------
-const sortBy = ref('-created_at')                // порядок сортировки
+// ---------- Фильтры и сортировка ----------
+const sortBy = ref('-created_at')
 const selectedCategoryId = ref<number | null>(null)
 const selectedBrandIds = ref<number[]>([])
-const selectedColorIds = ref<string[]>([])
+const selectedColorId = ref<string>('')
 const weightMin = ref<number | null>(null)
 const weightMax = ref<number | null>(null)
 const widthMin = ref<number | null>(null)
@@ -229,37 +256,29 @@ const lengthMax = ref<number | null>(null)
 const priceMin = ref<number | null>(null)
 const priceMax = ref<number | null>(null)
 
-// Данные из стора
+// Данные из API
 const categories = computed(() => productStore.categories)
 const brands = computed(() => productStore.brands)
 const productColors = computed(() => productStore.colors)
 const products = computed(() => productStore.products)
 
-// Загрузка товаров с параметрами на бэкенд
+// Загрузка товаров с параметрами
 const loadProducts = async () => {
   const params: Record<string, any> = {}
-
   if (sortBy.value) params.ordering = sortBy.value
-
   if (selectedCategoryId.value) params.category = selectedCategoryId.value
-
   if (selectedBrandIds.value.length) params.brand = selectedBrandIds.value.join(',')
-
-  if (selectedColorIds.value.length) params.color = selectedColorIds.value.join(',')
-
+  if (selectedColorId.value) params.color = selectedColorId.value
   if (weightMin.value !== null) params.weight_min = weightMin.value
   if (weightMax.value !== null) params.weight_max = weightMax.value
-
   if (widthMin.value !== null) params.width_min = widthMin.value
   if (widthMax.value !== null) params.width_max = widthMax.value
   if (heightMin.value !== null) params.height_min = heightMin.value
   if (heightMax.value !== null) params.height_max = heightMax.value
   if (lengthMin.value !== null) params.length_min = lengthMin.value
   if (lengthMax.value !== null) params.length_max = lengthMax.value
-
   if (priceMin.value !== null) params.price_min = priceMin.value
   if (priceMax.value !== null) params.price_max = priceMax.value
-
   await productStore.fetchProducts(params)
 }
 
@@ -267,7 +286,7 @@ const loadProducts = async () => {
 const resetFilters = () => {
   selectedCategoryId.value = null
   selectedBrandIds.value = []
-  selectedColorIds.value = []
+  selectedColorId.value = ''
   weightMin.value = null
   weightMax.value = null
   widthMin.value = null
@@ -281,13 +300,13 @@ const resetFilters = () => {
   sortBy.value = '-created_at'
 }
 
-// Следим за всеми фильтрами и перезагружаем товары
+// Отслеживание изменений фильтров
 watch(
   [
     sortBy,
     selectedCategoryId,
     selectedBrandIds,
-    selectedColorIds,
+    selectedColorId,
     weightMin,
     weightMax,
     widthMin,
@@ -303,40 +322,50 @@ watch(
   { deep: true }
 )
 
-// Инициализация
-onMounted(async () => {
-  await productStore.fetchColors()
-  await productStore.fetchCategories()
-  await productStore.fetchBrands()
-  await loadProducts()
-})
-
 // Вспомогательные функции
+const getFullImageUrl = (path: string) => {
+  if (!path) return ''
+  if (path.startsWith('/media')) return import.meta.env.VITE_BACKEND_URL + path
+  return path
+}
+
 const getMainImageUrl = (product: Product) => {
   if (product.main_image?.image) {
-    let url = product.main_image.image
-    if (url.startsWith('/media')) url = import.meta.env.VITE_BACKEND_URL + url
-    return url
+    return getFullImageUrl(product.main_image.image)
   }
   return 'https://via.placeholder.com/300x200?text=Нет+фото'
 }
 
 const addToCart = async (product: Product) => {
   if (!authStore.isAuthenticated) {
-    alert('Для добавления в корзину необходимо авторизоваться')
+    console.warn('Для добавления в корзину необходимо авторизоваться')
     return
   }
   try {
     await cartStore.addToCart(product.id, 1)
-    alert(`Товар "${product.name}" добавлен в корзину`)
+    console.log(`Товар "${product.name}" добавлен в корзину`)
   } catch (err) {
-    alert('Ошибка при добавлении в корзину')
+    console.error('Ошибка при добавлении в корзину', err)
   }
 }
+
+// Выбор коллекции (опционально)
+const selectCollection = (collection: any) => {
+  console.log('Выбрана подборка:', collection.name)
+  // Здесь можно сделать фильтрацию товаров по коллекции, если бэкенд это поддерживает
+}
+
+// Инициализация
+onMounted(async () => {
+  await productStore.fetchColors()
+  await productStore.fetchCategories()
+  await productStore.fetchBrands()
+  await productStore.fetchCollections()
+  await loadProducts()
+})
 </script>
 
 <style lang="scss" scoped>
-// Переменные
 $pure-white: #ffffff;
 $soft-white: #fafbfc;
 $light-grey: #f0f4f8;
@@ -347,7 +376,6 @@ $text-medium: #5d6d87;
 $text-light: #8a9bb8;
 $accent-glow: rgba(23, 61, 237, 0.15);
 
-// Глобальные стили для box-sizing
 input, select, textarea, button {
   box-sizing: border-box;
 }
@@ -356,31 +384,23 @@ input, select, textarea, button {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
 
 @mixin smooth-transition {
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-// Секция department (hero)
 .department {
   position: relative;
   padding: 120px 2rem 80px;
   background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
   overflow: hidden;
-  
   &__wrapper {
     max-width: 1200px;
     margin: 0 auto;
-    position: relative;
-    z-index: 2;
     text-align: center;
   }
-  
   &__title {
     font-size: calc(3.5rem + 1.5vw);
     font-weight: 700;
@@ -389,122 +409,30 @@ input, select, textarea, button {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 1.5rem;
-    line-height: 1.1;
-    font-family: 'Inter', 'SF Pro Display', system-ui, sans-serif;
     animation: titleSlideUp 0.8s ease-out;
   }
-  
   &__description {
     font-size: 1.25rem;
     color: $text-medium;
     max-width: 600px;
     margin: 0 auto;
-    line-height: 1.6;
-    font-weight: 400;
     animation: fadeInUp 0.8s ease-out 0.2s both;
   }
 }
 
-// Анимации
-@keyframes titleSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// Баннер для новичков
-.beginner-banner {
-  margin: 2rem 0;
-  border-radius: 16px;
-  background: #fff;
-  border: 1px solid $light-grey;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-
-  &__content {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  h3 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: $text-dark;
-    margin: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  p {
-    margin: 0;
-    color: $text-medium;
-    font-size: 1rem;
-  }
-
-  &__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: $primary-blue;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 40px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-    white-space: nowrap;
-
-    &:hover {
-      background: darken($primary-blue, 8%);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba($primary-blue, 0.3);
-    }
-  }
-}
-
-// Основная секция магазина
 .shop-section {
   position: relative;
   padding: 80px 2rem;
   background: $soft-white;
   min-height: 100vh;
-  
   &__wrapper {
     max-width: 1400px;
     margin: 0 auto;
-    position: relative;
-    z-index: 2;
   }
 }
 
-// Карусель-слайдер (одно большое изображение)
 .shop-carousel {
   margin-bottom: 40px;
-  
   &__title {
     font-size: 1.8rem;
     font-weight: 700;
@@ -516,19 +444,46 @@ input, select, textarea, button {
 .carousel-container {
   position: relative;
   width: 100%;
-  height: 400px;
-  border-radius: 24px;
   overflow: hidden;
+  border-radius: 24px;
   @include glass-effect;
-  padding: 0; // убираем внутренние отступы
+  padding: 0;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
 }
 
 .carousel-slide {
+  flex: 0 0 100%;
+  position: relative;
+  cursor: pointer;
+  height: 400px;
+  overflow: hidden;
+}
+
+.carousel-image {
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: background-image 0.3s ease;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: $light-grey;
+  color: $text-medium;
+  font-size: 3rem;
+  p {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
 }
 
 .carousel-overlay {
@@ -545,11 +500,6 @@ input, select, textarea, button {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 8px;
-}
-
-.carousel-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
 }
 
 .carousel-arrow {
@@ -569,30 +519,16 @@ input, select, textarea, button {
   cursor: pointer;
   z-index: 10;
   @include smooth-transition;
-  
   &:hover:not(:disabled) {
     background: rgba(255,255,255,0.5);
     transform: translateY(-50%) scale(1.1);
   }
-  
   &:disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
-  
-  svg {
-    width: 28px;
-    height: 28px;
-    stroke: currentColor;
-  }
-  
-  &--left {
-    left: 20px;
-  }
-  
-  &--right {
-    right: 20px;
-  }
+  &--left { left: 20px; }
+  &--right { right: 20px; }
 }
 
 .carousel-dots {
@@ -609,19 +545,16 @@ input, select, textarea, button {
   background: $light-grey;
   cursor: pointer;
   @include smooth-transition;
-  
   &.active {
     background: $primary-blue;
     transform: scale(1.3);
   }
-  
   &:hover {
     background: $primary-blue;
     opacity: 0.7;
   }
 }
 
-// Основной лейаут (фильтры + товары)
 .shop-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -629,28 +562,21 @@ input, select, textarea, button {
   margin-top: 40px;
 }
 
-// Левая колонка фильтров
 .shop-filters {
   @include glass-effect;
   border-radius: 24px;
   padding: 30px;
   height: fit-content;
-  
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
     color: $text-dark;
     margin-bottom: 25px;
   }
-  
   &__group {
     margin-bottom: 25px;
-    
-    &:last-child {
-      margin-bottom: 0;
-    }
+    &:last-child { margin-bottom: 0; }
   }
-  
   &__label {
     display: block;
     font-weight: 600;
@@ -658,7 +584,6 @@ input, select, textarea, button {
     margin-bottom: 12px;
     font-size: 1.1rem;
   }
-  
   &__options {
     display: flex;
     flex-direction: column;
@@ -666,140 +591,45 @@ input, select, textarea, button {
     max-height: 200px;
     overflow-y: auto;
     padding-right: 10px;
-    
     &::-webkit-scrollbar {
       width: 4px;
     }
-    &::-webkit-scrollbar-track {
-      background: $light-grey;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: $primary-blue;
-    }
   }
-  
-  // Стили для радио-кнопок (категории)
-  &__radio {
+  &__radio, &__checkbox {
     display: flex;
     align-items: center;
     gap: 10px;
     cursor: pointer;
     font-size: 0.95rem;
     color: $text-medium;
-    
-    input[type="radio"] {
-      width: 18px;
-      height: 18px;
-      accent-color: $primary-blue;
-      cursor: pointer;
-    }
-    
-    &:hover {
-      color: $primary-blue;
-    }
+    &:hover { color: $primary-blue; }
   }
-  
-  // Стили для чекбоксов
-  &__checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: $text-medium;
-    
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: $primary-blue;
-      cursor: pointer;
-    }
-    
-    &:hover {
-      color: $primary-blue;
-    }
-  }
-  
-  &__colors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  
-  &__color {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    
-    .color-dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid $light-grey;
-    }
-    
-    input[type="checkbox"] {
-      display: none;
-    }
-    
-    input:checked + .color-dot {
-      border-color: $primary-blue;
-      box-shadow: 0 0 0 2px rgba($primary-blue, 0.3);
-    }
-  }
-  
-  &__empty {
-    font-size: 0.9rem;
-    color: $text-light;
-    font-style: italic;
-    padding: 5px 0;
-  }
-  
   &__dimensions {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    
     .dimension-row {
       display: flex;
       align-items: center;
       gap: 10px;
       font-size: 0.95rem;
-      color: $text-medium;
-      
-      span:first-child {
-        min-width: 70px;
-      }
-      
+      span:first-child { min-width: 70px; }
       .dimension-inputs {
         display: flex;
         align-items: center;
         gap: 5px;
         flex: 1;
-        
         input {
           width: 70px;
           padding: 8px 10px;
           border: 1px solid $light-grey;
           border-radius: 12px;
-          font-size: 0.9rem;
           background: rgba(255,255,255,0.8);
-          box-sizing: border-box;
-          
-          &:focus {
-            outline: none;
-            border-color: $primary-blue;
-          }
-        }
-        
-        span {
-          color: $text-light;
+          &:focus { outline: none; border-color: $primary-blue; }
         }
       }
     }
   }
-  
   &__reset {
     width: 100%;
     padding: 14px;
@@ -811,11 +641,9 @@ input, select, textarea, button {
     font-weight: 600;
     cursor: pointer;
     @include smooth-transition;
-    
     &:hover {
       background: $primary-blue;
       color: white;
-      border-color: transparent;
     }
   }
 }
@@ -824,51 +652,29 @@ input, select, textarea, button {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%; // контейнер занимает всю ширину
-  
   input {
     flex: 1;
-    min-width: 0;  // позволяет инпутам сжиматься
-    width: 100%;   // занимает доступное пространство
+    min-width: 0;
     padding: 10px 12px;
     border: 1px solid $light-grey;
     border-radius: 12px;
-    font-size: 0.95rem;
-    box-sizing: border-box;
-    
-    &:focus {
-      outline: none;
-      border-color: $primary-blue;
-    }
+    &:focus { outline: none; border-color: $primary-blue; }
   }
-  
-  span {
-    color: $text-light;
-    flex-shrink: 0;
-  }
+  span { color: $text-light; }
 }
 
 .select-wrapper {
   position: relative;
-  
   select {
     width: 100%;
     padding: 14px 18px;
     border: 1px solid $light-grey;
     border-radius: 16px;
     background: $pure-white;
-    font-size: 0.95rem;
-    color: $text-dark;
     appearance: none;
     cursor: pointer;
-    box-sizing: border-box;
-    
-    &:focus {
-      outline: none;
-      border-color: $primary-blue;
-    }
+    &:focus { outline: none; border-color: $primary-blue; }
   }
-  
   .select-arrow {
     position: absolute;
     right: 15px;
@@ -879,7 +685,6 @@ input, select, textarea, button {
   }
 }
 
-// Правая колонка товаров
 .shop-products {
   &__header {
     display: flex;
@@ -887,13 +692,7 @@ input, select, textarea, button {
     justify-content: space-between;
     margin-bottom: 30px;
   }
-  
-  &__title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: $text-dark;
-  }
-  
+  &__title { font-size: 1.8rem; font-weight: 700; color: $text-dark; }
   &__count {
     font-size: 1rem;
     color: $text-light;
@@ -901,11 +700,14 @@ input, select, textarea, button {
     padding: 6px 15px;
     border-radius: 30px;
   }
-  
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 24px;
+  }
+  &__loading, &__error {
+    text-align: center;
+    padding: 60px;
   }
 }
 
@@ -915,276 +717,74 @@ input, select, textarea, button {
   border-radius: 24px;
   overflow: hidden;
   @include smooth-transition;
-  
   &:hover {
     transform: translateY(-8px);
     box-shadow: 0 25px 40px rgba(0, 0, 0, 0.15);
   }
-  
-  &__link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-  
   &__image {
-    position: relative;
     height: 200px;
     overflow: hidden;
-    
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
     }
-    
-    &:hover img {
-      transform: scale(1.1);
-    }
+    &:hover img { transform: scale(1.1); }
   }
-  
-  &__info {
-    padding: 20px;
-  }
-  
-  &__name {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: $text-dark;
-    margin-bottom: 6px;
-    line-height: 1.3;
-  }
-  
-  &__category {
-    font-size: 0.9rem;
-    color: $text-light;
-    margin-bottom: 10px;
-  }
-  
-  &__price {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: $primary-blue;
-    margin-bottom: 15px;
-  }
-  
+  &__info { padding: 20px; }
+  &__name { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  &__category { font-size: 0.9rem; color: $text-light; margin-bottom: 10px; }
+  &__price { font-size: 1.4rem; font-weight: 700; color: $primary-blue; margin-bottom: 15px; }
   &__cart {
     position: absolute;
     bottom: 20px;
     right: 20px;
     width: 46px;
     height: 46px;
-    border: none;
     border-radius: 50%;
     background: $blue-gradient;
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     @include smooth-transition;
     z-index: 2;
-    
-    &:hover {
-      transform: scale(1.15);
-      box-shadow: 0 10px 20px rgba($primary-blue, 0.3);
-    }
-    
-    svg {
-      width: 22px;
-      height: 22px;
-    }
+    &:hover { transform: scale(1.15); }
   }
 }
 
-// Адаптивность
+@keyframes titleSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 1200px) {
-  .shop-layout {
-    grid-template-columns: 280px 1fr;
-    gap: 30px;
-  }
-  
-  .shop-filters {
-    padding: 25px;
-  }
-  
-  .carousel-container {
-    height: 350px;
-  }
-  
-  .carousel-title {
-    font-size: 1.8rem;
-  }
+  .shop-layout { grid-template-columns: 280px 1fr; gap: 30px; }
+  .carousel-slide { height: 350px; }
+  .carousel-title { font-size: 1.8rem; }
 }
-
 @media (max-width: 968px) {
-  .shop-layout {
-    grid-template-columns: 1fr;
-  }
-  
-  .shop-filters {
-    order: 2;
-    margin-top: 40px;
-  }
-  
-  .shop-products {
-    order: 1;
-  }
-  
-  .department {
-    padding: 100px 1.5rem 60px;
-    &__title {
-      font-size: calc(2.5rem + 1.5vw);
-    }
-  }
-  
-  .shop-section {
-    padding: 60px 1.5rem;
-  }
-  
-  .carousel-container {
-    height: 300px;
-  }
-  
-  .carousel-title {
-    font-size: 1.5rem;
-  }
-  
-  .carousel-subtitle {
-    font-size: 1rem;
-  }
+  .shop-layout { grid-template-columns: 1fr; }
+  .shop-filters { order: 2; margin-top: 40px; }
+  .department { padding: 100px 1.5rem 60px; }
+  .shop-section { padding: 60px 1.5rem; }
+  .carousel-slide { height: 300px; }
 }
-
 @media (max-width: 768px) {
-  .shop-products__grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-  }
-  
-  .carousel-container {
-    height: 250px;
-  }
-  
-  .carousel-overlay {
-    padding: 20px;
-  }
-  
-  .carousel-title {
-    font-size: 1.3rem;
-  }
-  
-  .carousel-subtitle {
-    font-size: 0.9rem;
-  }
+  .shop-products__grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .carousel-slide { height: 250px; }
+  .carousel-overlay { padding: 20px; }
+  .carousel-title { font-size: 1.3rem; }
 }
-
 @media (max-width: 480px) {
-  .department {
-    padding: 60px 0.75rem 30px;
-    &__title {
-      font-size: calc(1.5rem + 1.5vw);
-    }
-  }
-  
-  .shop-section {
-    padding: 30px 0.75rem;
-  }
-  
-  .shop-carousel__title {
-    font-size: 1.5rem;
-  }
-  
-  .shop-filters {
-    padding: 20px;
-  }
-  
-  .shop-filters__dimensions .dimension-row .dimension-inputs input {
-    width: 50px;
-  }
-  
-  .carousel-container {
-    height: 200px;
-  }
-  
-  .carousel-arrow {
-    width: 36px;
-    height: 36px;
-    
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
-  
-  .carousel-overlay {
-    padding: 15px;
-  }
-  
-  .carousel-title {
-    font-size: 1.1rem;
-  }
-  
-  .carousel-subtitle {
-    font-size: 0.8rem;
-  }
-}
-
-// Дополнительный декор
-.department::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(23, 61, 237, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(77, 124, 254, 0.05) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.cart-fab {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: $blue-gradient;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 30px rgba($primary-blue, 0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  z-index: 1000;
-
-  &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 15px 40px rgba($primary-blue, 0.6);
-  }
-
-  svg {
-    width: 32px;
-    height: 32px;
-  }
-
-  .cart-badge {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #ff4757;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    height: 24px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-  }
+  .carousel-slide { height: 200px; }
+  .carousel-arrow { width: 36px; height: 36px; }
+  .carousel-overlay { padding: 15px; }
+  .carousel-title { font-size: 1.1rem; }
 }
 </style>

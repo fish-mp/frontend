@@ -7,7 +7,8 @@ export const useProductStore = defineStore("product", () => {
   const currentProduct = ref<ProductDetail | null>(null);
   const brands = ref<Brand[]>([]);
   const categories = ref<Category[]>([]);
-  const colors = ref<{ id: string; name: string }[]>([]);   
+  const colors = ref<{ id: string; name: string }[]>([]);
+  const collections = ref<any[]>([]);   // коллекции
   const loading = ref(false);
   const error = ref<string | null>(null);
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -86,6 +87,18 @@ export const useProductStore = defineStore("product", () => {
     }
   };
 
+  const fetchCollections = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/collections/`, {
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Не удалось загрузить подборки");
+      collections.value = await response.json();
+    } catch (e: any) {
+      console.error(e);
+    }
+  };
+
   const addReview = async (productId: string, score: number, text: string) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/reviews/`, {
@@ -106,14 +119,16 @@ export const useProductStore = defineStore("product", () => {
     currentProduct,
     brands,
     categories,
-    colors,          // <-- добавлено
+    colors,
+    collections,
     loading,
     error,
     fetchProducts,
     fetchProductById,
     fetchBrands,
     fetchCategories,
-    fetchColors,     // <-- добавлено
+    fetchColors,
+    fetchCollections,
     addReview,
   };
 });

@@ -222,7 +222,7 @@ const setRating = async (star: number) => {
   if (!currentProduct) return
   try {
     await productStore.addReview(currentProduct.id, star, ratingText.value || '')
-    alert('Спасибо за вашу оценку!')
+  
     await productStore.fetchProductById(productId.value)
     userRating.value = star
   } catch (err) {
@@ -240,9 +240,9 @@ const addToCart = async () => {
   if (!currentProduct) return
   try {
     await cartStore.addToCart(currentProduct.id, 1)
-    alert(`Товар "${currentProduct.name}" добавлен в корзину`)
+
   } catch (err) {
-    alert('Ошибка при добавлении в корзину')
+
   }
 }
 
@@ -265,14 +265,14 @@ const toggleFavorite = async () => {
       const favId = favoritesStore.getFavoriteId(currentProduct.id)
       if (favId) {
         await favoritesStore.removeFromFavorites(favId)
-        alert('Товар удалён из избранного')
+  
       }
     } else {
       await favoritesStore.addToFavorites(currentProduct.id)
-      alert('Товар добавлен в избранное')
+
     }
   } catch (err) {
-    alert('Ошибка при изменении избранного')
+
   }
 }
 </script>
