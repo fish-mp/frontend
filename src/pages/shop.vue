@@ -10,7 +10,6 @@
 
   <section class="shop-section">
     <div class="shop-section__wrapper">
-      <!-- Карусель-слайдер -->
       <div class="shop-carousel">
         <h2 class="shop-carousel__title">Актуальное</h2>
         <div class="carousel-container">
@@ -35,18 +34,16 @@
           <span v-for="(_, index) in carouselImages" :key="index" class="carousel-dot"
             :class="{ active: currentSlide === index }" @click="currentSlide = index"></span>
         </div>
- <div class="beginner-banner">
-  <div class="beginner-banner__content">
-    <h3>🐟 Новичок в аквариумистике?</h3>
-    <p>Выбор аквариума, совместимость рыб, оборудование и запуск</p>
-  </div>
-  <router-link to="/beginner-guide" class="beginner-banner__btn">Руководство для новичков →</router-link>
-</div>
+        <div class="beginner-banner">
+          <div class="beginner-banner__content">
+            <h3>🐟 Новичок в аквариумистике?</h3>
+            <p>Выбор аквариума, совместимость рыб, оборудование и запуск</p>
+          </div>
+          <router-link to="/beginner-guide" class="beginner-banner__btn">Руководство для новичков →</router-link>
+        </div>
       </div>
 
-      <!-- Основная часть: фильтры и товары -->
       <div class="shop-layout">
-        <!-- Левая колонка фильтров -->
         <aside class="shop-filters">
           <h3 class="shop-filters__title">Фильтры</h3>
 
@@ -54,11 +51,11 @@
           <div class="shop-filters__group">
             <label class="shop-filters__label">Сортировка</label>
             <div class="select-wrapper">
-              <select v-model="sortBy" class="filter-select">
-                <option value="new">Новые</option>
-                <option value="popular">Популярные</option>
-                <option value="priceAsc">Дешевле</option>
-                <option value="priceDesc">Дороже</option>
+              <select v-model="sortBy">
+                <option value="-created_at">Новые</option>
+                <option value="-average_rating">Популярные</option>
+                <option value="price">Дешевле</option>
+                <option value="-price">Дороже</option>
               </select>
               <div class="select-arrow">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -68,7 +65,7 @@
             </div>
           </div>
 
-          <!-- Категория (радио-кнопки) -->
+          <!-- Категория -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Категория</label>
             <div class="shop-filters__options">
@@ -83,13 +80,10 @@
           <div class="shop-filters__group">
             <label class="shop-filters__label">Бренд</label>
             <div class="shop-filters__options">
-              <label v-for="brand in filteredBrands" :key="brand.id" class="shop-filters__checkbox">
+              <label v-for="brand in brands" :key="brand.id" class="shop-filters__checkbox">
                 <input type="checkbox" :value="brand.id" v-model="selectedBrandIds" />
                 <span>{{ brand.name }}</span>
               </label>
-              <div v-if="filteredBrands.length === 0" class="shop-filters__empty">
-                Нет брендов для выбранной категории
-              </div>
             </div>
           </div>
 
@@ -97,10 +91,10 @@
           <div class="shop-filters__group">
             <label class="shop-filters__label">Цвет</label>
             <div class="shop-filters__options shop-filters__colors">
-              <label v-for="color in colors" :key="color" class="shop-filters__color">
-                <input type="checkbox" :value="color" v-model="selectedColors" />
-                <span class="color-dot" :style="{ backgroundColor: color }"></span>
-                <span>{{ color }}</span>
+              <label v-for="color in productColors" :key="color.id" class="shop-filters__color">
+                <input type="checkbox" :value="color.id" v-model="selectedColorIds" />
+                <span class="color-dot" :style="{ backgroundColor: color.name }"></span>
+                <span>{{ color.name }}</span>
               </label>
             </div>
           </div>
@@ -108,40 +102,39 @@
           <!-- Вес -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Вес, кг</label>
-            <div class="shop-filters__options">
-              <label v-for="weight in weightRanges" :key="weight.value" class="shop-filters__checkbox">
-                <input type="checkbox" :value="weight.value" v-model="selectedWeights" />
-                <span>{{ weight.label }}</span>
-              </label>
+            <div class="price-range">
+              <input type="number" v-model.number="weightMin" placeholder="от" min="0" step="0.1" />
+              <span>—</span>
+              <input type="number" v-model.number="weightMax" placeholder="до" min="0" step="0.1" />
             </div>
           </div>
 
-          <!-- Размеры (габариты) -->
+          <!-- Габариты -->
           <div class="shop-filters__group">
             <label class="shop-filters__label">Габариты, см</label>
             <div class="shop-filters__dimensions">
               <div class="dimension-row">
                 <span>Ширина:</span>
                 <div class="dimension-inputs">
-                  <input type="number" v-model.number="dimensions.width.min" placeholder="от" min="0" />
+                  <input type="number" v-model.number="widthMin" placeholder="от" min="0" />
                   <span>—</span>
-                  <input type="number" v-model.number="dimensions.width.max" placeholder="до" min="0" />
+                  <input type="number" v-model.number="widthMax" placeholder="до" min="0" />
                 </div>
               </div>
               <div class="dimension-row">
                 <span>Высота:</span>
                 <div class="dimension-inputs">
-                  <input type="number" v-model.number="dimensions.height.min" placeholder="от" min="0" />
+                  <input type="number" v-model.number="heightMin" placeholder="от" min="0" />
                   <span>—</span>
-                  <input type="number" v-model.number="dimensions.height.max" placeholder="до" min="0" />
+                  <input type="number" v-model.number="heightMax" placeholder="до" min="0" />
                 </div>
               </div>
               <div class="dimension-row">
                 <span>Длина:</span>
                 <div class="dimension-inputs">
-                  <input type="number" v-model.number="dimensions.length.min" placeholder="от" min="0" />
+                  <input type="number" v-model.number="lengthMin" placeholder="от" min="0" />
                   <span>—</span>
-                  <input type="number" v-model.number="dimensions.length.max" placeholder="до" min="0" />
+                  <input type="number" v-model.number="lengthMax" placeholder="до" min="0" />
                 </div>
               </div>
             </div>
@@ -151,21 +144,19 @@
           <div class="shop-filters__group">
             <label class="shop-filters__label">Цена, ₽</label>
             <div class="price-range">
-              <input type="number" v-model.number="priceRange.min" placeholder="от" min="0" />
+              <input type="number" v-model.number="priceMin" placeholder="от" min="0" />
               <span>—</span>
-              <input type="number" v-model.number="priceRange.max" placeholder="до" min="0" />
+              <input type="number" v-model.number="priceMax" placeholder="до" min="0" />
             </div>
           </div>
 
-          <!-- Кнопка сброса -->
           <button class="shop-filters__reset" @click="resetFilters">Сбросить фильтры</button>
         </aside>
 
-        <!-- Правая колонка с товарами -->
         <main class="shop-products">
           <div class="shop-products__header">
             <h2 class="shop-products__title">Товары</h2>
-            <span class="shop-products__count">Найдено: {{ filteredProducts.length }}</span>
+            <span class="shop-products__count">Найдено: {{ products.length }}</span>
           </div>
 
           <div v-if="productStore.loading" class="shop-products__loading">
@@ -176,7 +167,7 @@
             <p>{{ productStore.error }}</p>
           </div>
           <div v-else class="shop-products__grid">
-            <div v-for="product in filteredProducts" :key="product.id" class="product-card">
+            <div v-for="product in products" :key="product.id" class="product-card">
               <router-link :to="`/shop/${product.id}`" class="product-card__link">
                 <div class="product-card__image">
                   <img :src="getMainImageUrl(product)" :alt="product.name" />
@@ -201,7 +192,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useProductStore } from '../stores/product'
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
@@ -211,7 +202,7 @@ const productStore = useProductStore()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 
-// ---------- Данные для карусели-слайдера ----------
+// ---------- Карусель ----------
 const carouselImages = [
   { url: 'https://via.placeholder.com/1200x400?text=Акция+на+аквариумы', title: 'Скидки на аквариумы до 30%', subtitle: 'Только до конца месяца' },
   { url: 'https://via.placeholder.com/1200x400?text=Новые+корма+Tetra', title: 'Новая линейка кормов Tetra', subtitle: 'Сбалансированное питание для ваших рыб' },
@@ -222,37 +213,105 @@ const currentSlide = ref(0)
 const nextSlide = () => { if (currentSlide.value < carouselImages.length - 1) currentSlide.value++ }
 const prevSlide = () => { if (currentSlide.value > 0) currentSlide.value-- }
 
-// ---------- Фильтры и сортировка ----------
-const sortBy = ref('new')
+// ---------- Фильтры ----------
+const sortBy = ref('-created_at')                // порядок сортировки
 const selectedCategoryId = ref<number | null>(null)
 const selectedBrandIds = ref<number[]>([])
-const selectedColors = ref<string[]>([])
-const selectedWeights = ref<string[]>([])
-const dimensions = ref({
-  width: { min: null as number | null, max: null as number | null },
-  height: { min: null as number | null, max: null as number | null },
-  length: { min: null as number | null, max: null as number | null },
-})
-const priceRange = ref({ min: null as number | null, max: null as number | null })
+const selectedColorIds = ref<string[]>([])
+const weightMin = ref<number | null>(null)
+const weightMax = ref<number | null>(null)
+const widthMin = ref<number | null>(null)
+const widthMax = ref<number | null>(null)
+const heightMin = ref<number | null>(null)
+const heightMax = ref<number | null>(null)
+const lengthMin = ref<number | null>(null)
+const lengthMax = ref<number | null>(null)
+const priceMin = ref<number | null>(null)
+const priceMax = ref<number | null>(null)
 
-const colors = ['Красный', 'Синий', 'Зелёный', 'Жёлтый', 'Чёрный', 'Белый', 'Прозрачный']
-const weightRanges = [
-  { label: 'до 1 кг', value: 'lt1' },
-  { label: '1-5 кг', value: '1-5' },
-  { label: '5-10 кг', value: '5-10' },
-  { label: 'более 10 кг', value: 'gt10' },
-]
-
-// ---------- Данные из API ----------
+// Данные из стора
 const categories = computed(() => productStore.categories)
 const brands = computed(() => productStore.brands)
+const productColors = computed(() => productStore.colors)
 const products = computed(() => productStore.products)
 
-const filteredBrands = computed(() => {
-  if (!selectedCategoryId.value) return brands.value
-  return brands.value
+// Загрузка товаров с параметрами на бэкенд
+const loadProducts = async () => {
+  const params: Record<string, any> = {}
+
+  if (sortBy.value) params.ordering = sortBy.value
+
+  if (selectedCategoryId.value) params.category = selectedCategoryId.value
+
+  if (selectedBrandIds.value.length) params.brand = selectedBrandIds.value.join(',')
+
+  if (selectedColorIds.value.length) params.color = selectedColorIds.value.join(',')
+
+  if (weightMin.value !== null) params.weight_min = weightMin.value
+  if (weightMax.value !== null) params.weight_max = weightMax.value
+
+  if (widthMin.value !== null) params.width_min = widthMin.value
+  if (widthMax.value !== null) params.width_max = widthMax.value
+  if (heightMin.value !== null) params.height_min = heightMin.value
+  if (heightMax.value !== null) params.height_max = heightMax.value
+  if (lengthMin.value !== null) params.length_min = lengthMin.value
+  if (lengthMax.value !== null) params.length_max = lengthMax.value
+
+  if (priceMin.value !== null) params.price_min = priceMin.value
+  if (priceMax.value !== null) params.price_max = priceMax.value
+
+  await productStore.fetchProducts(params)
+}
+
+// Сброс фильтров
+const resetFilters = () => {
+  selectedCategoryId.value = null
+  selectedBrandIds.value = []
+  selectedColorIds.value = []
+  weightMin.value = null
+  weightMax.value = null
+  widthMin.value = null
+  widthMax.value = null
+  heightMin.value = null
+  heightMax.value = null
+  lengthMin.value = null
+  lengthMax.value = null
+  priceMin.value = null
+  priceMax.value = null
+  sortBy.value = '-created_at'
+}
+
+// Следим за всеми фильтрами и перезагружаем товары
+watch(
+  [
+    sortBy,
+    selectedCategoryId,
+    selectedBrandIds,
+    selectedColorIds,
+    weightMin,
+    weightMax,
+    widthMin,
+    widthMax,
+    heightMin,
+    heightMax,
+    lengthMin,
+    lengthMax,
+    priceMin,
+    priceMax,
+  ],
+  () => loadProducts(),
+  { deep: true }
+)
+
+// Инициализация
+onMounted(async () => {
+  await productStore.fetchColors()
+  await productStore.fetchCategories()
+  await productStore.fetchBrands()
+  await loadProducts()
 })
 
+// Вспомогательные функции
 const getMainImageUrl = (product: Product) => {
   if (product.main_image?.image) {
     let url = product.main_image.image
@@ -260,101 +319,6 @@ const getMainImageUrl = (product: Product) => {
     return url
   }
   return 'https://via.placeholder.com/300x200?text=Нет+фото'
-}
-
-// Вспомогательная функция для безопасного получения названия цвета
-const getColorName = (color: any): string | undefined => {
-  if (!color) return undefined
-  return typeof color === 'object' ? color.name : color
-}
-
-const filteredProducts = computed(() => {
-  let result = [...products.value]
-
-  // Фильтр по категории
-  if (selectedCategoryId.value) {
-    result = result.filter(p => p.category?.id === selectedCategoryId.value || p.category_id === selectedCategoryId.value)
-  }
-  // Фильтр по брендам
-  if (selectedBrandIds.value.length) {
-    result = result.filter(p => {
-      const brandId = p.brand?.id ?? p.brand_id
-      return brandId !== undefined && selectedBrandIds.value.includes(brandId)
-    })
-  }
-  // Фильтр по цвету (исправлено)
-  if (selectedColors.value.length) {
-    result = result.filter(p => {
-      const colName = getColorName(p.color)
-      return colName && selectedColors.value.includes(colName)
-    })
-  }
-  // Фильтр по весу
-  if (selectedWeights.value.length) {
-    result = result.filter(p => {
-      if (p.weight === undefined) return false
-      return selectedWeights.value.some(range => {
-        if (range === 'lt1') return p.weight! < 1
-        if (range === '1-5') return p.weight! >= 1 && p.weight! <= 5
-        if (range === '5-10') return p.weight! >= 5 && p.weight! <= 10
-        if (range === 'gt10') return p.weight! > 10
-        return false
-      })
-    })
-  }
-  // Фильтр по габаритам
-  if (dimensions.value.width.min !== null) {
-    result = result.filter(p => p.width !== undefined && p.width >= dimensions.value.width.min!)
-  }
-  if (dimensions.value.width.max !== null) {
-    result = result.filter(p => p.width !== undefined && p.width <= dimensions.value.width.max!)
-  }
-  if (dimensions.value.height.min !== null) {
-    result = result.filter(p => p.height !== undefined && p.height >= dimensions.value.height.min!)
-  }
-  if (dimensions.value.height.max !== null) {
-    result = result.filter(p => p.height !== undefined && p.height <= dimensions.value.height.max!)
-  }
-  if (dimensions.value.length.min !== null) {
-    result = result.filter(p => p.length !== undefined && p.length >= dimensions.value.length.min!)
-  }
-  if (dimensions.value.length.max !== null) {
-    result = result.filter(p => p.length !== undefined && p.length <= dimensions.value.length.max!)
-  }
-  // Фильтр по цене
-  if (priceRange.value.min !== null) {
-    result = result.filter(p => p.price >= priceRange.value.min!)
-  }
-  if (priceRange.value.max !== null) {
-    result = result.filter(p => p.price <= priceRange.value.max!)
-  }
-
-  // Сортировка
-  switch (sortBy.value) {
-    case 'new':
-      result = result.sort((a, b) => (a.is_new === b.is_new ? 0 : a.is_new ? -1 : 1))
-      break
-    case 'popular':
-      result = result.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0))
-      break
-    case 'priceAsc':
-      result = result.sort((a, b) => a.price - b.price)
-      break
-    case 'priceDesc':
-      result = result.sort((a, b) => b.price - a.price)
-      break
-  }
-  return result
-})
-
-const resetFilters = () => {
-  selectedCategoryId.value = null
-  selectedBrandIds.value = []
-  selectedColors.value = []
-  selectedWeights.value = []
-  dimensions.value = { width: { min: null, max: null }, height: { min: null, max: null }, length: { min: null, max: null } }
-  priceRange.value = { min: null, max: null }
-  sortBy.value = 'new'
 }
 
 const addToCart = async (product: Product) => {
@@ -369,12 +333,6 @@ const addToCart = async (product: Product) => {
     alert('Ошибка при добавлении в корзину')
   }
 }
-
-onMounted(async () => {
-  await productStore.fetchProducts()
-  await productStore.fetchCategories()
-  await productStore.fetchBrands()
-})
 </script>
 
 <style lang="scss" scoped>
