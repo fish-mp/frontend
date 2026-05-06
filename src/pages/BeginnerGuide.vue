@@ -5,7 +5,7 @@
       <h1 class="guide__title">Руководство для начинающих</h1>
       <p class="guide__subtitle">Всё, что нужно знать, чтобы создать идеальный подводный мир</p>
 
-      <div class="guide__grid">
+      <div class="guide__list">
         <div v-for="article in articles" :key="article.id" class="guide-card">
           <div class="guide-card__icon" :style="{ backgroundColor: article.bgColor }">
             <span class="guide-card__emoji">{{ article.emoji }}</span>
@@ -178,14 +178,14 @@ $text-light: #8a9bb8;
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
-.guide__grid {
-  display: grid;
-  grid-template-rows: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-}
 
 @mixin smooth-transition {
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.guide__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .beginner-guide {
@@ -193,6 +193,9 @@ $text-light: #8a9bb8;
   padding: 100px 2rem 80px;
   min-height: 100vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: 10px;
 
   .guide-bg {
     position: absolute;
@@ -206,7 +209,7 @@ $text-light: #8a9bb8;
   }
 
   &__wrapper {
-    max-width: 1400px;
+    max-width: 1100px;
     margin: 0 auto;
     position: relative;
     z-index: 2;
@@ -230,9 +233,9 @@ $text-light: #8a9bb8;
     margin-bottom: 3rem;
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  &__list {
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
   }
 }
@@ -244,54 +247,57 @@ $text-light: #8a9bb8;
   background: rgba(255, 255, 255, 0.9);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem;
 
   &:hover {
-    transform: translateY(-8px);
+    transform: translateY(-4px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
   }
 
   &__icon {
-    width: 70px;
-    height: 70px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 24px auto 0 auto;
+    flex-shrink: 0;
     background: $primary-blue;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
 
   &__emoji {
-    font-size: 2.4rem;
+    font-size: 3rem;
     line-height: 1;
   }
 
   &__content {
-    padding: 1.5rem 1.8rem 2rem;
-    text-align: center;
+    flex: 1;
+    text-align: left;
   }
 
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
     color: $text-dark;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
   &__description {
     font-size: 1rem;
     line-height: 1.5;
     color: $text-medium;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   &__btn {
     background: $blue-gradient;
     border: none;
     color: white;
-    padding: 0.7rem 1.8rem;
+    padding: 0.6rem 1.5rem;
     border-radius: 40px;
     font-weight: 600;
     font-size: 0.9rem;
@@ -388,21 +394,31 @@ $text-light: #8a9bb8;
     &__subtitle {
       font-size: 1rem;
     }
-    &__grid {
+    &__list {
       gap: 1.5rem;
     }
   }
 
-  .guide-card__icon {
-    width: 60px;
-    height: 60px;
-    margin-top: 20px;
-  }
-  .guide-card__emoji {
-    font-size: 2rem;
-  }
-  .guide-card__title {
-    font-size: 1.3rem;
+  .guide-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+    gap: 1rem;
+
+    &__icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto;
+    }
+    &__emoji {
+      font-size: 2.5rem;
+    }
+    &__content {
+      text-align: center;
+    }
+    &__title {
+      font-size: 1.3rem;
+    }
   }
 }
 </style>
