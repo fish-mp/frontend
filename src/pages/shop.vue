@@ -58,6 +58,15 @@
         </div>
       </div>
 
+      <!-- Баннер для новичков -->
+      <div class="beginner-banner">
+        <div class="beginner-banner__content">
+          <h3>🐟 Новичок в аквариумистике?</h3>
+          <p>Выбор аквариума, совместимость рыб, оборудование и запуск</p>
+        </div>
+        <router-link to="/beginner-guide" class="beginner-banner__btn">Руководство для новичков →</router-link>
+      </div>
+
       <!-- Основная часть: фильтры и товары -->
       <div class="shop-layout">
         <!-- Левая колонка фильтров -->
@@ -233,14 +242,12 @@ const cartStore = useCartStore()
 
 // ---------- Карусель коллекций ----------
 const currentCollectionSlide = ref(0)
-const prevCollectionSlide = () => {
-  if (currentCollectionSlide.value > 0) currentCollectionSlide.value--
-}
+const prevCollectionSlide = () => { if (currentCollectionSlide.value > 0) currentCollectionSlide.value-- }
 const nextCollectionSlide = () => {
   if (currentCollectionSlide.value < productStore.collections.length - 1) currentCollectionSlide.value++
 }
 
-// ---------- Фильтры и сортировка ----------
+// ---------- Фильтры ----------
 const sortBy = ref('-created_at')
 const selectedCategoryId = ref<number | null>(null)
 const selectedBrandIds = ref<number[]>([])
@@ -256,13 +263,12 @@ const lengthMax = ref<number | null>(null)
 const priceMin = ref<number | null>(null)
 const priceMax = ref<number | null>(null)
 
-// Данные из API
 const categories = computed(() => productStore.categories)
 const brands = computed(() => productStore.brands)
 const productColors = computed(() => productStore.colors)
 const products = computed(() => productStore.products)
 
-// Загрузка товаров с параметрами
+// Загрузка товаров
 const loadProducts = async () => {
   const params: Record<string, any> = {}
   if (sortBy.value) params.ordering = sortBy.value
@@ -282,7 +288,6 @@ const loadProducts = async () => {
   await productStore.fetchProducts(params)
 }
 
-// Сброс фильтров
 const resetFilters = () => {
   selectedCategoryId.value = null
   selectedBrandIds.value = []
@@ -300,29 +305,14 @@ const resetFilters = () => {
   sortBy.value = '-created_at'
 }
 
-// Отслеживание изменений фильтров
 watch(
-  [
-    sortBy,
-    selectedCategoryId,
-    selectedBrandIds,
-    selectedColorId,
-    weightMin,
-    weightMax,
-    widthMin,
-    widthMax,
-    heightMin,
-    heightMax,
-    lengthMin,
-    lengthMax,
-    priceMin,
-    priceMax,
-  ],
+  [sortBy, selectedCategoryId, selectedBrandIds, selectedColorId, weightMin, weightMax,
+   widthMin, widthMax, heightMin, heightMax, lengthMin, lengthMax, priceMin, priceMax],
   () => loadProducts(),
   { deep: true }
 )
 
-// Вспомогательные функции
+// Утилиты
 const getFullImageUrl = (path: string) => {
   if (!path) return ''
   if (path.startsWith('/media')) return import.meta.env.VITE_BACKEND_URL + path
@@ -330,9 +320,7 @@ const getFullImageUrl = (path: string) => {
 }
 
 const getMainImageUrl = (product: Product) => {
-  if (product.main_image?.image) {
-    return getFullImageUrl(product.main_image.image)
-  }
+  if (product.main_image?.image) return getFullImageUrl(product.main_image.image)
   return 'https://via.placeholder.com/300x200?text=Нет+фото'
 }
 
@@ -349,13 +337,11 @@ const addToCart = async (product: Product) => {
   }
 }
 
-// Выбор коллекции (опционально)
 const selectCollection = (collection: any) => {
   console.log('Выбрана подборка:', collection.name)
-  // Здесь можно сделать фильтрацию товаров по коллекции, если бэкенд это поддерживает
+  // здесь можно добавить фильтрацию товаров по коллекции
 }
 
-// Инициализация
 onMounted(async () => {
   await productStore.fetchColors()
   await productStore.fetchCategories()
@@ -555,6 +541,58 @@ input, select, textarea, button {
   }
 }
 
+.beginner-banner {
+  margin: 2rem 0;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid $light-grey;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  p {
+    margin: 0;
+    color: $text-medium;
+    font-size: 1rem;
+  }
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: $primary-blue;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+    &:hover {
+      background: darken($primary-blue, 8%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba($primary-blue, 0.3);
+    }
+  }
+}
+
 .shop-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -644,6 +682,7 @@ input, select, textarea, button {
     &:hover {
       background: $primary-blue;
       color: white;
+      border-color: transparent;
     }
   }
 }

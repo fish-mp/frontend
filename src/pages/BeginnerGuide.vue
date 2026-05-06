@@ -190,7 +190,7 @@ $text-light: #8a9bb8;
 
 .beginner-guide {
   background: $soft-white;
-  padding: 100px 2rem 80px;
+  padding: 140px 2rem 80px;
   min-height: 100vh;
   position: relative;
   display: flex;
@@ -250,7 +250,7 @@ $text-light: #8a9bb8;
   flex-direction: row;
   align-items: center;
   gap: 2rem;
-  padding: 1.5rem;
+  padding: 2rem;
 
   &:hover {
     transform: translateY(-4px);
@@ -323,7 +323,7 @@ $text-light: #8a9bb8;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 1rem;
+  padding: 2rem;
 
   &__content {
     @include glass-effect;
@@ -333,7 +333,7 @@ $text-light: #8a9bb8;
     width: 100%;
     max-height: 85vh;
     overflow-y: auto;
-    padding: 2rem;
+    padding: 2.5rem;
     position: relative;
     text-align: center;
   }
