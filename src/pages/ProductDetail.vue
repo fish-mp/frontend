@@ -33,15 +33,14 @@
         <!-- Информация -->
         <div class="product-detail__info">
           <h1 class="product-detail__title">{{ product.name }}</h1>
-          
+
           <div class="product-detail__rating">
             <div class="rating-stars">
               <span
                 v-for="star in 5"
                 :key="star"
                 class="star"
-                :class="{ filled: star <= (userRating || product.average_rating) }"
-                @click="setRating(star)"
+                :class="{ filled: star <= (product.average_rating) }"
               >
                 ★
               </span>
@@ -162,8 +161,6 @@ const favoritesStore = useFavoritesStore()
 const productId = computed(() => route.params.id as string)
 const product = computed<ProductDetail | null>(() => productStore.currentProduct as ProductDetail | null)
 const currentImage = ref('')
-const userRating = ref<number | null>(null)
-const ratingText = ref('')
 
 // Вспомогательная функция для получения полного URL изображения
 const getImageUrl = (path: string): string => {
@@ -212,37 +209,19 @@ const similarProducts = computed<Product[]>(() => {
     .slice(0, 4)
 })
 
-// Установка рейтинга (отправка отзыва)
-const setRating = async (star: number) => {
-  if (!authStore.isAuthenticated) {
-    alert('Для оценки товара необходимо авторизоваться')
-    return
-  }
-  const currentProduct = product.value
-  if (!currentProduct) return
-  try {
-    await productStore.addReview(currentProduct.id, star, ratingText.value || '')
-  
-    await productStore.fetchProductById(productId.value)
-    userRating.value = star
-  } catch (err) {
-    alert('Не удалось отправить оценку')
-  }
-}
-
 // Добавление в корзину
 const addToCart = async () => {
   if (!authStore.isAuthenticated) {
-    alert('Для добавления в корзину необходимо авторизоваться')
+    console.warn('Для добавления в корзину необходимо авторизоваться')
     return
   }
   const currentProduct = product.value
   if (!currentProduct) return
   try {
     await cartStore.addToCart(currentProduct.id, 1)
-
+    console.log(`Товар "${currentProduct.name}" добавлен в корзину`)
   } catch (err) {
-
+    console.error('Ошибка при добавлении в корзину', err)
   }
 }
 
@@ -254,7 +233,7 @@ const isFavorite = computed(() => {
 
 const toggleFavorite = async () => {
   if (!authStore.isAuthenticated) {
-    alert('Для добавления в избранное необходимо авторизоваться')
+    console.warn('Для добавления в избранное необходимо авторизоваться')
     return
   }
   const currentProduct = product.value
@@ -265,14 +244,14 @@ const toggleFavorite = async () => {
       const favId = favoritesStore.getFavoriteId(currentProduct.id)
       if (favId) {
         await favoritesStore.removeFromFavorites(favId)
-  
+        console.log('Товар удалён из избранного')
       }
     } else {
       await favoritesStore.addToFavorites(currentProduct.id)
-
+      console.log('Товар добавлен в избранное')
     }
   } catch (err) {
-
+    console.error('Ошибка при изменении избранного', err)
   }
 }
 </script>
@@ -447,16 +426,12 @@ input, select, textarea, button {
       .star {
         font-size: 1.8rem;
         color: $light-grey;
-        cursor: pointer;
-        @include smooth-transition;
+        // Убираем pointer cursor и переходы
+        cursor: default;
 
         &.filled {
           color: #FFB800;
           text-shadow: 0 0 10px #FFB800;
-        }
-
-        &:hover {
-          transform: scale(1.2);
         }
       }
     }
