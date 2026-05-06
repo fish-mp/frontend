@@ -349,6 +349,7 @@ input, select, textarea, button {
     @include glass-effect;
     border-radius: 24px;
     padding: 20px;
+    max-height: 400px;
   }
 
   &__main-image {
