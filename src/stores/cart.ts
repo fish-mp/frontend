@@ -54,7 +54,7 @@ export const useCartStore = defineStore('cart', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ product: productId, quantity })
+        body: JSON.stringify({ product_id: productId, quantity })
       })
       if (!response.ok) throw new Error('Не удалось добавить товар в корзину')
       await fetchCart()
