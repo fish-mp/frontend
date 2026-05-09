@@ -22,12 +22,12 @@
               <p class="cart-item__price">{{ item.product.price }} ₽</p>
             </div>
             <div class="cart-item__quantity">
-              <button @click="updateQuantity(item, item.quantity - 1)" :disabled="cartStore.loading">−</button>
+              <button class="quantity-btn" @click="updateQuantity(item, item.quantity - 1)" :disabled="cartStore.loading">−</button>
               <span class="quantity-value">{{ item.quantity }}</span>
-              <button @click="updateQuantity(item, item.quantity + 1)" :disabled="cartStore.loading">+</button>
+              <button class="quantity-btn" @click="updateQuantity(item, item.quantity + 1)" :disabled="cartStore.loading">+</button>
             </div>
             <div class="cart-item__total">{{ item.product.price * item.quantity }} ₽</div>
-            <button @click="removeItem(item.id)" :disabled="cartStore.loading">🗑️</button>
+            <button class="cart-item__remove" @click="removeItem(item.id)" :disabled="cartStore.loading">🗑️</button>
           </div>
         </div>
 
@@ -124,7 +124,7 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     font-size: 2.5rem;
     font-weight: 700;
     color: $text-dark;
-    margin-bottom: 40px;
+    margin: 60px 0 40px;
   }
 
   &__empty {

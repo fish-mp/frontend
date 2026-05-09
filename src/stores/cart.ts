@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -26,6 +26,12 @@ export const useCartStore = defineStore('cart', () => {
   const items = ref<CartItemResponse[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
+  
+    const itemsCount = computed(() => {
+      return items.value.reduce((total, item) => {
+        return total + Number(item.quantity || 0)
+      }, 0)
+    })
 
   const fetchCart = async () => {
     loading.value = true
@@ -35,10 +41,25 @@ export const useCartStore = defineStore('cart', () => {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       })
-      if (!response.ok) throw new Error('Не удалось загрузить корзину')
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          items.value = []
+          return
+        }
+        throw new Error('Не удалось загрузить корзину')
+      }
+
       const data: CartResponse = await response.json()
-      items.value = data.items
+      
+      if (data && Array.isArray(data.items)) {
+        items.value = data.items
+      } else {
+        items.value = []
+      }
+
     } catch (err: any) {
+      console.error('Fetch cart error:', err)
       error.value = err.message
       items.value = []
     } finally {
@@ -46,7 +67,7 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  const addToCart = async (productId: string, quantity: number = 1) => {
+  const addToCart = async (productId: string | number, quantity: number = 1) => {
     loading.value = true
     error.value = null
     try {
@@ -56,8 +77,15 @@ export const useCartStore = defineStore('cart', () => {
         credentials: 'include',
         body: JSON.stringify({ product_id: productId, quantity })
       })
-      if (!response.ok) throw new Error('Не удалось добавить товар в корзину')
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}))
+        throw new Error(errData.detail || 'Ошибка добавления в корзину')
+      }
+
+      // После успешного добавления обновляем состояние корзины с сервера
       await fetchCart()
+      
     } catch (err: any) {
       error.value = err.message
       throw err
@@ -148,6 +176,7 @@ export const useCartStore = defineStore('cart', () => {
     clearCart,
     createOrder,
     totalItems,
-    totalPrice
+    totalPrice,
+    itemsCount
   }
 })
