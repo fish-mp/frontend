@@ -18,7 +18,7 @@ export const useProductStore = defineStore("product", () => {
     error.value = null;
     try {
       const query = new URLSearchParams(params).toString();
-      const url = `${BACKEND_URL}/api/products/${query ? `?${query}` : ""}`;
+      const url = `https://fishkids.ru/api/products/${query ? `?${query}` : ""}`;
       const response = await fetch(url, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -64,7 +64,7 @@ export const useProductStore = defineStore("product", () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/categories/`, {
+      const response = await fetch(`https://fishkids.ru/api/categories/`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
@@ -89,7 +89,7 @@ export const useProductStore = defineStore("product", () => {
 
   const fetchCollections = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/collections/`, {
+      const response = await fetch(`https://fishkids.ru/api/collections/`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Не удалось загрузить подборки");
