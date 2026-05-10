@@ -969,7 +969,7 @@ input, select, textarea, button {
 }
 @media (max-width: 968px) {
   .shop-layout { grid-template-columns: 1fr; }
-  .shop-filters { order: 2; margin-top: 40px; }
+  .shop-filters { order: 2; margin-top: 40px; max-width: 325px; }
   .department { padding: 100px 1.5rem 60px; }
   .shop-section { padding: 60px 1.5rem; }
   .carousel-slide { height: 300px; }
@@ -979,6 +979,12 @@ input, select, textarea, button {
   .carousel-slide { height: 250px; }
   .carousel-overlay { padding: 20px; }
   .carousel-title { font-size: 1.3rem; }
+}
+@media (max-width: 768px) {
+  .shop-products__grid {
+    grid-template-columns: 1fr !important;   // одна колонка на мобильных
+    gap: 1rem;
+  }
 }
 @media (max-width: 480px) {
   .carousel-slide { height: 200px; }
