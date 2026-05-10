@@ -364,12 +364,7 @@ const getSelectedCategoryIds = (): number[] => {
   }
 }
 
-// Определить, выбрана ли родительская категория (для подсветки)
-const isCategorySelected = (parent: Category & { children: Category[] }) => {
-  if (!selectedCategoryId.value) return false
-  if (selectedCategoryId.value === parent.id) return true
-  return parent.children.some(child => child.id === selectedCategoryId.value)
-}
+
 
 const toggleParentExpand = (parentId: number) => {
   expandedParents.value[parentId] = !expandedParents.value[parentId]
@@ -448,9 +443,7 @@ const addToCart = async (product: Product) => {
   }
 }
 
-const selectCollection = (collection: any) => {
-  console.log('Выбрана подборка:', collection.name)
-}
+
 
 onMounted(async () => {
   await productStore.fetchColors()
