@@ -375,9 +375,7 @@ const toggleParentExpand = (parentId: number) => {
   expandedParents.value[parentId] = !expandedParents.value[parentId]
 }
 
-const onCategorySelect = (parent: Category) => {
-  // Можно оставить пустым, либо добавить логику, если нужно
-}
+
 
 // Загрузка товаров
 const loadProducts = async () => {
