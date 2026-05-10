@@ -24,7 +24,7 @@
               v-for="collection in productStore.collections"
               :key="collection.id"
               class="carousel-slide"
-              @click="selectCollection(collection)"
+              @click="openCollectionModal(collection)"
             >
               <img
                 v-if="collection.cover_image"
@@ -90,17 +90,64 @@
               </div>
             </div>
           </div>
-
-          <!-- Категория (радио-кнопки) -->
-          <div class="shop-filters__group">
-            <label class="shop-filters__label">Категория</label>
-            <div class="shop-filters__options">
-              <label v-for="cat in categories" :key="cat.id" class="shop-filters__radio">
-                <input type="radio" :value="cat.id" v-model="selectedCategoryId" />
-                <span>{{ cat.name }}</span>
-              </label>
+          <!-- Модальное окно коллекции -->
+<Teleport to="body">
+  <div v-if="isCollectionModalOpen" class="modal-overlay" @click.self="closeCollectionModal">
+    <div class="modal-container">
+      <button class="modal-close" @click="closeCollectionModal">×</button>
+      <h2 class="modal-title">{{ selectedCollection?.name }}</h2>
+      <div class="modal-products">
+        <div v-for="product in selectedCollection?.products" :key="product.id" class="modal-product-card">
+          <router-link :to="`/shop/${product.id}`" class="product-card__link" @click="closeCollectionModal">
+            <div class="product-card__image">
+              <img :src="getMainImageUrl(product)" :alt="product.name" />
             </div>
-          </div>
+            <div class="product-card__info">
+              <h3 class="product-card__name">{{ product.name }}</h3>
+              <p class="product-card__category">{{ product.brand_name }}</p>
+              <div class="product-card__price">{{ product.price }} ₽</div>
+            </div>
+          </router-link>
+          <button class="product-card__cart" @click="addToCart(product)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
+              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</Teleport>
+<!-- Категория (только дочерние с радио, родительские – для раскрытия) -->
+<div class="shop-filters__group">
+  <label class="shop-filters__label">Категория</label>
+  <div class="category-tree">
+    <div
+      v-for="parent in categoryTree"
+      :key="parent.id"
+      class="category-parent"
+    >
+      <div
+        class="category-parent__header"
+        @click="toggleParentExpand(parent.id)"
+      >
+        <span class="expand-icon">{{ expandedParents[parent.id] ? '▼' : '▶' }}</span>
+        <span class="parent-name">{{ parent.name }}</span>
+      </div>
+      <div class="category-children" v-if="expandedParents[parent.id]">
+        <label
+          v-for="child in parent.children"
+          :key="child.id"
+          class="category-child"
+          :class="{ active: selectedCategoryId === child.id }"
+        >
+          <input type="radio" :value="child.id" v-model="selectedCategoryId" />
+          <span>{{ child.name }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
 
           <!-- Бренд -->
           <div class="shop-filters__group">
@@ -235,11 +282,13 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useProductStore } from '../stores/product'
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
-import type { Product } from '../types/Product'
+import type { Product,Category} from '../types/Product'
+
 
 const productStore = useProductStore()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
+const expandedParents = ref<Record<number, boolean>>({})
 
 const cartItemsCount = computed(() => {
   return cartStore.itemsCount})
@@ -252,6 +301,7 @@ const nextCollectionSlide = () => {
 }
 
 // ---------- Фильтры ----------
+
 const sortBy = ref('-created_at')
 const selectedCategoryId = ref<number | null>(null)
 const selectedBrandIds = ref<number[]>([])
@@ -266,17 +316,68 @@ const lengthMin = ref<number | null>(null)
 const lengthMax = ref<number | null>(null)
 const priceMin = ref<number | null>(null)
 const priceMax = ref<number | null>(null)
+const selectedCollection = ref<any>(null)
+const isCollectionModalOpen = ref(false)
+
+const openCollectionModal = (collection: any) => {
+  selectedCollection.value = collection
+  isCollectionModalOpen.value = true
+}
+
+const closeCollectionModal = () => {
+  isCollectionModalOpen.value = false
+  selectedCollection.value = null
+}
 
 const categories = computed(() => productStore.categories)
 const brands = computed(() => productStore.brands)
 const productColors = computed(() => productStore.colors)
 const products = computed(() => productStore.products)
 
+// Построение дерева категорий
+const categoryTree = computed<Array<Category & { children: Category[] }>>(() => {
+  const parents = categories.value.filter(c => c.parent === null)
+  const childrenByParent: Record<number, Category[]> = {}
+  categories.value.forEach(c => {
+    if (c.parent !== null) {
+      if (!childrenByParent[c.parent]) childrenByParent[c.parent] = []
+      childrenByParent[c.parent].push(c)
+    }
+  })
+  return parents.map(p => ({
+    ...p,
+    children: childrenByParent[p.id] || []
+  }))
+})
+
+
+// Получить все ID категорий для выбранной (включая потомков, если выбрана родительская)
+const getSelectedCategoryIds = (): number[] => {
+  if (!selectedCategoryId.value) return []
+  const selected = selectedCategoryId.value
+  const parent = categoryTree.value.find(p => p.id === selected)
+  if (parent) {
+    const childIds = parent.children.map(c => c.id)
+    return [selected, ...childIds]
+  } else {
+    return [selected]
+  }
+}
+
+
+
+const toggleParentExpand = (parentId: number) => {
+  expandedParents.value[parentId] = !expandedParents.value[parentId]
+}
+
+
+
 // Загрузка товаров
 const loadProducts = async () => {
   const params: Record<string, any> = {}
   if (sortBy.value) params.ordering = sortBy.value
-  if (selectedCategoryId.value) params.category = selectedCategoryId.value
+  const selectedCats = getSelectedCategoryIds()
+  if (selectedCats.length) params.category = selectedCats.join(',')
   if (selectedBrandIds.value.length) params.brand = selectedBrandIds.value.join(',')
   if (selectedColorId.value) params.color = selectedColorId.value
   if (weightMin.value !== null) params.weight_min = weightMin.value
@@ -307,6 +408,7 @@ const resetFilters = () => {
   priceMin.value = null
   priceMax.value = null
   sortBy.value = '-created_at'
+  expandedParents.value = {}
 }
 
 watch(
@@ -341,9 +443,7 @@ const addToCart = async (product: Product) => {
   }
 }
 
-const selectCollection = (collection: any) => {
-  console.log('Выбрана подборка:', collection.name)
-}
+
 
 onMounted(async () => {
   await productStore.fetchColors()
@@ -885,5 +985,187 @@ input, select, textarea, button {
   .carousel-arrow { width: 36px; height: 36px; }
   .carousel-overlay { padding: 15px; }
   .carousel-title { font-size: 1.1rem; }
+}
+.category-tree {
+  .category-parent {
+    margin-bottom: 0.5rem;
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      .expand-icon {
+        font-size: 0.75rem;
+        color: $text-light;
+        width: 20px;
+        text-align: center;
+      }
+      .parent-name {
+        flex: 1;
+        font-weight: 500;
+      }
+      &:hover {
+        background: rgba($primary-blue, 0.05);
+      }
+    }
+    .category-children {
+      margin-left: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      .category-child {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.4rem 0.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        &.active {
+          background: rgba($primary-blue, 0.08);
+        }
+        input[type="radio"] {
+          accent-color: $primary-blue;
+        }
+        &:hover {
+          background: rgba($primary-blue, 0.05);
+        }
+      }
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.modal-container {
+  @include glass-effect;
+  background: white;
+  border-radius: 32px;
+  max-width: 90vw;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 2rem;
+  position: relative;
+  text-align: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-light;
+  transition: color 0.2s;
+  &:hover {
+    color: $primary-blue;
+  }
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 1rem 0;
+}
+
+.modal-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.modal-product-card {
+  @include glass-effect;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(255, 255, 255, 0.9);
+  transition: transform 0.2s;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  }
+  .product-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .product-card__image {
+    height: 160px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+  .product-card__info {
+    padding: 0.75rem;
+    text-align: left;
+  }
+  .product-card__name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
+  .product-card__category {
+    font-size: 0.75rem;
+    color: $text-light;
+    margin-bottom: 0.5rem;
+  }
+  .product-card__price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $primary-blue;
+  }
+  .product-card__cart {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: $blue-gradient;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    svg {
+      width: 20px;
+      height: 20px;
+      filter: none;
+    }
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
 }
 </style>
