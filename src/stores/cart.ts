@@ -149,10 +149,13 @@ export const useCartStore = defineStore('cart', () => {
         credentials: 'include',
         body: JSON.stringify({ status: 'processing' })
       })
-      if (!response.ok) throw new Error('Не удалось оформить заказ')
-      await response.json()
-      await clearCart()
-      return true
+      if (!response.ok) {
+        throw new Error('Не удалось оформить заказ')
+      } else {
+        await response.json()
+        items.value = []
+        return true
+      }
     } catch (err: any) {
       error.value = err.message
       throw err
