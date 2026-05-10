@@ -18,7 +18,7 @@ export const useProductStore = defineStore("product", () => {
     error.value = null;
     try {
       const query = new URLSearchParams(params).toString();
-      const url = `${BACKEND_URL}/api/products/${query ? `?${query}` : ""}`;
+      const url = `https://fishkids.ru/api/products/${query ? `?${query}` : ""}`;
       const response = await fetch(url, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
