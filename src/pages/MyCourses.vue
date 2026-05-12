@@ -161,7 +161,7 @@ const fetchMyCourses = async () => {
     isLoading.value = true;
     error.value = null;
     
-    const response = await fetch(`${BACKEND_URL}/api/courses/my/`, {
+    const response = await fetch(`https://fishkids.ru/api/courses/my/`, {
       headers: {
         'Authorization': `Bearer ${authStore.accessToken}`,
         'Content-Type': 'application/json'

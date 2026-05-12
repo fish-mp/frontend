@@ -14,7 +14,7 @@ export const useCourseStore = defineStore("course", () => {
   const fetchCourses = async () => {
     try {
       isLoading.value = true;
-      const response = await fetch(`${BACKEND_URL}/api/courses/`, {
+      const response = await fetch(`https://fishkids.ru/api/courses/`, {
         headers: {
           // Authorization: `Bearer ${auth.accessToken}`,
         },
@@ -43,7 +43,7 @@ export const useCourseStore = defineStore("course", () => {
         throw new Error("Требуется авторизация");
       }
 
-      const response = await fetch(`${BACKEND_URL}/api/my-courses/`, {
+      const response = await fetch(`https://fishkids.ru/api/my-courses/`, {
         headers: {
           Authorization: `Bearer ${auth.accessToken}`,
         },
@@ -70,7 +70,7 @@ export const useCourseStore = defineStore("course", () => {
       }
 
       const response = await fetch(
-        `${BACKEND_URL}/api/courses/${courseId}/enroll/`,
+        `https://fishkids.ru/api/courses/${courseId}/enroll/`,
         {
           method: "POST",
           headers: {

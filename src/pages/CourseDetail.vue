@@ -1,6 +1,5 @@
 <template>
   <section class="course-detail">
-    <!-- Фоновые элементы -->
     <div class="bg-circle-1"></div>
     <div class="bg-circle-2"></div>
     
@@ -69,26 +68,48 @@
             <div class="course-detail__text">{{ course.description }}</div>
           </div>
           
-          <div class="course-detail__download" v-if="course.files && course.files.length">
+          <div class="course-detail__download" v-if="HasFiles">
             <div class="course-detail__download-header">
               <h3 class="course-detail__download-title">Материалы курса</h3>
-              <p class="course-detail__download-subtitle">Доступные файлы для изучения</p>
+              <p class="course-detail__download-subtitle">Доступные файлы и видео для изучения</p>
             </div>
+
+            <!-- ========== ОТЛАДОЧНЫЙ БЛОК ========== -->
+            <details style="margin-bottom: 20px; background: #f5f5f5; padding: 10px; border-radius: 8px; font-size: 12px;">
+              <summary style="cursor: pointer; font-weight: bold;">🔍 Отладка: содержимое course.files</summary>
+              <pre style="white-space: pre-wrap;">{{ JSON.stringify(course.files, null, 2) }}</pre>
+            </details>
+            <!-- ==================================== -->
+
             <div class="course-detail__files-grid">
               <div v-for="file in course.files" :key="file.id" class="course-detail__file-card">
                 <div class="file-card__content">
                   <div class="file-card__icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <svg v-if="isVideo(getFileUrl(file))" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                      <rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M9 9l6 3-6 3V9z" stroke="currentColor" stroke-width="1.5" fill="currentColor"/>
+                    </svg>
+                    <svg v-else width="32" height="32" viewBox="0 0 24 24" fill="none">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="currentColor" stroke-width="1.5"/>
                       <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                   </div>
                   <div class="file-card__info">
                     <h4 class="file-card__title">{{ file.title }}</h4>
-                    <p class="file-card__type">{{ getFileType(file.file) }}</p>
+                    <p class="file-card__type">{{ getFileType(file) }}</p>
                   </div>
                 </div>
-                <a :href="file.file" download class="file-card__download-btn">
+                
+                <!-- Для видео – плеер -->
+                <div v-if="isVideo(getFileUrl(file))" class="file-card__video">
+                  <video controls class="video-player">
+                    <source :src="getFileUrl(file)" :type="getVideoMimeType(getFileUrl(file))">
+                    Ваш браузер не поддерживает видео.
+                  </video>
+                </div>
+                
+                <!-- Для остальных файлов – кнопка скачивания -->
+                <a v-else :href="getFileUrl(file)" download class="file-card__download-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   </svg>
@@ -96,6 +117,9 @@
                 </a>
               </div>
             </div>
+          </div>
+          <div v-else class="course-detail__no-files">
+            <p>Материалы курса пока не загружены.</p>
           </div>
         </div>
       </transition>
@@ -131,16 +155,44 @@ import type { Course } from '../types/Course'
 const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
-
-const auth = useAuthStore();
-const isAuth = computed(() => auth.isAuthenticated);
+const auth = useAuthStore()
+const isAuth = computed(() => auth.isAuthenticated)
 
 const course = ref<Course | null>(null)
 const isLoading = ref(false)
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-const getFileType = (url: string) => {
-  const extension = url.split('.').pop()?.toLowerCase();
+// ========== Утилиты для работы с файлами ==========
+// Универсальное получение URL файла (пробуем разные поля)
+const getFileUrl = (file: any): string => {
+  return file.file || file.url || file.file_url || file.path || ''
+}
+
+// Проверка, является ли файл видео
+const isVideo = (url: string): boolean => {
+  if (!url) return false
+  try {
+    const cleanUrl = url.split('?')[0]
+    const ext = cleanUrl.split('.').pop()?.toLowerCase()
+    return ext === 'mp4' || ext === 'webm' || ext === 'ogg' || ext === 'mov'
+  } catch {
+    return false
+  }
+}
+
+// MIME-тип для видео
+const getVideoMimeType = (url: string): string => {
+  const ext = url.split('.').pop()?.toLowerCase()
+  if (ext === 'mp4') return 'video/mp4'
+  if (ext === 'webm') return 'video/webm'
+  if (ext === 'ogg') return 'video/ogg'
+  return 'video/mp4'
+}
+
+// Получение типа файла для отображения
+const getFileType = (file: any): string => {
+  const url = getFileUrl(file)
+  const extension = url.split('.').pop()?.toLowerCase()
   const types: Record<string, string> = {
     'pdf': 'PDF документ',
     'doc': 'Word документ',
@@ -151,30 +203,42 @@ const getFileType = (url: string) => {
     'xlsx': 'Таблица Excel',
     'jpg': 'Изображение',
     'jpeg': 'Изображение',
-    'png': 'Изображение'
-  };
-  return types[extension || ''] || 'Файл';
-};
+    'png': 'Изображение',
+    'mp4': 'Видео',
+    'webm': 'Видео',
+    'ogg': 'Видео',
+    'mov': 'Видео'
+  }
+  return types[extension || ''] || 'Файл'
+}
 
+// Проверка наличия файлов
+const HasFiles = computed(() => {
+  return course.value?.files && course.value.files.length > 0
+})
+
+// ========== Загрузка курса ==========
 const fetchCourse = async () => {
   try {
     isLoading.value = true
     const courseId = Number(route.params.id)
 
     const storedCourse = courseStore.courses.find(c => c.id === courseId)
-
     if (storedCourse) {
       course.value = storedCourse
     } else {
       const response = await fetch(`${BACKEND_URL}/api/courses/${courseId}/`, {
         headers: {
-          'Authorization': `Bearer ${useAuthStore().accessToken}`
+          'Authorization': `Bearer ${auth.accessToken}`
         }
       })
-
       if (!response.ok) throw new Error('Курс не найден')
       course.value = await response.json()
     }
+
+    // Отладка: выводим files в консоль
+    console.log('📁 Данные курса:', course.value)
+    console.log('📁 course.files:', course.value?.files)
   } catch (error) {
     console.error('Ошибка загрузки курса:', error)
     router.replace({ name: 'Courses' })
@@ -186,9 +250,7 @@ const fetchCourse = async () => {
 const fetchNewCourse = async (id: number) => {
   try {
     const ok = await courseStore.enrollToCourse(id)
-    if (ok) {
-      setTimeout(fetchCourse, 100)
-    }
+    if (ok) setTimeout(fetchCourse, 100)
   } catch (error) {
     console.error(error)
   }
@@ -198,6 +260,7 @@ onMounted(() => {
   fetchCourse()
 })
 </script>
+
 
 <style lang="scss" scoped>
 // Цветовая схема как в других компонентах

@@ -37,7 +37,7 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart/`, {
+      const response = await fetch(`https://fishkids.ru/api/cart/`, {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -71,7 +71,7 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart-items/`, {
+      const response = await fetch(`https://fishkids.ru/api/cart-items/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -98,7 +98,7 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart-items/${cartItemId}/`, {
+      const response = await fetch(`https://fishkids.ru/api/cart-items/${cartItemId}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -118,7 +118,7 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart-items/${cartItemId}/`, {
+      const response = await fetch(`https://fishkids.ru/api/cart-items/${cartItemId}/`, {
         method: 'DELETE',
         credentials: 'include'
       })
@@ -143,7 +143,7 @@ export const useCartStore = defineStore('cart', () => {
     error.value = null
     try {
       // Отправляем статус 'processing' – он будет установлен на бэкенде (или используется по умолчанию)
-      const response = await fetch(`${BACKEND_URL}/api/orders/`, {
+      const response = await fetch(`https://fishkids.ru/api/orders/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
