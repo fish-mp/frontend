@@ -22,7 +22,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
   const fetchFavorites = async () => {
     loading.value = true
     try {
-      const response = await fetch(`https://fishkids.ru/api/favorites/`, {
+      const response = await fetch(`${BACKEND_URL}/api/favorites/`, {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -49,7 +49,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
   // Добавить товар в избранное
   const addToFavorites = async (productId: string) => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/favorites/`, {
+      const response = await fetch(`${BACKEND_URL}/api/favorites/`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -66,7 +66,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
   // Удалить товар из избранного (по id записи избранного)
   const removeFromFavorites = async (favoriteId: number) => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/favorites/${favoriteId}/`, {
+      const response = await fetch(`${BACKEND_URL}/api/favorites/${favoriteId}/`, {
         method: 'DELETE',
         credentials: 'include'
       })

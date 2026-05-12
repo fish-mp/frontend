@@ -18,7 +18,7 @@ export const useProductStore = defineStore("product", () => {
     error.value = null;
     try {
       const query = new URLSearchParams(params).toString();
-      const url = `https://fishkids.ru/api/products/${query ? `?${query}` : ""}`;
+      const url = `${BACKEND_URL}/api/products/${query ? `?${query}` : ""}`;
       const response = await fetch(url, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -36,7 +36,7 @@ export const useProductStore = defineStore("product", () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch(`https://fishkids.ru/api/products/${id}/`, {
+      const response = await fetch(`${BACKEND_URL}/api/products/${id}/`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
@@ -51,7 +51,7 @@ export const useProductStore = defineStore("product", () => {
 
   const fetchBrands = async () => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/brands/`, {
+      const response = await fetch(`${BACKEND_URL}/api/brands/`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
@@ -64,7 +64,7 @@ export const useProductStore = defineStore("product", () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/categories/`, {
+      const response = await fetch(`${BACKEND_URL}/api/categories/`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
@@ -77,7 +77,7 @@ export const useProductStore = defineStore("product", () => {
 
   const fetchColors = async () => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/colors/`, {
+      const response = await fetch(`${BACKEND_URL}/api/colors/`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Не удалось загрузить цвета");
@@ -89,7 +89,7 @@ export const useProductStore = defineStore("product", () => {
 
   const fetchCollections = async () => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/collections/`, {
+      const response = await fetch(`${BACKEND_URL}/api/collections/`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("Не удалось загрузить подборки");
@@ -101,7 +101,7 @@ export const useProductStore = defineStore("product", () => {
 
   const addReview = async (productId: string, score: number, text: string) => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/reviews/`, {
+      const response = await fetch(`${BACKEND_URL}/api/reviews/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -12,7 +12,7 @@ export const useNewsStore = defineStore("news", () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await fetch(`https://fishkids.ru/api/news/`, {
+      const response = await fetch(`${BACKEND_URL}/api/news/`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         method: "GET",

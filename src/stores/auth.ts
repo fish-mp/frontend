@@ -45,7 +45,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const login = async (credentials: { email: string; password: string }) => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/token/`, {
+      const response = await fetch(`${BACKEND_URL}/api/token/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ export const useAuthStore = defineStore("auth", () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       try {
-        const verifyResponse = await fetch(`https://fishkids.ru/api/token/verify/`, {
+        const verifyResponse = await fetch(`${BACKEND_URL}/api/token/verify/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -127,7 +127,7 @@ export const useAuthStore = defineStore("auth", () => {
     age: number;
   }) => {
     try {
-      const response = await fetch(`https://fishkids.ru/api/users/register/`, {
+      const response = await fetch(`${BACKEND_URL}/api/users/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +149,7 @@ export const useAuthStore = defineStore("auth", () => {
   const refresh = async () => {
     try {
       if (!refreshToken.value) throw new Error("No refresh token");
-      const response = await fetch(`https://fishkids.ru/api/token/refresh/`, {
+      const response = await fetch(`${BACKEND_URL}/api/token/refresh/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
