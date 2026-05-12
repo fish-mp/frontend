@@ -68,24 +68,16 @@
             <div class="course-detail__text">{{ course.description }}</div>
           </div>
           
-          <div class="course-detail__download" v-if="HasFiles">
+          <div class="course-detail__download" v-if="course.files && course.files.length">
             <div class="course-detail__download-header">
               <h3 class="course-detail__download-title">Материалы курса</h3>
-              <p class="course-detail__download-subtitle">Доступные файлы и видео для изучения</p>
+              <p class="course-detail__download-subtitle">Доступные файлы для изучения</p>
             </div>
-
-            <!-- ========== ОТЛАДОЧНЫЙ БЛОК ========== -->
-            <details style="margin-bottom: 20px; background: #f5f5f5; padding: 10px; border-radius: 8px; font-size: 12px;">
-              <summary style="cursor: pointer; font-weight: bold;">🔍 Отладка: содержимое course.files</summary>
-              <pre style="white-space: pre-wrap;">{{ JSON.stringify(course.files, null, 2) }}</pre>
-            </details>
-            <!-- ==================================== -->
-
             <div class="course-detail__files-grid">
               <div v-for="file in course.files" :key="file.id" class="course-detail__file-card">
                 <div class="file-card__content">
                   <div class="file-card__icon">
-                    <svg v-if="isVideo(getFileUrl(file))" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <svg v-if="isVideo(file.file)" width="32" height="32" viewBox="0 0 24 24" fill="none">
                       <rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
                       <path d="M9 9l6 3-6 3V9z" stroke="currentColor" stroke-width="1.5" fill="currentColor"/>
                     </svg>
@@ -96,20 +88,20 @@
                   </div>
                   <div class="file-card__info">
                     <h4 class="file-card__title">{{ file.title }}</h4>
-                    <p class="file-card__type">{{ getFileType(file) }}</p>
+                    <p class="file-card__type">{{ getFileType(file.file) }}</p>
                   </div>
                 </div>
                 
                 <!-- Для видео – плеер -->
-                <div v-if="isVideo(getFileUrl(file))" class="file-card__video">
+                <div v-if="isVideo(file.file)" class="file-card__video">
                   <video controls class="video-player">
-                    <source :src="getFileUrl(file)" :type="getVideoMimeType(getFileUrl(file))">
+                    <source :src="file.file" :type="getVideoMimeType(file.file)">
                     Ваш браузер не поддерживает видео.
                   </video>
                 </div>
                 
                 <!-- Для остальных файлов – кнопка скачивания -->
-                <a v-else :href="getFileUrl(file)" download class="file-card__download-btn">
+                <a v-else :href="file.file" download class="file-card__download-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   </svg>
@@ -117,9 +109,6 @@
                 </a>
               </div>
             </div>
-          </div>
-          <div v-else class="course-detail__no-files">
-            <p>Материалы курса пока не загружены.</p>
           </div>
         </div>
       </transition>
@@ -213,9 +202,6 @@ const getFileType = (file: any): string => {
 }
 
 // Проверка наличия файлов
-const HasFiles = computed(() => {
-  return course.value?.files && course.value.files.length > 0
-})
 
 // ========== Загрузка курса ==========
 const fetchCourse = async () => {
@@ -889,5 +875,91 @@ $error-color: #FF5252;
     justify-content: center;
     margin-top: 0;
   }
+}
+.course-detail__files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.course-detail__file-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.course-detail__file-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.file-card__content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.file-card__icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: rgba(23, 61, 237, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-card__info {
+  flex: 1;
+}
+
+.file-card__title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.file-card__type {
+  font-size: 0.8rem;
+  color: #5d6d87;
+}
+
+.file-card__video {
+  margin-top: 16px;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+
+.video-player {
+  width: 100%;
+  max-height: 260px;
+  display: block;
+  outline: none;
+}
+
+.file-card__download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: rgba(23, 61, 237, 0.1);
+  border-radius: 30px;
+  text-decoration: none;
+  color: #173DED;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.file-card__download-btn:hover {
+  background: rgba(23, 61, 237, 0.2);
 }
 </style>
