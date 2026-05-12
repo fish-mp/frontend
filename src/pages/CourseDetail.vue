@@ -2,28 +2,25 @@
   <section class="course-detail">
     <div class="bg-circle-1"></div>
     <div class="bg-circle-2"></div>
-    
+
     <div class="course-detail__wrapper" v-if="course">
       <router-link to="/courses" class="course-detail__back">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         Все курсы
       </router-link>
-      
+
       <div class="course-detail__content course-detail__header">
         <h1 class="course-detail__title">{{ course.title }}</h1>
         <p class="course-detail__desc">{{ course.short_description }}</p>
-        
+
         <div class="course-detail__actions">
           <p v-if="!isAuth" class="course-access__msg course-access__msg--error">
             Чтобы записаться, нужно авторизоваться!
           </p>
-          <button 
-            v-else-if="course.enrollment_state === null" 
-            class="btn btn--primary course-detail__enroll"
-            @click="fetchNewCourse(course.id)"
-          >
+          <button v-else-if="course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
+            @click="fetchNewCourse(course.id)">
             <span class="btn-text">Записаться на курс</span>
             <div class="btn-glow"></div>
             <div class="btn-sparkle"></div>
@@ -32,30 +29,24 @@
       </div>
 
       <div class="course-access" v-if="course.enrollment_state">
-        <div 
-          v-if="course.enrollment_state === 'applied'" 
-          class="course-access__msg course-access__msg--warning"
-        >
+        <div v-if="course.enrollment_state === 'applied'" class="course-access__msg course-access__msg--warning">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
           </svg>
           <span>Ваша заявка на курс находится на рассмотрении</span>
         </div>
-        <div 
-          v-else-if="course.enrollment_state === 'rejected'" 
-          class="course-access__msg course-access__msg--error"
-        >
+        <div v-else-if="course.enrollment_state === 'rejected'" class="course-access__msg course-access__msg--error">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
           </svg>
           <span>Ваша заявка отклонена</span>
         </div>
-        <div 
-          v-else-if="course.enrollment_state === 'enrolled'" 
-          class="course-access__msg course-access__msg--success"
-        >
+        <div v-else-if="course.enrollment_state === 'enrolled'" class="course-access__msg course-access__msg--success">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
           </svg>
           <span>Вы успешно записаны на курс!</span>
         </div>
@@ -67,23 +58,31 @@
             <h2 class="course-detail__subtitle">Описание курса</h2>
             <div class="course-detail__text">{{ course.description }}</div>
           </div>
-          
-          <div class="course-detail__download" v-if="course.files && course.files.length">
+
+          <!-- ---- ВИДЕО ПЛЕЕР (если есть видеофайл) ---- -->
+          <div v-if="videoFile" class="course-detail__video-section">
+            <video controls class="course-video">
+              <source :src="videoFile.file" :type="getVideoMimeType(videoFile.file)">
+              Ваш браузер не поддерживает видео.
+            </video>
+            <h3 class="video-title">{{ videoFile.title }}</h3>
+          </div>
+
+          <!-- ---- ОСТАЛЬНЫЕ ФАЙЛЫ ---- -->
+          <div class="course-detail__download" v-if="otherFiles.length">
             <div class="course-detail__download-header">
               <h3 class="course-detail__download-title">Материалы курса</h3>
-              <p class="course-detail__download-subtitle">Доступные файлы для изучения</p>
+              <p class="course-detail__download-subtitle">Дополнительные файлы для скачивания</p>
             </div>
             <div class="course-detail__files-grid">
-              <div v-for="file in course.files" :key="file.id" class="course-detail__file-card">
+              <div v-for="file in otherFiles" :key="file.id" class="course-detail__file-card">
                 <div class="file-card__content">
                   <div class="file-card__icon">
-                    <svg v-if="isVideo(file.file)" width="32" height="32" viewBox="0 0 24 24" fill="none">
-                      <rect x="2" y="6" width="20" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                      <path d="M9 9l6 3-6 3V9z" stroke="currentColor" stroke-width="1.5" fill="currentColor"/>
-                    </svg>
-                    <svg v-else width="32" height="32" viewBox="0 0 24 24" fill="none">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="currentColor" stroke-width="1.5"/>
-                      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="currentColor"
+                        stroke-width="1.5" />
+                      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" />
                     </svg>
                   </div>
                   <div class="file-card__info">
@@ -91,19 +90,10 @@
                     <p class="file-card__type">{{ getFileType(file.file) }}</p>
                   </div>
                 </div>
-                
-                <!-- Для видео – плеер -->
-                <div v-if="isVideo(file.file)" class="file-card__video">
-                  <video controls class="video-player">
-                    <source :src="file.file" :type="getVideoMimeType(file.file)">
-                    Ваш браузер не поддерживает видео.
-                  </video>
-                </div>
-                
-                <!-- Для остальных файлов – кнопка скачивания -->
-                <a v-else :href="file.file" download class="file-card__download-btn">
+                <a :href="file.file" download class="file-card__download-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" />
                   </svg>
                   <span class="file-card__download-text">Скачать</span>
                 </a>
@@ -118,11 +108,12 @@
       <div class="loading-spinner"></div>
       <p>Загрузка курса…</p>
     </div>
-    
+
     <div v-else class="course-detail__not-found">
       <div class="not-found__icon">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-          <path d="M9.172 16.242L12 13.414l2.828 2.828 1.414-1.414L13.414 12l2.828-2.828-1.414-1.414L12 10.586 9.172 7.758 7.758 9.172 10.586 12l-2.828 2.828 1.414 1.414zM12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M9.172 16.242L12 13.414l2.828 2.828 1.414-1.414L13.414 12l2.828-2.828-1.414-1.414L12 10.586 9.172 7.758 7.758 9.172 10.586 12l-2.828 2.828 1.414 1.414zM12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
+            stroke="currentColor" stroke-width="1.5" />
         </svg>
       </div>
       <h2>Курс не найден</h2>
@@ -151,25 +142,13 @@ const course = ref<Course | null>(null)
 const isLoading = ref(false)
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
-// ========== Утилиты для работы с файлами ==========
-// Универсальное получение URL файла (пробуем разные поля)
-const getFileUrl = (file: any): string => {
-  return file.file || file.url || file.file_url || file.path || ''
-}
-
-// Проверка, является ли файл видео
+// ========== Обработка файлов ==========
 const isVideo = (url: string): boolean => {
   if (!url) return false
-  try {
-    const cleanUrl = url.split('?')[0]
-    const ext = cleanUrl.split('.').pop()?.toLowerCase()
-    return ext === 'mp4' || ext === 'webm' || ext === 'ogg' || ext === 'mov'
-  } catch {
-    return false
-  }
+  const ext = url.split('.').pop()?.toLowerCase()
+  return ext === 'mp4' || ext === 'webm' || ext === 'ogg' || ext === 'mov'
 }
 
-// MIME-тип для видео
 const getVideoMimeType = (url: string): string => {
   const ext = url.split('.').pop()?.toLowerCase()
   if (ext === 'mp4') return 'video/mp4'
@@ -178,10 +157,8 @@ const getVideoMimeType = (url: string): string => {
   return 'video/mp4'
 }
 
-// Получение типа файла для отображения
-const getFileType = (file: any): string => {
-  const url = getFileUrl(file)
-  const extension = url.split('.').pop()?.toLowerCase()
+const getFileType = (url: string): string => {
+  const ext = url.split('.').pop()?.toLowerCase()
   const types: Record<string, string> = {
     'pdf': 'PDF документ',
     'doc': 'Word документ',
@@ -193,15 +170,20 @@ const getFileType = (file: any): string => {
     'jpg': 'Изображение',
     'jpeg': 'Изображение',
     'png': 'Изображение',
-    'mp4': 'Видео',
-    'webm': 'Видео',
-    'ogg': 'Видео',
-    'mov': 'Видео'
+    'zip': 'Архив ZIP',
+    'rar': 'Архив RAR'
   }
-  return types[extension || ''] || 'Файл'
+  return types[ext || ''] || 'Файл'
 }
 
-// Проверка наличия файлов
+// Разделяем файлы на видео и остальные
+const videoFile = computed(() => {
+  return course.value?.files?.find(file => isVideo(file.file))
+})
+
+const otherFiles = computed(() => {
+  return course.value?.files?.filter(file => !isVideo(file.file)) || []
+})
 
 // ========== Загрузка курса ==========
 const fetchCourse = async () => {
@@ -221,10 +203,6 @@ const fetchCourse = async () => {
       if (!response.ok) throw new Error('Курс не найден')
       course.value = await response.json()
     }
-
-    // Отладка: выводим files в консоль
-    console.log('📁 Данные курса:', course.value)
-    console.log('📁 course.files:', course.value?.files)
   } catch (error) {
     console.error('Ошибка загрузки курса:', error)
     router.replace({ name: 'Courses' })
@@ -961,5 +939,28 @@ $error-color: #FF5252;
 
 .file-card__download-btn:hover {
   background: rgba(23, 61, 237, 0.2);
+}.course-detail__video-section {
+  margin: 40px 0;
+  width: 100%;
+  background: #000;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.course-video {
+  width: 100%;
+  max-height: 500px;
+  display: block;
+  outline: none;
+}
+
+.video-title {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  margin: 0;
 }
 </style>
