@@ -50,6 +50,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { useCartStore } from '../stores/cart';
 
 const props = defineProps({
     modelValue: { type: Boolean, required: true }
@@ -60,11 +61,13 @@ const email = ref('');
 const password = ref('');
 const loading = ref(false);
 const auth = useAuthStore();
+const cart = useCartStore();
 
 const handleLogin = async () => {
     loading.value = true;
     try {
         await auth.login({ email: email.value, password: password.value });
+        await cart.fetchCart();
         emit('update:modelValue', false);
         email.value = '';
         password.value = '';

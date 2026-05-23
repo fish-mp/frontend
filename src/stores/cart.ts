@@ -168,6 +168,12 @@ export const useCartStore = defineStore('cart', () => {
   const totalPrice = () =>
     items.value.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 
+  const resetCart = () => {
+    items.value = []
+    loading.value = false
+    error.value = null
+  }
+
   return {
     items,
     loading,
@@ -180,6 +186,7 @@ export const useCartStore = defineStore('cart', () => {
     createOrder,
     totalItems,
     totalPrice,
-    itemsCount
+    itemsCount,
+    resetCart
   }
 })

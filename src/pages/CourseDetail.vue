@@ -126,10 +126,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCourseStore } from '../stores/course'
 import { useAuthStore } from '../stores/auth'
+import { apiFetch } from '../utils/api'
 import type { Course } from '../types/Course'
 
 const route = useRoute()
@@ -186,23 +187,15 @@ const otherFiles = computed(() => {
 })
 
 // ========== Загрузка курса ==========
+const courseId = computed(() => Number(route.params.id))
+
 const fetchCourse = async () => {
   try {
     isLoading.value = true
-    const courseId = Number(route.params.id)
 
-    const storedCourse = courseStore.courses.find(c => c.id === courseId)
-    if (storedCourse) {
-      course.value = storedCourse
-    } else {
-      const response = await fetch(`${BACKEND_URL}/api/courses/${courseId}/`, {
-        headers: {
-          'Authorization': `Bearer ${auth.accessToken}`
-        }
-      })
-      if (!response.ok) throw new Error('Курс не найден')
-      course.value = await response.json()
-    }
+    const response = await apiFetch(`${BACKEND_URL}/api/courses/${courseId.value}/`)
+    if (!response.ok) throw new Error('Курс не найден')
+    course.value = await response.json()
   } catch (error) {
     console.error('Ошибка загрузки курса:', error)
     router.replace({ name: 'Courses' })
@@ -214,11 +207,19 @@ const fetchCourse = async () => {
 const fetchNewCourse = async (id: number) => {
   try {
     const ok = await courseStore.enrollToCourse(id)
-    if (ok) setTimeout(fetchCourse, 100)
+    if (ok) {
+      course.value = null
+      await fetchCourse()
+    }
   } catch (error) {
     console.error(error)
   }
 }
+
+// При смене статуса авторизации перезагружаем курс (enrollment_state может измениться)
+watch(isAuth, () => {
+  if (courseId.value) fetchCourse()
+})
 
 onMounted(() => {
   fetchCourse()

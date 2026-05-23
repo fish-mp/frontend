@@ -115,6 +115,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
+import { apiFetch } from "../utils/api";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const router = useRouter();
@@ -161,11 +162,8 @@ const fetchMyCourses = async () => {
     isLoading.value = true;
     error.value = null;
     
-    const response = await fetch(`${BACKEND_URL}/api/courses/my/`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.accessToken}`,
-        'Content-Type': 'application/json'
-      },
+    const response = await apiFetch(`${BACKEND_URL}/api/courses/my/`, {
+      headers: { 'Content-Type': 'application/json' },
     });
     
     if (!response.ok) {

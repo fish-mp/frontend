@@ -201,6 +201,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useAuthStore } from "../stores/auth";
+import { useCartStore } from "../stores/cart";
 import { useRoute, useRouter } from "vue-router";
 import LoginPopup from "../components/LoginPopup.vue";
 import RegisterPopup from "../components/RegisterPopup.vue";
@@ -221,6 +222,7 @@ const mobileNav = ref(null);
 const burger = ref(null);
 
 const auth = useAuthStore();
+const cart = useCartStore();
 const isAuth = computed(() => auth.isAuthenticated);
 const user = computed(() => auth.user);
 
@@ -298,6 +300,7 @@ function handleRegisterClick() {
 }
 
 function handleLogout() {
+  cart.resetCart();
   auth.logout();
   closeMobileNav();
 }
