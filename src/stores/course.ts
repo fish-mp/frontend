@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useAuthStore } from "./auth";
+import { apiFetch } from "../utils/api";
 import type { Course } from "../types/Course";
 
 export const useCourseStore = defineStore("course", () => {
@@ -14,11 +15,7 @@ export const useCourseStore = defineStore("course", () => {
   const fetchCourses = async () => {
     try {
       isLoading.value = true;
-      const response = await fetch(`${BACKEND_URL}/api/courses/`, {
-        headers: {
-          // Authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
+      const response = await fetch(`${BACKEND_URL}/api/courses/`);
 
       if (!response.ok) {
         const body = await response.text();
@@ -43,11 +40,7 @@ export const useCourseStore = defineStore("course", () => {
         throw new Error("Требуется авторизация");
       }
 
-      const response = await fetch(`${BACKEND_URL}/api/my-courses/`, {
-        headers: {
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
+      const response = await apiFetch(`${BACKEND_URL}/api/my-courses/`);
 
       if (!response.ok) {
         const body = await response.text();
@@ -69,12 +62,11 @@ export const useCourseStore = defineStore("course", () => {
         throw new Error("Требуется авторизация");
       }
 
-      const response = await fetch(
+      const response = await apiFetch(
         `${BACKEND_URL}/api/courses/${courseId}/enroll/`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${auth.accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -82,13 +74,7 @@ export const useCourseStore = defineStore("course", () => {
 
       if (!response.ok) throw new Error("Ошибка записи на курс");
 
-      // Обновляем состояние курса в списке всех курсов
-      const updatedCourses = courses.value.map((course) =>
-        course.id === courseId
-          ? { ...course, enrollment_state: "applied" }
-          : course
-      );
-      courses.value = updatedCourses;
+      await fetchCourses();
 
       return true;
     } catch (err: any) {
