@@ -56,10 +56,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useCartStore, type CartItemResponse } from '../stores/cart'
-import { useRouter } from 'vue-router'
+
 
 const cartStore = useCartStore()
-const router = useRouter()
+
 
 const getProductImage = (product: any) => {
   if (product.main_image?.image) return product.main_image.image
