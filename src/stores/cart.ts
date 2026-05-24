@@ -138,31 +138,37 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  const createOrder = async () => {
-    loading.value = true
-    error.value = null
-    try {
-      // Отправляем статус 'processing' – он будет установлен на бэкенде (или используется по умолчанию)
-      const response = await fetch(`${BACKEND_URL}/api/orders/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status: 'processing' })
-      })
-      if (!response.ok) {
-        throw new Error('Не удалось оформить заказ')
-      } else {
-        await response.json()
-        items.value = []
-        return true
-      }
-    } catch (err: any) {
-      error.value = err.message
-      throw err
-    } finally {
-      loading.value = false
+ const createOrder = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    // Отправляем POST – бэкенд сам создаст заказ и платёж
+    const response = await fetch(`${BACKEND_URL}/api/orders/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      // тело можно не отправлять (бэкенд игнорирует)
+    })
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}))
+      throw new Error(errData.error || 'Не удалось оформить заказ')
     }
+
+    const data = await response.json()
+    // data = { order_id: number, confirmation_url: string }
+
+    // Очищаем локальную корзину (серверная уже очищена)
+    items.value = []
+
+    return data
+  } catch (err: any) {
+    error.value = err.message
+    throw err
+  } finally {
+    loading.value = false
   }
+}
 
   const totalItems = () => items.value.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = () =>
