@@ -86,6 +86,11 @@ export const router = createRouter({
       component: () => import("../pages/BeginnerGuide.vue"),
     },
     {
+      path: '/order-success',
+      name: 'OrderSuccess',
+      component: () => import('../pages/OrderSuccess.vue'),
+    },
+    {
       path: '/cart',
       name: 'cart',
       component: () => import('../pages/CartView.vue'),

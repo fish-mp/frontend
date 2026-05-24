@@ -90,9 +90,15 @@ const clearCart = async () => {
 const handleCheckout = async () => {
   if (cartStore.items.length === 0) return
   try {
-    await cartStore.createOrder()
-    alert('Спасибо за заказ! С вами свяжется менеджер после уточнения наличия товара на складе.')
-    router.push('/shop')
+    const result = await cartStore.createOrder()
+    if (result && result.confirmation_url) {
+      // Сохраняем ID заказа, чтобы страница успеха могла проверить статус
+      localStorage.setItem('last_order_id', result.order_id.toString())
+      // Перенаправляем на страницу оплаты ЮKassa
+      window.location.href = result.confirmation_url
+    } else {
+      throw new Error('Не получена ссылка на оплату')
+    }
   } catch (err) {
     alert('Не удалось оформить заказ. Попробуйте позже.')
   }
