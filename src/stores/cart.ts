@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { apiFetch } from '../utils/api'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -37,10 +38,7 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart/`, {
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-      })
+      const response = await apiFetch(`${BACKEND_URL}/api/cart/`)
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -71,10 +69,8 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart-items/`, {
+      const response = await apiFetch(`${BACKEND_URL}/api/cart-items/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ product_id: productId, quantity })
       })
 
@@ -98,10 +94,8 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart-items/${cartItemId}/`, {
+      const response = await apiFetch(`${BACKEND_URL}/api/cart-items/${cartItemId}/`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ quantity })
       })
       if (!response.ok) throw new Error('Не удалось обновить количество')
@@ -118,9 +112,8 @@ export const useCartStore = defineStore('cart', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await fetch(`${BACKEND_URL}/api/cart-items/${cartItemId}/`, {
-        method: 'DELETE',
-        credentials: 'include'
+      const response = await apiFetch(`${BACKEND_URL}/api/cart-items/${cartItemId}/`, {
+        method: 'DELETE'
       })
       if (!response.ok) throw new Error('Не удалось удалить товар')
       await fetchCart()
@@ -143,11 +136,8 @@ export const useCartStore = defineStore('cart', () => {
   error.value = null
   try {
     // Отправляем POST – бэкенд сам создаст заказ и платёж
-    const response = await fetch(`${BACKEND_URL}/api/orders/`, {
+    const response = await apiFetch(`${BACKEND_URL}/api/orders/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      // тело можно не отправлять (бэкенд игнорирует)
     })
 
     if (!response.ok) {
