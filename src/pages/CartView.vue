@@ -41,6 +41,12 @@
             <span>Общая стоимость:</span>
             <span>{{ cartStore.totalPrice() }} ₽</span>
           </div>
+          <p class="cart-summary__legal">
+            Оформляя заказ, вы соглашаетесь с
+            <a href="/fishkids_publichnaya_oferta.pdf" target="_blank" rel="noopener noreferrer">публичной офертой</a>
+            и
+            <a href="/fishkids_usloviya_vozvrata.pdf" target="_blank" rel="noopener noreferrer">условиями возврата</a>.
+          </p>
           <button class="cart-summary__checkout" @click="handleCheckout" :disabled="cartStore.loading">
             Оформить заказ
           </button>
@@ -299,10 +305,27 @@ $accent-glow: rgba(23, 61, 237, 0.15);
     margin-top: 10px;
   }
 
+  &__legal {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: $text-medium;
+    line-height: 1.5;
+
+    a {
+      color: $primary-blue;
+      text-decoration: underline;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
   &__checkout {
     width: 100%;
     padding: 16px;
-    margin-top: 20px;
+    margin-top: 12px;
     background: $blue-gradient;
     border: none;
     border-radius: 16px;
