@@ -302,6 +302,21 @@ $light-blue: #64b5f6;
   opacity: 0.8;
 }
 
+.footer__policy-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: $primary-blue;
+  font-size: 0.95rem;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.3s ease, text-decoration-color 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+}
+
 // Анимации
 @keyframes fadeInUp {
   from {
