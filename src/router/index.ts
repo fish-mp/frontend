@@ -96,6 +96,11 @@ export const router = createRouter({
       component: () => import('../pages/CartView.vue'),
     },
     {
+      path: '/checkout',
+      name: 'checkout',
+      component: () => import('../pages/CheckoutView.vue'),
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: () => import('../pages/ProfileView.vue'),

@@ -23,6 +23,17 @@ interface CartResponse {
   total_cart_price: string
 }
 
+export interface OrderPayload {
+  email: string
+  phone: string
+  city: string
+  street: string
+  house: string
+  apartment?: string
+  postal_code?: string
+  offer_accepted: boolean
+}
+
 export const useCartStore = defineStore('cart', () => {
   const items = ref<CartItemResponse[]>([])
   const loading = ref(false)
@@ -131,13 +142,14 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
- const createOrder = async () => {
+ const createOrder = async (payload: OrderPayload) => {
   loading.value = true
   error.value = null
   try {
-    // Отправляем POST – бэкенд сам создаст заказ и платёж
+    // Отправляем контактные данные и адрес – бэкенд создаст заказ и платёж
     const response = await apiFetch(`${BACKEND_URL}/api/orders/`, {
       method: 'POST',
+      body: JSON.stringify(payload),
     })
 
     if (!response.ok) {
