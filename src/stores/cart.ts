@@ -26,11 +26,13 @@ interface CartResponse {
 export interface OrderPayload {
   email: string
   phone: string
+  delivery_method: 'pickup' | 'delivery'
   city: string
   street: string
   house: string
   apartment?: string
   postal_code?: string
+  beyond_mkad: boolean
   offer_accepted: boolean
 }
 
