@@ -19,7 +19,7 @@
 
       <div v-else-if="status === 'pending'" class="status pending">
         <p>Оплата ещё не подтверждена. Это может занять несколько секунд.</p>
-        <button @click="checkStatus" class="btn btn-outline">Проверить снова</button>
+        <button @click="() => checkStatus(false)" class="btn btn-outline">Проверить снова</button>
       </div>
 
       <div v-else class="status error">
