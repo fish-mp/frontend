@@ -32,12 +32,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { apiFetch } from '../utils/api'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const loading = ref(true)
 const status = ref<string | null>(null)
 
-const checkStatus = async () => {
+// Сколько раз автоматически перепроверить статус, если оплата ещё не подтверждена
+// (вебхук от ЮKassa может прийти на пару секунд позже возврата пользователя).
+const MAX_RETRIES = 5
+const RETRY_DELAY_MS = 2000
+
+const checkStatus = async (autoRetry = true) => {
   const orderId = localStorage.getItem('last_order_id')
   if (!orderId) {
     status.value = 'error'
@@ -45,26 +51,39 @@ const checkStatus = async () => {
     return
   }
 
-  try {
-    const response = await fetch(`${BACKEND_URL}/api/orders/${orderId}/`, {
-      credentials: 'include'
-    })
-    if (response.ok) {
-      const data = await response.json()
-      status.value = data.status
-      // Если заказ оплачен, можно удалить ID из localStorage
-      if (data.status === 'paid') {
-        localStorage.removeItem('last_order_id')
+  loading.value = true
+  let attempt = 0
+
+  while (true) {
+    try {
+      // apiFetch подставляет JWT (Authorization: Bearer) — эндпоинт требует авторизации
+      const response = await apiFetch(`${BACKEND_URL}/api/orders/${orderId}/`)
+      if (response.ok) {
+        const data = await response.json()
+        status.value = data.status
+        if (data.status === 'paid') {
+          localStorage.removeItem('last_order_id')
+          break
+        }
+        // Заказ ещё в pending — даём вебхуку время и пробуем снова
+        if (autoRetry && data.status === 'pending' && attempt < MAX_RETRIES) {
+          attempt++
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS))
+          continue
+        }
+        break
+      } else {
+        status.value = 'error'
+        break
       }
-    } else {
+    } catch (e) {
+      console.error('Ошибка проверки статуса:', e)
       status.value = 'error'
+      break
     }
-  } catch (e) {
-    console.error('Ошибка проверки статуса:', e)
-    status.value = 'error'
-  } finally {
-    loading.value = false
   }
+
+  loading.value = false
 }
 
 onMounted(() => {
