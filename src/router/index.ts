@@ -124,7 +124,7 @@ try {
   router.afterEach((to) => {
     try {
       if ((window as any).ym && typeof (window as any).ym === "function") {
-        (window as any).ym(109762517, "hit", window.location.href);
+        (window as any).ym(109763488, "hit", (to as any).fullPath || window.location.href);
       }
     } catch (e) {}
   });
