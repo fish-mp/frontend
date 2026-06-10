@@ -44,7 +44,7 @@
               <div class="delivery-method__content">
                 <span class="delivery-method__title">Доставка</span>
                 <span v-if="cartStore.totalPrice() > 10000" class="delivery-method__free">Бесплатно</span>
-                <span v-else class="delivery-method__desc">от 300 ₽</span>
+                <span v-else class="delivery-method__desc">от 1500 ₽</span>
               </div>
             </label>
           </div>
@@ -82,7 +82,7 @@
 
             <label v-if="cartStore.totalPrice() < 10000" class="checkbox-field">
               <input type="checkbox" v-model="form.beyond_mkad" />
-              <span>Адрес находится за МКАД (+1000 ₽ к доставке)</span>
+              <span>Адрес находится за МКАД (+1500 ₽ к доставке)</span>
             </label>
           </template>
         </div>
@@ -158,7 +158,7 @@ const submitError = ref<string | null>(null)
 
 const deliveryCost = computed(() => {
   if (cartStore.totalPrice() >= 10000 || form.delivery_method === 'pickup') return 0
-  return form.beyond_mkad ? 1000 : 300
+  return form.beyond_mkad ? 3000 : 1500
 })
 
 onMounted(async () => {
