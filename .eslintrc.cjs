@@ -1,0 +1,23 @@
+module.exports = {
+  root: true,
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: 'module',
+    project: './tsconfig.json',
+  },
+  plugins: ['@typescript-eslint', 'vue'],
+  extends: ['plugin:vue/vue3-recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  rules: {
+    'no-console': 'warn',
+    'no-debugger': 'warn',
+  },
+  settings: {
+    vue: { version: 'detect' },
+  },
+};
