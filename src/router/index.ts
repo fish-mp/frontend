@@ -115,3 +115,13 @@ export const router = createRouter({
     return { left: 0, top: 0 };
   },
 });
+// Yandex.Metrica SPA tracking — замените REPLACE_WITH_YANDEX_METRIKA_ID на ваш ID счётчика
+try {
+  router.afterEach((to) => {
+    try {
+      if ((window as any).ym && typeof (window as any).ym === "function") {
+        (window as any).ym(109762517, "hit", window.location.href);
+      }
+    } catch (e) {}
+  });
+} catch (e) {}
