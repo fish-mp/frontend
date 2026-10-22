@@ -1,55 +1,112 @@
 <template>
-  <header :class="styles.header">
+  <header :class="styles.header" @keydown.esc="closeAllDropdowns">
     <div :class="styles.headerWrapper">
       <!-- Логотип -->
-      <router-link to="/" :class="styles.headerLogoLink">
+      <router-link
+        :to="portal ? '/' : '/aquarium'"
+        :class="styles.headerLogoLink"
+        :aria-label="portal ? 'Цифровая школа — главная' : 'Школа аквариумистики — главная'"
+      >
         <div :class="styles.logoContainer">
           <div :class="styles.logoGlow"></div>
-          <img src="../assets/image/logo.svg" alt="Логотип" :class="styles.logo" />
+          <img
+            :src="portal ? schoolLogo : aquariumLogo"
+            :alt="portal ? 'Цифровая школа' : 'Логотип'"
+            :class="styles.logo"
+          />
         </div>
       </router-link>
 
       <!-- Навигация -->
-      <nav ref="mobileNav" :class="[styles.nav, { [styles.navOpen]: isMobileNavOpen }]">
+      <nav
+        id="site-navigation"
+        ref="mobileNav"
+        :class="[styles.nav, { [styles.navOpen]: isMobileNavOpen }]"
+        aria-label="Основная навигация"
+      >
         <div :class="styles.navBackdrop"></div>
 
-        <router-link to="/" :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/' }]"
-          @click="closeMobileNav">
+        <router-link
+          :to="portal ? '/' : '/aquarium'"
+          :class="[
+            styles.navLink,
+            { [styles.navLinkActive]: $route.path === (portal ? '/' : '/aquarium') },
+          ]"
+          @click="closeMobileNav"
+        >
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path
                 d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </div>
           <span :class="styles.navText">Главная</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <router-link to="/aquaristics"
-          :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/aquaristics' }]" @click="closeMobileNav">
+        <router-link v-if="!portal" to="/" :class="styles.navLink" @click="closeMobileNav">
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path
                 d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </div>
-          <span :class="styles.navText">Аквариумистика</span>
+          <span :class="styles.navText">Цифровая школа ↗</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <router-link to="/news" :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/news' }]"
-          @click="closeMobileNav">
+        <router-link
+          :to="portal ? '/news' : '/aquarium/news'"
+          :class="[
+            styles.navLink,
+            {
+              [styles.navLinkActive]: portal
+                ? $route.path.startsWith('/news')
+                : $route.path === '/aquarium/news',
+            },
+          ]"
+          @click="closeMobileNav"
+        >
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path
                 d="M19 20H5C3.89543 20 3 19.1046 3 18V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V18C21 19.1046 20.1046 20 19 20Z"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M16 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M8 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M16 2V6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8 2V6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M3 10H21"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </div>
           <span :class="styles.navText">Новости</span>
@@ -57,72 +114,142 @@
         </router-link>
 
         <!-- ВЫПАДАЮЩЕЕ МЕНЮ КУРСОВ -->
-        <div :class="[styles.dropdown, { [styles.dropdownOpen]: isCoursesDropdownOpen }]"
+        <div
+          :class="[styles.dropdown, { [styles.dropdownOpen]: isCoursesDropdownOpen }]"
           @mouseenter="openCoursesDropdown"
-          @mouseleave="closeCoursesDropdown">
-          <button :class="[styles.dropdownToggle, { [styles.navLinkActive]: isCoursesActive }]"
-            @click="toggleCoursesDropdown">
+          @mouseleave="closeCoursesDropdown"
+        >
+          <button
+            :class="[styles.dropdownToggle, { [styles.navLinkActive]: isCoursesActive }]"
+            :aria-expanded="isCoursesDropdownOpen"
+            aria-controls="header-directions"
+            @click="toggleCoursesDropdown"
+          >
             <div :class="styles.navIcon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path
+                  d="M12 14L21 9L12 4L3 9L12 14Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M9 12V20C9 20.2652 9.10536 20.5196 9.29289 20.7071C9.48043 20.8946 9.73478 21 10 21H14C14.2652 21 14.5196 20.8946 14.7071 20.7071C14.8946 20.5196 15 20.2652 15 20V12"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
             </div>
-            <span :class="styles.navText">Курсы</span>
+            <span :class="styles.navText">{{ portal ? 'Направления' : 'Курсы' }}</span>
             <div :class="styles.dropdownArrow">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </div>
           </button>
-          
-          <div :class="styles.dropdownMenu">
-            <router-link 
-              to="/courses" 
-              :class="[styles.dropdownItem, { [styles.dropdownItemActive]: $route.path === '/courses' }]"
-              @click="closeAllDropdowns">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                <path d="M9 12l2 2 4-4"></path>
-              </svg>
-              <span>Все курсы</span>
-            </router-link>
-            
-            <router-link 
-              to="/my-courses" 
-              :class="[styles.dropdownItem, { [styles.dropdownItemActive]: $route.path === '/my-courses' }]"
-              @click="closeAllDropdowns">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              <span>Мои курсы</span>
-            </router-link>
+
+          <div
+            id="header-directions"
+            :class="styles.dropdownMenu"
+            :style="portal && isCoursesDropdownOpen ? { maxHeight: 'none' } : undefined"
+          >
+            <template v-if="portal">
+              <router-link
+                v-for="direction in directions"
+                :key="direction.id"
+                :to="direction.to || { path: '/', hash: `#${direction.id}` }"
+                :class="styles.dropdownItem"
+                @click="closeAllDropdowns"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+                <span>{{ direction.title }}</span>
+              </router-link>
+            </template>
+            <template v-else>
+              <router-link
+                to="/courses"
+                :class="[
+                  styles.dropdownItem,
+                  { [styles.dropdownItemActive]: $route.path === '/courses' },
+                ]"
+                @click="closeAllDropdowns"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  <path d="M9 12l2 2 4-4"></path>
+                </svg>
+                <span>Все курсы</span>
+              </router-link>
+
+              <router-link
+                to="/my-courses"
+                :class="[
+                  styles.dropdownItem,
+                  { [styles.dropdownItemActive]: $route.path === '/my-courses' },
+                ]"
+                @click="closeAllDropdowns"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Мои курсы</span>
+              </router-link>
+            </template>
           </div>
         </div>
 
         <!-- МАГАЗИН -->
-        <router-link 
-          to="/shop" 
-          :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/shop' }]" 
-          @click="closeMobileNav">
+        <router-link
+          :to="portal ? '/shop' : '/aquarium/shop'"
+          :class="[
+            styles.navLink,
+            { [styles.navLinkActive]: $route.path === (portal ? '/shop' : '/aquarium/shop') },
+          ]"
+          @click="closeMobileNav"
+        >
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C16.4696 17 15.9609 17.2107 15.5858 17.5858C15.2107 17.9609 15 18.4696 15 19C15 19.5304 15.2107 20.0391 15.5858 20.4142C15.9609 20.7893 16.4696 21 17 21C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19C19 18.4696 18.7893 18.0391 18.4142 17.5858C17.9609 17.2107 17.5304 17 17 17ZM9 19C9 19.5304 8.78929 20.0391 8.41421 20.4142C8.03914 20.7893 7.53043 21 7 21C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19C5 18.4696 5.21071 17.9609 5.58579 17.5858C5.96086 17.2107 6.46957 17 7 17C7.53043 17 8.03914 17.2107 8.41421 17.5858C8.78929 17.9609 9 18.4696 9 19Z" 
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C16.4696 17 15.9609 17.2107 15.5858 17.5858C15.2107 17.9609 15 18.4696 15 19C15 19.5304 15.2107 20.0391 15.5858 20.4142C15.9609 20.7893 16.4696 21 17 21C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19C19 18.4696 18.7893 18.0391 18.4142 17.5858C17.9609 17.2107 17.5304 17 17 17ZM9 19C9 19.5304 8.78929 20.0391 8.41421 20.4142C8.03914 20.7893 7.53043 21 7 21C6.46957 21 5.96086 20.7893 5.58579 20.4142C5.21071 20.0391 5 19.5304 5 19C5 18.4696 5.21071 17.9609 5.58579 17.5858C5.96086 17.2107 6.46957 17 7 17C7.53043 17 8.03914 17.2107 8.41421 17.5858C8.78929 17.9609 9 18.4696 9 19Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </div>
           <span :class="styles.navText">Магазин</span>
           <div :class="styles.navHighlight"></div>
         </router-link>
 
-        <router-link to="/events" :class="[styles.navLink, { [styles.navLinkActive]: $route.path === '/events' }]"
-          @click="closeMobileNav">
+        <router-link
+          :to="portal ? '/events' : '/aquarium/events'"
+          :class="[
+            styles.navLink,
+            {
+              [styles.navLinkActive]: portal
+                ? $route.path.startsWith('/events')
+                : $route.path === '/aquarium/events',
+            },
+          ]"
+          @click="closeMobileNav"
+        >
           <div :class="styles.navIcon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path
                 d="M8 7V3M16 7V3M7 11H17M5 21H19C20.1046 21 21 20.1046 21 19V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V19C3 20.1046 3.89543 21 5 21Z"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </div>
           <span :class="styles.navText">Мероприятия</span>
@@ -181,11 +308,13 @@
       </div>
 
       <!-- БУРГЕР МЕНЮ -->
-      <button 
-        :class="[styles.burger, { [styles.burgerOpen]: isMobileNavOpen }]" 
-        ref="burger" 
+      <button
+        :class="[styles.burger, { [styles.burgerOpen]: isMobileNavOpen }]"
+        ref="burger"
         @click="toggleMobileNav"
-        aria-label="Открыть меню"
+        :aria-label="isMobileNavOpen ? 'Закрыть меню' : 'Открыть меню'"
+        :aria-expanded="isMobileNavOpen"
+        aria-controls="site-navigation"
       >
         <div :class="[styles.burgerLine, styles.burgerLine1]"></div>
         <div :class="[styles.burgerLine, styles.burgerLine2]"></div>
@@ -199,17 +328,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
-import { useAuthStore } from "../stores/auth";
-import { useCartStore } from "../stores/cart";
-import { useRoute, useRouter } from "vue-router";
-import LoginPopup from "../components/LoginPopup.vue";
-import RegisterPopup from "../components/RegisterPopup.vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { useAuthStore } from '../stores/auth';
+import { useCartStore } from '../stores/cart';
+import { useRoute, useRouter } from 'vue-router';
+import LoginPopup from '../components/LoginPopup.vue';
+import RegisterPopup from '../components/RegisterPopup.vue';
 
 // Импортируем CSS модуль
 import styles from '../assets/scss/Header.module.scss';
+import schoolLogo from '../assets/digital-school/logo.png';
+import aquariumLogo from '../assets/image/logo.svg';
+import { directions } from '../data/directions';
 
-const emit = defineEmits(['toggle-sidebar'])
+const props = defineProps({ portal: { type: Boolean, default: false } });
+
+const emit = defineEmits(['toggle-sidebar']);
 const router = useRouter();
 const route = useRoute();
 
@@ -231,6 +365,8 @@ const userInitials = computed(() => {
 });
 
 const isCoursesActive = computed(() => {
+  if (props.portal)
+    return route.path === '/' && directions.some((direction) => route.hash === `#${direction.id}`);
   return route.path === '/courses' || route.path === '/my-courses';
 });
 
@@ -265,14 +401,14 @@ function closeMobileNav() {
 
 function toggleMobileNav() {
   isMobileNavOpen.value = !isMobileNavOpen.value;
-  
+
   // Блокируем скролл при открытом меню
   if (isMobileNavOpen.value) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
   }
-  
+
   emit('toggle-sidebar');
 }
 
@@ -306,11 +442,11 @@ function handleLogout() {
 }
 
 onMounted(() => {
-  document.addEventListener("click", onClickOutside);
+  document.addEventListener('click', onClickOutside);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener("click", onClickOutside);
+  document.removeEventListener('click', onClickOutside);
   document.body.style.overflow = '';
 });
 

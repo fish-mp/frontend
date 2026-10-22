@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../pages/Home.vue";
 import CardDetail from "../pages/CardDetail.vue";
 import News from "../pages/News.vue";
 import Courses from "../pages/Courses.vue";
@@ -10,7 +9,8 @@ import NotFound from "../pages/NotFound.vue";
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", name: "Home", component: Home },
+    { path: "/", name: "DigitalSchool", component: () => import('../pages/DigitalSchool.vue'), meta: { portal: true, title: 'Цифровая школа — учись, исследуй, открывай новое' } },
+    { path: "/aquarium", name: "Home", component: () => import('../pages/Home.vue'), meta: { title: 'Школа аквариумистики — АкваВселенная' } },
     {
       path: "/card/:id",
       name: "CardDetail",
@@ -20,7 +20,8 @@ export const router = createRouter({
     {
       path: "/news",
       name: "News",
-      component: News,
+      component: () => import('../pages/SchoolJournal.vue'),
+      meta: { portal: true, title: 'Новости — Цифровая школа' },
     },
     {
       path: "/courses",
@@ -46,13 +47,16 @@ export const router = createRouter({
       {
       path: "/shop",
       name: "shop",
-      component: () => import("../pages/shop.vue"),
+      component: () => import('../pages/SchoolShop.vue'),
+      meta: { portal: true, title: 'Магазин — Цифровая школа' },
     },
+    { path: '/aquarium/shop', name: 'AquariumShop', component: () => import('../pages/shop.vue') },
     
     {
       path: "/events",
       name: "Events",
-      component: () => import("../pages/Events.vue"),
+      component: () => import('../pages/SchoolJournal.vue'),
+      meta: { portal: true, title: 'Мероприятия — Цифровая школа' },
     },
     {
       path: "/fish/:id",
@@ -68,8 +72,12 @@ export const router = createRouter({
     {
       path: "/news/:id",
       name: "NewsDetail",
-      component: () => import("../pages/NewsDetail.vue"),
+      component: () => import('../pages/SchoolArticle.vue'),
+      meta: { portal: true, title: 'Новости — Цифровая школа' },
     },
+    { path: '/events/:id', name: 'SchoolEventDetail', component: () => import('../pages/SchoolArticle.vue'), meta: { portal: true, title: 'Мероприятие — Цифровая школа' } },
+    { path: '/aquarium/news', name: 'AquariumNews', component: News },
+    { path: '/aquarium/events', name: 'AquariumEvents', component: () => import('../pages/Events.vue') },
        {
       path: '/my-courses',
       name: 'MyCourses',
@@ -117,11 +125,15 @@ export const router = createRouter({
     if (savedPosition) {
       return savedPosition;
     }
+    if (_to.hash) {
+      return { el: _to.hash, top: _to.meta.portal ? (window.innerWidth <= 1024 ? 110 : 160) : 24, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' };
+    }
     return { left: 0, top: 0 };
   },
 });
 try {
   router.afterEach((to) => {
+    document.title = typeof to.meta.title === 'string' ? to.meta.title : 'Школа аквариумистики — АкваВселенная';
     try {
       if ((window as any).ym && typeof (window as any).ym === "function") {
         (window as any).ym(109763488, "hit", (to as any).fullPath || window.location.href);
