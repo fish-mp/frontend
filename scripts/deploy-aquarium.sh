@@ -33,6 +33,14 @@ image_name=$(docker inspect --format '{{.Config.Image}}' "$container")
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
 release_dir="$deploy/releases/aquarium-$stamp"
 mkdir -p "$release_dir"
+# Compose v2 otherwise changes default image/container names to use hyphens.
+# Pin the existing names so upgrades and rollback use the same service image.
+override="$release_dir/frontend-image.yaml"
+{
+  sed -n '/^version:/p' "$compose_file"
+  printf 'services:\n  frontend:\n    image: %s\n    container_name: %s\n' "$image_name" "$container"
+} > "$override"
+compose+=(-f "$override")
 rollback_tag="deploy_frontend:before-aquarium-$stamp"
 docker image tag "$old_image" "$rollback_tag"
 git -C "$frontend" rev-parse HEAD > "$release_dir/previous-source.txt"
