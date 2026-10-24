@@ -12,6 +12,8 @@ export interface CartItemResponse {
     price: number
     main_image?: { image: string }
     image?: string
+    category?: { name: string; parent_name?: string | null }
+    category_name?: string
   }
   quantity: number
   total_price?: number

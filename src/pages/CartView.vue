@@ -3,7 +3,7 @@
     <div class="cart__wrapper">
       <h1 class="cart__title">Корзина</h1>
 
-      <div v-if="cartStore.loading" class="cart__loading">
+      <div v-if="cartStore.loading && !cartStore.items.length" class="cart__loading">
         <div class="loading-spinner"></div>
         <p>Загрузка корзины...</p>
       </div>
@@ -55,6 +55,7 @@
           </button>
         </div>
       </div>
+      <CartAquarium :items="cartStore.items" />
     </div>
   </section>
 </template>
@@ -63,6 +64,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore, type CartItemResponse } from '../stores/cart'
+import CartAquarium from '../components/aquarium/CartAquarium.vue'
 
 
 const cartStore = useCartStore()

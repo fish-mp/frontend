@@ -1,0 +1,172 @@
+[
+  {
+    "id": "8c5617e6-4328-436b-9a88-18711a7dee2a",
+    "name": "Гуппи (Poecilia reticulata)",
+    "isFish": true
+  },
+  {
+    "id": "3845caef-c219-4316-9e44-675ea2692d7e",
+    "name": "Меченосец (Xiphophorus hellerii)",
+    "isFish": true
+  },
+  {
+    "id": "2d5af98b-aa15-4aa1-b982-d94b737c6685",
+    "name": "Пецилия (Xiphophorus maculatus)",
+    "isFish": true
+  },
+  {
+    "id": "c8b3182b-208f-4c48-81eb-c126903b35e7",
+    "name": "Моллинезия чёрная (Poecilia sphenops)",
+    "isFish": true
+  },
+  {
+    "id": "41c67dba-c3a1-4091-b390-909ea14f36ed",
+    "name": "Данио рерио (Danio rerio)",
+    "isFish": true
+  },
+  {
+    "id": "7255b275-cb60-47a6-9e1f-bcd347d9d872",
+    "name": "Барбус суматранский (Puntigrus tetrazona)",
+    "isFish": true
+  },
+  {
+    "id": "84654df7-b256-405c-ac7a-d7e66097f6b2",
+    "name": "Барбус вишнёвый (Puntius titteya)",
+    "isFish": true
+  },
+  {
+    "id": "a8269218-c94f-477b-824b-6fe96a2af874",
+    "name": "Расбора клинопятнистая (Trigonostigma heteromorpha)",
+    "isFish": true
+  },
+  {
+    "id": "b9ebcce0-4e62-4ec6-96b4-8e257b7308b8",
+    "name": "Кардинал (Tanichthys albonubes)",
+    "isFish": true
+  },
+  {
+    "id": "3d65b377-c562-4693-935c-3d39d802bd0d",
+    "name": "Бетта/Петушок (Betta splendens)",
+    "isFish": true
+  },
+  {
+    "id": "a49e7c98-837e-4c99-bf22-310d11c8cdb1",
+    "name": "Гурами жемчужный (Trichogaster leeri)",
+    "isFish": true
+  },
+  {
+    "id": "fcd9cace-8b35-404f-aa0c-719d0a2d00b3",
+    "name": "Гурами мраморный (Trichopodus trichopterus)",
+    "isFish": true
+  },
+  {
+    "id": "5d55e6d5-1e60-44a9-925f-3492e6d84dfa",
+    "name": "Лялиус (Trichogaster lalius)",
+    "isFish": true
+  },
+  {
+    "id": "1c15b21e-b999-4a27-bd43-57bd90b6e939",
+    "name": "Макропод (Macropodus opercularis)",
+    "isFish": true
+  },
+  {
+    "id": "000cf579-78ce-4477-99c3-322ce5db5023",
+    "name": "Неон голубой (Paracheirodon innesi)",
+    "isFish": true
+  },
+  {
+    "id": "5debc2de-5555-4b69-9db2-402274d5caf3",
+    "name": "Неон красный (Paracheirodon axelrodi)",
+    "isFish": true
+  },
+  {
+    "id": "f423213d-86e6-4e6e-a047-1924f1cf98aa",
+    "name": "Тетра фон Рио (Hyphessobrycon flammeus)",
+    "isFish": true
+  },
+  {
+    "id": "044b2d61-b21f-47b4-804c-df858b768062",
+    "name": "Тернеция (Gymnocorymbus ternetzi)",
+    "isFish": true
+  },
+  {
+    "id": "38b52f99-a66a-4238-bc7e-026a8bd382dc",
+    "name": "Минора/Тетра-серпас (Hyphessobrycon eques)",
+    "isFish": true
+  },
+  {
+    "id": "e193fe07-6a12-4ab1-9963-0d5d02cbd910",
+    "name": "Скалярия (Pterophyllum scalare)",
+    "isFish": true
+  },
+  {
+    "id": "c6008e92-1cb4-4e82-bf66-c1a91314402a",
+    "name": "Дискус (Symphysodon spp.)",
+    "isFish": true
+  },
+  {
+    "id": "51dda162-3386-4d76-b057-76ec0ea616f6",
+    "name": "Апистограмма какаду (Apistogramma cacatuoides)",
+    "isFish": true
+  },
+  {
+    "id": "886373f4-2ccf-458e-be41-ded95da1c07f",
+    "name": "Цихлазома меека (Thorichthys meeki)",
+    "isFish": true
+  },
+  {
+    "id": "f032cc02-7542-4745-9c2b-4954da7524fd",
+    "name": "Меланохромис ауратус (Melanochromis auratus)",
+    "isFish": true
+  },
+  {
+    "id": "132ab60f-f622-4116-a366-6d0bbdd7a5c5",
+    "name": "Коридорас панда (Corydoras panda)",
+    "isFish": true
+  },
+  {
+    "id": "2594a7ca-f2e5-48bc-bd5d-b8ea60352fd4",
+    "name": "Анциструс (Ancistrus spp.)",
+    "isFish": true
+  },
+  {
+    "id": "3bc64c0d-71fd-4719-b52e-c47ca2fcce8b",
+    "name": "Птеригоплихт (Pterygoplichthys spp.)",
+    "isFish": true
+  },
+  {
+    "id": "0749130d-8875-4b7d-a0d9-8682def02b93",
+    "name": "Боция клоун (Chromobotia macracanthus)",
+    "isFish": true
+  },
+  {
+    "id": "9cd23e2a-894d-460a-86d5-9eea952cbf06",
+    "name": "Сом стеклянный (Kryptopterus vitreolus)",
+    "isFish": true
+  },
+  {
+    "id": "e5930fc6-186a-4a91-b7b0-f54db197a864",
+    "name": "Аквариум AquaCube 30",
+    "isFish": false
+  },
+  {
+    "id": "e405d38c-76de-422c-b3ac-66e0078855dc",
+    "name": "Аквариум AquaSphere 20",
+    "isFish": false
+  },
+  {
+    "id": "19809a9f-70f9-4edf-9a82-d089d29ad47c",
+    "name": "Аквариум-бокал AquaGoblet 12",
+    "isFish": false
+  },
+  {
+    "id": "ff650e3f-07b5-4b19-a6d8-769cf6d41ed4",
+    "name": "Аквариум AquaRect 60",
+    "isFish": false
+  },
+  {
+    "id": "703b4d63-e1de-43ae-b6f6-6aa72de8c270",
+    "name": "Аквариум AquaCorner 80",
+    "isFish": false
+  }
+]
