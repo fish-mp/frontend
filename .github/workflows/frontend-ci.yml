@@ -13,5 +13,6 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - run: bash -n scripts/deploy-aquarium.sh
       - run: npm run test:aquarium
       - run: npm run build
