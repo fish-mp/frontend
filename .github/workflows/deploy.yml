@@ -1,14 +1,11 @@
 name: Deploy
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
-
 jobs:
-  deploy:
-    runs-on: debian-latest
+  inspect:
+    runs-on: ubuntu-latest
     steps:
-      - name: SSH deploy
+      - name: Inspect frontend deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PROD_SSH_HOST }}
@@ -16,6 +13,11 @@ jobs:
           port: ${{ secrets.PROD_SSH_PORT }}
           key: ${{ secrets.PROD_SSH_KEY }}
           script_stop: true
-          command_timeout: 20m
           script: |
-            BRANCH=main FRONT_BRANCH=main /home/desai/deploy/deploy.sh
+            set -eu
+            id
+            docker inspect deploy_frontend_1 --format 'Image={{.Config.Image}} WorkDir={{.Config.WorkingDir}} Cmd={{json .Config.Cmd}} Mounts={{json .Mounts}}'
+            docker exec deploy_frontend_1 sh -c 'ls -la /usr/share/nginx/html; cat /etc/nginx/conf.d/default.conf'
+            cat /home/desai/frontend/Dockerfile
+            cat /home/desai/deploy/deploy.sh
+            git -C /home/desai/frontend status --short
