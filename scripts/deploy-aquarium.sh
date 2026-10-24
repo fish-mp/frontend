@@ -68,6 +68,9 @@ git -C "$frontend" cat-file -e "$revision^{commit}"
 git -C "$frontend" merge --ff-only "$revision"
 [[ "$(git -C "$frontend" rev-parse HEAD)" == "$revision" ]]
 printf '{"revision":"%s","fishSpecies":29}\n' "$revision" > "$frontend/public/aquarium-release.json"
+# Public files are copied into dist with their source permissions. Keep backups
+# private, but make the release marker readable by the nginx worker user.
+chmod 644 "$frontend/public/aquarium-release.json"
 
 # The existing Dockerfile and .env supply the production build configuration.
 # The local demo database, credentials and .env.local are not in the repository.
@@ -79,6 +82,11 @@ if [[ -d "$release_dir/previous-html/assets" ]]; then
   docker build -t "$image_name" "$release_dir"
 fi
 
+# Validate the built image before replacing the currently serving container.
+docker run --rm --user nginx --entrypoint sh "$image_name" -c \
+  'test -r /usr/share/nginx/html/index.html && test -r /usr/share/nginx/html/aquarium-release.json'
+docker run --rm --entrypoint nginx "$image_name" -t
+
 release_started=true
 "${compose[@]}" up -d --no-deps --no-build frontend
 healthy=false
@@ -89,6 +97,11 @@ for attempt in $(seq 1 30); do
   fi
   sleep 1
 done
+if [[ "$healthy" != true ]]; then
+  echo 'New frontend health check failed. HTTP response:'
+  curl --silent --show-error --include --max-time 5 http://127.0.0.1:5173/aquarium-release.json || true
+  docker logs --tail 15 "$container" || true
+fi
 [[ "$healthy" == true ]]
 docker exec deploy_frontend_1 nginx -t
 docker exec deploy_nginx_1 nginx -t
