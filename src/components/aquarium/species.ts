@@ -1,3 +1,5 @@
+import type { CartItemResponse } from '../../stores/cart'
+
 export interface FishAppearance {
   kind: 'glass' | 'catfish' | 'slender' | 'round' | 'angel' | 'fancy' | 'fish' | 'photo'
   color: string
@@ -79,6 +81,37 @@ export interface AquariumGroup {
   quantity: number
   appearance: FishAppearance
   image?: string
+  temperament?: 'peaceful' | 'predatory' | 'aggressive' | ''
+}
+
+export type AquariumProductDetails = Pick<CartItemResponse['product'], 'category' | 'fish_temperament' | 'main_image'> & {
+  images?: { image: string }[]
+}
+
+export function buildAquariumGroups(items: CartItemResponse[], details: Record<string, AquariumProductDetails> = {}): AquariumGroup[] {
+  return items.flatMap(({ product, quantity: itemQuantity }) => {
+    const quantity = Math.max(0, Math.floor(Number(itemQuantity) || 0))
+    if (!quantity) return []
+    const detail = details[product.id]
+    const category = product.category || detail?.category
+    const categoryName = [category?.name, category?.parent_name, product.category_name].filter(Boolean).join(' ')
+    // Explicit non-fish categories take precedence over words in product names.
+    if (categoryName && !isFishCategory(categoryName)) return []
+    const appearance = identifyFish(product.name)
+    const temperament = product.fish_temperament ?? detail?.fish_temperament
+    const image = product.main_image?.image || product.image || detail?.main_image?.image || detail?.images?.[0]?.image
+    if (!appearance && !isFishCategory(categoryName) && !temperament) return []
+    return [{ id: product.id, name: product.name, quantity, image, temperament,
+      appearance: appearance || { kind: image ? 'photo' : 'fish', color: '#b8ccc2', accent: '#92bcaa', size: 59, speed: 0.5, zone: 0.5 },
+    }]
+  })
+}
+
+export function getCompatibilityRisk(groups: AquariumGroup[]): AquariumGroup[] {
+  const inhabitants = groups.filter(group => group.quantity > 0)
+  const total = inhabitants.reduce((sum, group) => sum + group.quantity, 0)
+  if (total < 2) return []
+  return inhabitants.filter(group => group.temperament === 'predatory' || group.temperament === 'aggressive')
 }
 
 export function isFishCategory(category: string) {

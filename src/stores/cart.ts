@@ -14,6 +14,7 @@ export interface CartItemResponse {
     image?: string
     category?: { name: string; parent_name?: string | null }
     category_name?: string
+    fish_temperament?: 'peaceful' | 'predatory' | 'aggressive' | ''
   }
   quantity: number
   total_price?: number
