@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { apiFetch } from '../utils/api'
+import { useAuthStore } from './auth'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -50,6 +51,7 @@ export const useCartStore = defineStore('cart', () => {
     })
 
   const fetchCart = async () => {
+    const revision = useAuthStore().sessionRevision
     loading.value = true
     error.value = null
     try {
@@ -64,6 +66,7 @@ export const useCartStore = defineStore('cart', () => {
       }
 
       const data: CartResponse = await response.json()
+      if (revision !== useAuthStore().sessionRevision) return
       
       if (data && Array.isArray(data.items)) {
         items.value = data.items
@@ -72,11 +75,12 @@ export const useCartStore = defineStore('cart', () => {
       }
 
     } catch (err: any) {
+      if (revision !== useAuthStore().sessionRevision) return
       console.error('Fetch cart error:', err)
       error.value = err.message
       items.value = []
     } finally {
-      loading.value = false
+      if (revision === useAuthStore().sessionRevision) loading.value = false
     }
   }
 

@@ -21,7 +21,7 @@ export const useProductStore = defineStore("product", () => {
       const url = `${BACKEND_URL}/api/products/${query ? `?${query}` : ""}`;
       const response = await fetch(url, {
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: 'omit',
       });
       if (!response.ok) throw new Error("Не удалось загрузить товары");
       products.value = await response.json();
@@ -38,7 +38,7 @@ export const useProductStore = defineStore("product", () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/products/${id}/`, {
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: 'omit',
       });
       if (!response.ok) throw new Error("Не удалось загрузить товар");
       currentProduct.value = await response.json();
@@ -53,7 +53,7 @@ export const useProductStore = defineStore("product", () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/brands/`, {
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: 'omit',
       });
       if (!response.ok) throw new Error("Не удалось загрузить бренды");
       brands.value = await response.json();
@@ -66,7 +66,7 @@ export const useProductStore = defineStore("product", () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/categories/`, {
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: 'omit',
       });
       if (!response.ok) throw new Error("Не удалось загрузить категории");
       categories.value = await response.json();
@@ -78,7 +78,7 @@ export const useProductStore = defineStore("product", () => {
   const fetchColors = async () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/colors/`, {
-        credentials: "include",
+        credentials: 'omit',
       });
       if (!response.ok) throw new Error("Не удалось загрузить цвета");
       colors.value = await response.json();
@@ -90,7 +90,7 @@ export const useProductStore = defineStore("product", () => {
   const fetchCollections = async () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/collections/`, {
-        credentials: "include",
+        credentials: 'omit',
       });
       if (!response.ok) throw new Error("Не удалось загрузить подборки");
       collections.value = await response.json();
@@ -104,7 +104,7 @@ export const useProductStore = defineStore("product", () => {
       const response = await fetch(`${BACKEND_URL}/api/reviews/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: 'omit',
         body: JSON.stringify({ product: productId, score, text }),
       });
       if (!response.ok) throw new Error("Не удалось оставить отзыв");

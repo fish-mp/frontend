@@ -65,7 +65,7 @@ watch(() => props.items.map(item => item.product), async (products, _, cleanup) 
   cleanup(() => controller.abort())
   await Promise.allSettled(products.filter(product => !identifyFish(product.name) && !product.category && !product.category_name && !details.value[product.id]).map(async (product) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL?.trim()}/api/products/${encodeURIComponent(product.id)}/`, { signal: controller.signal, credentials: 'include' })
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL?.trim()}/api/products/${encodeURIComponent(product.id)}/`, { signal: controller.signal, credentials: 'omit' })
       if (response.ok) details.value[product.id] = await response.json()
     } catch { /* The cart remains usable if extra catalog data is unavailable. */ }
   }))

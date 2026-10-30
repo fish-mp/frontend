@@ -14,7 +14,7 @@ export const useNewsStore = defineStore("news", () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/news/`, {
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: 'omit',
         method: "GET",
       });
       if (!response.ok) throw new Error("Не удалось загрузить новости");

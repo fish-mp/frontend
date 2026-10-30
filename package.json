@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint -c .eslintrc.cjs --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "eslint -c .eslintrc.cjs --ext .js,.jsx,.ts,.tsx . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:auth": "node --test tests/auth.test.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

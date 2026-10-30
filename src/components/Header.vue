@@ -173,7 +173,7 @@
               <div :class="styles.userAvatar">{{ userInitials }}</div>
               <span :class="styles.userName">{{ user?.first_name || user?.email }}</span>
             </router-link>
-            <button :class="[styles.btn, styles.btnLogout]" @click="auth.logout()">
+            <button :class="[styles.btn, styles.btnLogout]" @click="handleLogout">
               <span :class="styles.btnText">Выйти</span>
             </button>
           </div>
@@ -299,9 +299,13 @@ function handleRegisterClick() {
   closeMobileNav();
 }
 
-function handleLogout() {
-  cart.resetCart();
-  auth.logout();
+async function handleLogout() {
+  try {
+    await auth.logout();
+  } catch (error) {
+    alert('Вы вышли на этом устройстве. Сервер недоступен, отзыв сессии не подтверждён.');
+  }
+  await router.push('/');
   closeMobileNav();
 }
 

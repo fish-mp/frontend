@@ -14,7 +14,7 @@ const auth = useAuthStore();
 const cart = useCartStore();
 
 onMounted(async () => {
-  auth.initAuth();
+  await auth.initAuth();
   if (auth.isAuthenticated) {
     await cart.fetchCart();
   }

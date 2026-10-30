@@ -144,14 +144,15 @@ const isLoading = ref(false)
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 // ========== Обработка файлов ==========
+const fileExtension = (url: string) => url.split(/[?#]/)[0].split('.').pop()?.toLowerCase() || ''
 const isVideo = (url: string): boolean => {
   if (!url) return false
-  const ext = url.split('.').pop()?.toLowerCase()
+  const ext = fileExtension(url)
   return ext === 'mp4' || ext === 'webm' || ext === 'ogg' || ext === 'mov'
 }
 
 const getVideoMimeType = (url: string): string => {
-  const ext = url.split('.').pop()?.toLowerCase()
+  const ext = fileExtension(url)
   if (ext === 'mp4') return 'video/mp4'
   if (ext === 'webm') return 'video/webm'
   if (ext === 'ogg') return 'video/ogg'
@@ -159,7 +160,7 @@ const getVideoMimeType = (url: string): string => {
 }
 
 const getFileType = (url: string): string => {
-  const ext = url.split('.').pop()?.toLowerCase()
+  const ext = fileExtension(url)
   const types: Record<string, string> = {
     'pdf': 'PDF документ',
     'doc': 'Word документ',
