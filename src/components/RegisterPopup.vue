@@ -10,7 +10,13 @@
                 </button>
             </div>
             
-            <form class="popup__form" @submit.prevent="handleRegister">
+            <div v-if="message" class="registration-success" role="status">
+                <h3>Проверьте почту</h3>
+                <p>{{ message }}</p>
+                <p>Перейдите по ссылке в письме, затем войдите в аккаунт.</p>
+                <button type="button" class="btn btn--primary btn--full" @click="message = ''; $emit('update:modelValue', false)">Понятно</button>
+            </div>
+            <form v-else class="popup__form" @submit.prevent="handleRegister">
                 <div class="form__group">
                     <label class="form__label">Почта</label>
                     <input 
@@ -68,6 +74,7 @@
                     />
                 </div>
                 
+                <p v-if="error" role="alert" class="form-error">{{ error }}</p>
                 <button class="btn btn--primary btn--full" type="submit" :disabled="loading">
                     <span v-if="!loading" class="btn-text">Зарегистрироваться</span>
                     <span v-else class="loading">Регистрация...</span>
@@ -96,20 +103,23 @@ const first_name = ref('');
 const city = ref('');
 const age = ref('');
 const loading = ref(false);
+const message = ref('');
+const error = ref('');
 
 const auth = useAuthStore();
 
 const handleRegister = async () => {
     loading.value = true;
+    error.value = '';
     try {
-        await auth.register({
+        const result = await auth.register({
             email: email.value,
             password: password.value,
             first_name: first_name.value,
             city: city.value,
             age: Number(age.value),
         });
-        emit('update:modelValue', false);
+        message.value = result.message;
         // Сброс полей
         email.value = '';
         password.value = '';
@@ -117,7 +127,7 @@ const handleRegister = async () => {
         city.value = '';
         age.value = '';
     } catch (e) {
-        alert('Ошибка регистрации. Проверьте введенные данные.');
+        error.value = e.message || 'Ошибка регистрации. Проверьте введенные данные.';
     } finally {
         loading.value = false;
     }
@@ -126,4 +136,7 @@ const handleRegister = async () => {
 
 <style lang="scss" scoped>
 @import '../assets/scss/RegisterPopup.scss';
+.registration-success { line-height: 1.7; color: #516078; }
+.registration-success h3 { color: #142745; }
+.form-error { font-size: 14px; line-height: 1.6; color: #b42332; }
 </style>

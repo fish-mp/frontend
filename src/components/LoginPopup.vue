@@ -33,14 +33,15 @@
                     />
                 </div>
                 
+                <p v-if="error" role="alert" class="form-message form-message--error">{{ error }}</p>
+                <p v-if="message" role="status" class="form-message">{{ message }}</p>
                 <button class="btn btn--primary btn--full" type="submit" :disabled="loading">
                     <span v-if="!loading" class="btn-text">Войти</span>
                     <span v-else class="loading">Вход...</span>
                 </button>
                 
                 <div class="form__footer">
-                    <a href="#" class="form__link">Забыли пароль?</a>
-                    <a href="#" class="form__link">Регистрация</a>
+                    <button type="button" class="form__link" :disabled="loading || !email" @click="resend">Отправить письмо подтверждения</button>
                 </div>
             </form>
         </div>
@@ -60,11 +61,15 @@ const emit = defineEmits(['update:modelValue']);
 const email = ref('');
 const password = ref('');
 const loading = ref(false);
+const error = ref('');
+const message = ref('');
 const auth = useAuthStore();
 const cart = useCartStore();
 
 const handleLogin = async () => {
     loading.value = true;
+    error.value = '';
+    message.value = '';
     try {
         await auth.login({ email: email.value, password: password.value });
         await cart.fetchCart();
@@ -72,7 +77,20 @@ const handleLogin = async () => {
         email.value = '';
         password.value = '';
     } catch (e) {
-        alert('Ошибка входа. Проверьте email и пароль.');
+        error.value = e.message || 'Ошибка входа. Проверьте email и пароль.';
+    } finally {
+        loading.value = false;
+    }
+};
+
+const resend = async () => {
+    loading.value = true;
+    error.value = '';
+    try {
+        const result = await auth.resendVerification(email.value);
+        message.value = result.message;
+    } catch (e) {
+        error.value = e.message;
     } finally {
         loading.value = false;
     }
@@ -81,4 +99,7 @@ const handleLogin = async () => {
 
 <style lang="scss" scoped>
 @import '../assets/scss/LoginPopup.scss';
+.form-message { font-size: 14px; line-height: 1.6; color: #173ded; }
+.form-message--error { color: #b42332; }
+button.form__link { background: none; border: 0; cursor: pointer; font: inherit; }
 </style>

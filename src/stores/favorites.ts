@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { apiFetch } from '../utils/api'
+import { useAuthStore } from './auth'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -20,14 +22,15 @@ export const useFavoritesStore = defineStore('favorites', () => {
 
   // Загрузить все избранные товары текущего пользователя
   const fetchFavorites = async () => {
+    const revision = useAuthStore().sessionRevision
     loading.value = true
     try {
-      const response = await fetch(`${BACKEND_URL}/api/favorites/`, {
-        credentials: 'include',
+      const response = await apiFetch(`${BACKEND_URL}/api/favorites/`, {
         headers: { 'Content-Type': 'application/json' }
       })
       if (!response.ok) throw new Error('Не удалось загрузить избранное')
-      favorites.value = await response.json()
+      const data = await response.json()
+      if (revision === useAuthStore().sessionRevision) favorites.value = data
     } catch (err) {
       console.error(err)
     } finally {
@@ -49,9 +52,8 @@ export const useFavoritesStore = defineStore('favorites', () => {
   // Добавить товар в избранное
   const addToFavorites = async (productId: string) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/favorites/`, {
+      const response = await apiFetch(`${BACKEND_URL}/api/favorites/`, {
         method: 'POST',
-        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ product_id: productId })
       })
@@ -66,9 +68,8 @@ export const useFavoritesStore = defineStore('favorites', () => {
   // Удалить товар из избранного (по id записи избранного)
   const removeFromFavorites = async (favoriteId: number) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/favorites/${favoriteId}/`, {
+      const response = await apiFetch(`${BACKEND_URL}/api/favorites/${favoriteId}/`, {
         method: 'DELETE',
-        credentials: 'include'
       })
       if (!response.ok) throw new Error('Не удалось удалить из избранного')
       await fetchFavorites() // обновить список
@@ -79,6 +80,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
   }
 
   return {
+    resetFavorites: () => { favorites.value = []; loading.value = false },
     favorites,
     loading,
     fetchFavorites,

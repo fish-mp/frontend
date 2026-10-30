@@ -10,6 +10,7 @@ import NotFound from "../pages/NotFound.vue";
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: '/verify-email', name: 'VerifyEmail', component: () => import('../pages/VerifyEmail.vue') },
     { path: "/", name: "Home", component: Home },
     {
       path: "/card/:id",
