@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import GenesisAction from '../components/genesis/GenesisAction.vue';
+import GenesisGalaxy from '../components/genesis/GenesisGalaxy.vue';
 import { discoveries, institutes, news, programs, universes } from '../data/genesis';
 import { AQUARIUM_URL } from '../utils/site';
 import '../assets/css/genesis.css';
 
 const page = ref<HTMLElement>();
 const dialog = ref<HTMLDialogElement>();
-const dialogKind = ref<'menu' | 'search' | 'info'>('menu');
+type DialogKind = 'menu' | 'search' | 'info' | 'coming-soon' | 'aquarium';
+const dialogKind = ref<DialogKind>('menu');
 const dialogTitle = ref('');
 const dialogText = ref('');
 const query = ref('');
@@ -33,13 +35,23 @@ const searchResults = computed(() => {
   );
 });
 
-async function openDialog(kind: 'menu' | 'search' | 'info', title = '', text = '') {
+async function openDialog(kind: DialogKind, title = '', text = '') {
   dialogKind.value = kind;
   dialogTitle.value = title;
   dialogText.value = text;
   query.value = '';
   await nextTick();
   dialog.value?.showModal();
+}
+
+function openDetails(title: string, aquarium = false) {
+  return openDialog(
+    aquarium ? 'aquarium' : 'coming-soon',
+    title.replace(/\n/g, ' '),
+    aquarium
+      ? 'Откройте удивительный мир под водой: познакомьтесь с обитателями аквариумов, найдите интересные курсы и создайте свой аквамир вместе со школой аквариумистики.'
+      : 'Мы уже готовим этот раздел. Совсем скоро здесь появятся подробная информация и полезные материалы. Загляните к нам чуть позже — будем рады продолжить знакомство!'
+  );
 }
 
 function closeDialog() {
@@ -55,30 +67,6 @@ async function jumpTo(id: string) {
     block: 'start',
   });
   target?.focus({ preventScroll: true });
-}
-
-function tiltGalaxy(event: PointerEvent) {
-  if (
-    event.pointerType !== 'mouse' ||
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-    return;
-  const target = event.currentTarget as HTMLElement;
-  const bounds = target.getBoundingClientRect();
-  target.style.setProperty(
-    '--tilt-x',
-    `${(0.5 - (event.clientY - bounds.top) / bounds.height) * 12}deg`
-  );
-  target.style.setProperty(
-    '--tilt-y',
-    `${((event.clientX - bounds.left) / bounds.width - 0.5) * 14}deg`
-  );
-}
-
-function resetGalaxy(event: PointerEvent) {
-  const target = event.currentTarget as HTMLElement;
-  target.style.removeProperty('--tilt-x');
-  target.style.removeProperty('--tilt-y');
 }
 
 function toggleContrast() {
@@ -247,18 +235,8 @@ onBeforeUnmount(() => {
                 "
                 class="g-galaxy"
                 :data-universe="universe.id"
-                @pointermove="tiltGalaxy"
-                @pointerleave="resetGalaxy"
               >
-                <span class="g-galaxy__space"
-                  ><img
-                    class="g-galaxy__image"
-                    :src="universe.image"
-                    width="194"
-                    height="194"
-                    alt=""
-                    fetchpriority="high"
-                /></span>
+                <span class="g-galaxy__space"><GenesisGalaxy :variant="universe.id" /></span>
                 <span class="g-galaxy__name">{{ universe.name }}</span>
               </component>
             </div>
@@ -362,8 +340,8 @@ onBeforeUnmount(() => {
                 <p>Ближайший набор: даты уточняются</p>
               </div>
               <GenesisAction
-                :href="program.id === 'aquarium' ? AQUARIUM_URL : undefined"
-                :unavailable="program.id !== 'aquarium'"
+                aria-haspopup="dialog"
+                @click="openDetails(program.title, program.id === 'aquarium')"
                 :tone="['plum', 'purple'].includes(program.theme) ? 'pink' : 'dark'"
                 :icon="
                   ['plum', 'purple'].includes(program.theme)
@@ -387,7 +365,9 @@ onBeforeUnmount(() => {
               <h3 id="college-title">Колледж</h3>
               <p>Экономическое направление</p>
             </div>
-            <GenesisAction tone="outline" unavailable>Подробнее</GenesisAction>
+            <GenesisAction tone="outline" aria-haspopup="dialog" @click="openDetails('Колледж')"
+              >Подробнее</GenesisAction
+            >
           </article>
         </div>
 
@@ -487,7 +467,8 @@ onBeforeUnmount(() => {
                 :icon="
                   item.theme === 'plum' ? '/genesis/s3-imgArrow1.svg' : '/genesis/s3-imgArrow.svg'
                 "
-                unavailable
+                aria-haspopup="dialog"
+                @click="openDetails(item.title)"
                 >Подробнее</GenesisAction
               >
             </article>
@@ -646,7 +627,10 @@ onBeforeUnmount(() => {
     <dialog
       ref="dialog"
       class="g-dialog"
-      :class="{ 'g-dialog--menu': dialogKind === 'menu' }"
+      :class="{
+        'g-dialog--menu': dialogKind === 'menu',
+        'g-dialog--details': dialogKind === 'coming-soon' || dialogKind === 'aquarium',
+      }"
       aria-labelledby="genesis-dialog-title"
       @keydown.esc.capture.stop.prevent="closeDialog"
       @click="$event.target === $event.currentTarget && closeDialog()"
@@ -712,6 +696,23 @@ onBeforeUnmount(() => {
               </button>
             </li>
           </ul>
+        </template>
+        <template v-else-if="dialogKind === 'coming-soon' || dialogKind === 'aquarium'">
+          <div class="g-coming-mark">
+            <img src="/genesis/s1-img.svg" width="64" height="64" alt="" />
+          </div>
+          <p class="g-eyebrow">
+            {{ dialogKind === 'aquarium' ? 'ВАША ВСЕЛЕННАЯ УЖЕ ОТКРЫТА' : 'СКОРО В «ГЕНЕЗИСЕ»' }}
+          </p>
+          <h2 id="genesis-dialog-title">{{ dialogTitle }}</h2>
+          <p class="g-dialog__text">{{ dialogText }}</p>
+          <div class="g-coming-actions">
+            <GenesisAction v-if="dialogKind === 'aquarium'" :href="AQUARIUM_URL" tone="pink"
+              >Открыть школу</GenesisAction
+            >
+            <GenesisAction v-else tone="pink" @click="closeDialog">Буду ждать</GenesisAction>
+          </div>
+          <p class="g-coming-note">Образование длиною в жизнь. Новые возможности — впереди.</p>
         </template>
         <template v-else
           ><p class="g-eyebrow">УНИВЕРСИТЕТ «ГЕНЕЗИС»</p>

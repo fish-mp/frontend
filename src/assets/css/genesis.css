@@ -374,8 +374,6 @@
   gap: calc(24 * var(--u));
 }
 .genesis .g-galaxy {
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -384,7 +382,6 @@
   text-align: center;
   border-radius: calc(24 * var(--u));
   position: relative;
-  perspective: 700px;
 }
 .g-galaxy__space {
   position: relative;
@@ -392,8 +389,6 @@
   width: calc(194 * var(--u));
   height: calc(194 * var(--u));
   max-width: 100%;
-  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
-  transition: transform 300ms ease-out;
 }
 .g-galaxy__space::before {
   content: '';
@@ -407,12 +402,88 @@
     opacity 400ms,
     transform 600ms;
 }
-.g-galaxy__image {
+.g-galaxy__art {
+  --galaxy-state: paused;
+  --galaxy-twinkle: none;
+  display: block;
   position: relative;
   width: calc(194 * var(--u));
   height: calc(194 * var(--u));
   max-width: 100%;
   transition: filter 400ms;
+}
+.g-galaxy__art .galaxy-vector {
+  display: block;
+  width: inherit;
+  height: inherit;
+  overflow: visible;
+}
+/* P × rotation × inverse(P) spins each layer inside its original disc plane. */
+.g-galaxy__art :is(.galaxy-arms, .galaxy-orbits, .galaxy-dust) {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: g-disc-spin var(--galaxy-period) linear infinite;
+  animation-play-state: var(--galaxy-state);
+}
+.g-galaxy__art .galaxy-orbits {
+  animation-duration: calc(var(--galaxy-period) * 1.8);
+  animation-direction: reverse;
+}
+.g-galaxy__art .galaxy-dust {
+  animation-duration: calc(var(--galaxy-period) * 0.8);
+}
+.g-galaxy__art .galaxy-core {
+  transform-box: view-box;
+  animation: g-core-pulse 3.2s ease-in-out infinite;
+  animation-play-state: var(--galaxy-state);
+  transition: filter 400ms;
+}
+.g-galaxy__art .galaxy-star {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: var(--galaxy-twinkle) var(--star-period) ease-in-out infinite;
+  animation-delay: var(--star-delay);
+}
+.g-galaxy:focus-visible .g-galaxy__art {
+  --galaxy-state: running;
+  --galaxy-twinkle: g-star-twinkle;
+}
+.g-galaxy:focus-visible .galaxy-core {
+  filter: drop-shadow(0 0 4px #f5d5f3);
+}
+@keyframes g-disc-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes g-core-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scale(1.055);
+    opacity: 1;
+  }
+}
+@keyframes g-star-twinkle {
+  0%,
+  100% {
+    opacity: calc(var(--star-opacity) * 0.25);
+    transform: scale(0.8);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+  65% {
+    opacity: calc(var(--star-opacity) * 0.65);
+    transform: scale(1);
+  }
 }
 .g-galaxy__name {
   font-size: calc(18 * var(--u));
@@ -426,8 +497,7 @@
   opacity: 1;
   transform: scale(1.6);
 }
-.g-galaxy:focus-visible .g-galaxy__image {
-  animation: g-galaxy-alive 3.8s ease-in-out infinite;
+.g-galaxy:focus-visible .g-galaxy__art {
   filter: drop-shadow(0 0 12px rgb(232 185 232 / 28%));
 }
 .g-hero__star {
@@ -1025,6 +1095,66 @@
   line-height: 1.7;
   color: var(--g-lavender);
 }
+.genesis .g-dialog--details {
+  width: min(640px, calc(100vw - 32px));
+  background: radial-gradient(ellipse at 50% 0, #4a2c60 0, transparent 62%), var(--g-panel);
+  border-color: #735486;
+}
+.g-dialog--details .g-dialog__inner {
+  padding: 48px;
+  text-align: center;
+}
+.g-coming-mark {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  margin: 0 auto 28px;
+  border: 1px solid rgb(232 185 232 / 25%);
+  border-radius: 32px;
+  background: radial-gradient(circle, rgb(232 185 232 / 14%), rgb(232 185 232 / 3%));
+  box-shadow: 0 0 56px rgb(232 185 232 / 8%);
+}
+.g-coming-mark img {
+  width: 64px;
+  height: 64px;
+}
+.g-dialog--details h2 {
+  max-width: none;
+}
+.g-dialog--details .g-eyebrow {
+  letter-spacing: 0.08em;
+}
+.g-dialog--details .g-dialog__text {
+  margin-block: 20px 28px !important;
+}
+.g-coming-actions {
+  display: flex;
+  justify-content: center;
+}
+.g-coming-actions .g-action {
+  min-height: 48px;
+  min-width: 180px;
+  font-size: 15px;
+  line-height: 22px;
+}
+.g-coming-note {
+  margin-top: 24px !important;
+  color: var(--g-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+@media (max-width: 600px) {
+  .g-dialog--details .g-dialog__inner {
+    padding: 48px 24px 28px;
+  }
+  .g-coming-mark {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 24px;
+    border-radius: 26px;
+  }
+}
 .g-dialog__menu {
   display: flex;
   flex-direction: column;
@@ -1110,16 +1240,14 @@ body:has(.g-dialog[open]) {
   opacity: 1;
   transform: none;
 }
-@keyframes g-galaxy-alive {
-  0%,
-  100% {
-    transform: translateY(-5px) rotate(-4deg) scale(1.08);
-  }
-  50% {
-    transform: translateY(3px) rotate(4deg) scale(1.12);
-  }
-}
 @media (hover: hover) {
+  .g-galaxy:hover .g-galaxy__art {
+    --galaxy-state: running;
+    --galaxy-twinkle: g-star-twinkle;
+  }
+  .g-galaxy:hover .galaxy-core {
+    filter: drop-shadow(0 0 4px #f5d5f3);
+  }
   .g-header__nav a:hover,
   .g-footer a:hover,
   .g-footer button:not([aria-disabled='true']):hover {
@@ -1150,8 +1278,7 @@ body:has(.g-dialog[open]) {
     opacity: 1;
     transform: scale(1.6);
   }
-  .g-galaxy:hover .g-galaxy__image {
-    animation: g-galaxy-alive 3.8s ease-in-out infinite;
+  .g-galaxy:hover .g-galaxy__art {
     filter: drop-shadow(0 0 12px rgb(232 185 232 / 28%));
   }
   .g-galaxy:hover .g-galaxy__name {
@@ -1302,7 +1429,7 @@ body:has(.g-dialog[open]) {
     line-height: 1.5;
   }
   .g-galaxy__space,
-  .g-galaxy__image {
+  .g-galaxy__art {
     width: 160px;
     height: 160px;
   }
@@ -1689,7 +1816,7 @@ body:has(.g-dialog[open]) {
     border-radius: 12px;
   }
   .g-galaxy__space,
-  .g-galaxy__image {
+  .g-galaxy__art {
     width: min(24vw, 136px);
     height: min(24vw, 136px);
   }
