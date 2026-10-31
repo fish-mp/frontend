@@ -19,7 +19,7 @@
           <p v-if="!isAuth" class="course-access__msg course-access__msg--error">
             Чтобы записаться, нужно авторизоваться!
           </p>
-          <PrivacyConsent v-if="isAuth && course.enrollment_state === null" v-model="privacyConsent" purpose="enrollment" />
+          <PrivacyConsent :key="course.id" v-if="isAuth && course.enrollment_state === null" v-model="privacyConsent" purpose="enrollment" />
           <p v-if="courseStore.error" role="alert" class="course-access__msg course-access__msg--error">{{ courseStore.error }}</p>
           <button v-if="isAuth && course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
             @click="fetchNewCourse(course.id)">
