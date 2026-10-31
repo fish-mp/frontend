@@ -18,12 +18,15 @@
       </div>
 
       <div v-else-if="status === 'pending'" class="status pending">
-        <p>Оплата ещё не подтверждена. Это может занять несколько секунд.</p>
+        <p v-if="reviewRequired">Нужна дополнительная проверка платежа поддержкой. Не оплачивайте этот заказ повторно.</p>
+        <p v-else>Оплата ещё не подтверждена. Это может занять несколько секунд.</p>
         <button @click="() => checkStatus(false)" class="btn btn-outline">Проверить снова</button>
+        <a v-if="confirmationUrl" :href="confirmationUrl" class="btn">Продолжить оплату</a>
       </div>
 
+      <div v-else-if="status === 'cancelled'" class="status pending"><h2>Оплата отменена</h2><p>Резерв товара снят. Товары остались в корзине, и заказ можно оформить заново.</p><router-link to="/cart" class="btn">В корзину</router-link></div>
       <div v-else class="status error">
-        <p>Не удалось определить статус оплаты. Пожалуйста, свяжитесь с поддержкой.</p>
+        <p>Не удалось проверить оплату. Это не означает, что платёж не прошёл. Повторите проверку позже или свяжитесь с поддержкой.</p>
         <router-link to="/shop" class="btn">Перейти в магазин</router-link>
       </div>
     </div>
@@ -33,10 +36,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { apiFetch } from '../utils/api'
+import { useCartStore } from '../stores/cart'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 const loading = ref(true)
 const status = ref<string | null>(null)
+const confirmationUrl = ref<string | null>(null)
+const reviewRequired = ref(false)
 
 // Сколько раз автоматически перепроверить статус, если оплата ещё не подтверждена
 // (вебхук от ЮKassa может прийти на пару секунд позже возврата пользователя).
@@ -57,16 +63,20 @@ const checkStatus = async (autoRetry = true) => {
   while (true) {
     try {
       // apiFetch подставляет JWT (Authorization: Bearer) — эндпоинт требует авторизации
-      const response = await apiFetch(`${BACKEND_URL}/api/orders/${orderId}/`)
+      const response = await apiFetch(`${BACKEND_URL}/api/orders/${orderId}/payment/`, { method: 'POST' })
       if (response.ok) {
         const data = await response.json()
-        status.value = data.status
-        if (data.status === 'paid') {
+        status.value = ['paid', 'processing', 'shipped', 'delivered'].includes(data.status) ? 'paid' : data.status
+        confirmationUrl.value = data.confirmation_url || null
+        reviewRequired.value = data.payment_review_required === true
+        if (status.value === 'paid') {
           localStorage.removeItem('last_order_id')
+          localStorage.removeItem('checkout_attempt')
+          await useCartStore().fetchCart()
           break
         }
         // Заказ ещё в pending — даём вебхуку время и пробуем снова
-        if (autoRetry && data.status === 'pending' && attempt < MAX_RETRIES) {
+        if (autoRetry && !reviewRequired.value && data.status === 'pending' && attempt < MAX_RETRIES) {
           attempt++
           await new Promise((r) => setTimeout(r, RETRY_DELAY_MS))
           continue

@@ -43,7 +43,7 @@
               <input type="radio" v-model="form.delivery_method" value="delivery" />
               <div class="delivery-method__content">
                 <span class="delivery-method__title">Доставка</span>
-                <span v-if="cartStore.totalPrice() > 10000" class="delivery-method__free">Бесплатно</span>
+                <span v-if="cartStore.totalPrice() >= 10000" class="delivery-method__free">Бесплатно</span>
                 <span v-else class="delivery-method__desc">от 1500 ₽</span>
               </div>
             </label>
@@ -109,18 +109,20 @@
             <span>{{ cartStore.totalPrice() + deliveryCost }} ₽</span>
           </div>
 
+          <PrivacyConsent v-model="form.privacy_consent" purpose="checkout" />
           <label class="offer" :class="{ 'offer--error': errors.offer_accepted }">
             <input v-model="form.offer_accepted" type="checkbox" />
             <span>
               Я согласен с
-              <a href="/fishkids_publichnaya_oferta.pdf" target="_blank" rel="noopener noreferrer">публичной офертой</a>
+              <a :href="legalState.config.documents.some(d => d.slug === 'public-offer' && d.status === 'published') ? '/legal/public-offer' : '/fishkids_publichnaya_oferta.pdf'" target="_blank" rel="noopener noreferrer">публичной офертой</a>
               и
-              <a href="/fishkids_usloviya_vozvrata.pdf" target="_blank" rel="noopener noreferrer">условиями возврата</a>
+              <a :href="legalState.config.documents.some(d => d.slug === 'returns-policy' && d.status === 'published') ? '/legal/returns-policy' : '/fishkids_usloviya_vozvrata.pdf'" target="_blank" rel="noopener noreferrer">условиями возврата</a>
             </span>
           </label>
           <span v-if="errors.offer_accepted" class="field__error">{{ errors.offer_accepted }}</span>
 
-          <p v-if="submitError" class="submit-error">{{ submitError }}</p>
+          <p v-if="submitError" class="submit-error" role="alert">{{ submitError }}</p>
+          <router-link v-if="pendingOrderId" to="/order-success">Проверить или продолжить оплату заказа №{{ pendingOrderId }}</router-link>
 
           <button type="submit" class="checkout__pay" :disabled="cartStore.loading">
             {{ cartStore.loading ? 'Создание заказа...' : 'Перейти к оплате' }}
@@ -136,9 +138,14 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useCartStore, type OrderPayload } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
+import { useRouter } from 'vue-router'
+import PrivacyConsent from '../components/PrivacyConsent.vue'
+import { legalState } from '../utils/legal'
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
+const router = useRouter()
+const pendingOrderId = ref(localStorage.getItem('last_order_id'))
 
 const form = reactive<OrderPayload>({
   email: '',
@@ -190,22 +197,20 @@ const submit = async () => {
   submitError.value = null
   if (!validate()) return
 
-  const isFreeDelivery = cartStore.totalPrice() > 10000
-  const payload: OrderPayload = {
-    ...form,
-    delivery_method: isFreeDelivery ? 'pickup' : form.delivery_method,
-    beyond_mkad: isFreeDelivery ? false : form.beyond_mkad,
-  }
+  const payload: OrderPayload = { ...form }
 
   try {
     const result = await cartStore.createOrder(payload)
     if (result && result.confirmation_url) {
       localStorage.setItem('last_order_id', result.order_id.toString())
       window.location.href = result.confirmation_url
+    } else if (result?.order_id) {
+      await router.push('/order-success')
     } else {
-      submitError.value = 'Не удалось получить ссылку на оплату'
+      submitError.value = 'Не удалось проверить заказ. Повторите попытку.'
     }
   } catch (err: any) {
+    pendingOrderId.value = localStorage.getItem('last_order_id')
     submitError.value = err?.message || 'Не удалось оформить заказ. Попробуйте позже.'
   }
 }

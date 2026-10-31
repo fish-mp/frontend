@@ -74,6 +74,7 @@
                     />
                 </div>
                 
+                <PrivacyConsent v-model="privacyConsent" purpose="registration" />
                 <p v-if="error" role="alert" class="form-error">{{ error }}</p>
                 <button class="btn btn--primary btn--full" type="submit" :disabled="loading">
                     <span v-if="!loading" class="btn-text">Зарегистрироваться</span>
@@ -88,11 +89,13 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import PrivacyConsent from './PrivacyConsent.vue';
+import { validateLegalConsent, type ConsentValue } from '../utils/legal';
 
-const props = defineProps({
+defineProps({
     modelValue: { type: Boolean, required: true }
 });
 const emit = defineEmits(['update:modelValue', 'showLogin']);
@@ -107,17 +110,20 @@ const message = ref('');
 const error = ref('');
 
 const auth = useAuthStore();
+const privacyConsent = ref<ConsentValue>();
 
 const handleRegister = async () => {
     loading.value = true;
     error.value = '';
     try {
+        await validateLegalConsent('registration', privacyConsent.value);
         const result = await auth.register({
             email: email.value,
             password: password.value,
             first_name: first_name.value,
             city: city.value,
             age: Number(age.value),
+            privacy_consent: privacyConsent.value,
         });
         message.value = result.message;
         // Сброс полей
@@ -126,7 +132,7 @@ const handleRegister = async () => {
         first_name.value = '';
         city.value = '';
         age.value = '';
-    } catch (e) {
+    } catch (e: any) {
         error.value = e.message || 'Ошибка регистрации. Проверьте введенные данные.';
     } finally {
         loading.value = false;

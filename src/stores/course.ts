@@ -1,3 +1,4 @@
+import { validateLegalConsent, type ConsentValue } from '../utils/legal';
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useAuthStore } from "./auth";
@@ -56,8 +57,10 @@ export const useCourseStore = defineStore("course", () => {
     }
   };
 
-  const enrollToCourse = async (courseId: number) => {
+  const enrollToCourse = async (courseId: number, privacyConsent?: ConsentValue) => {
     try {
+      error.value = null;
+      await validateLegalConsent('enrollment', privacyConsent);
       if (!auth.isAuthenticated) {
         throw new Error("Требуется авторизация");
       }
@@ -66,6 +69,7 @@ export const useCourseStore = defineStore("course", () => {
         `${BACKEND_URL}/api/courses/${courseId}/enroll/`,
         {
           method: "POST",
+          body: JSON.stringify({ privacy_consent: privacyConsent }),
           headers: {
             "Content-Type": "application/json",
           },

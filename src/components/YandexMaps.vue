@@ -9,10 +9,10 @@
         <!-- Плейсхолдер пока карта не загружена -->
         <div v-if="!isMapLoaded && !mapError" class="map-placeholder">
           <div class="map-placeholder__content">
-            <div class="map-placeholder__spinner"></div>
-            <p class="map-placeholder__text">Загружаем карту...</p>
+            <div v-if="loadingTriggered" class="map-placeholder__spinner"></div>
+            <p class="map-placeholder__text">{{ loadingTriggered ? 'Загружаем карту…' : 'Карта загружается по вашему запросу. При загрузке браузер соединится с Яндексом и передаст сервису технические данные.' }}</p>
             <button 
-              v-if="!isIntersecting && !loadingTriggered"
+              v-if="!loadingTriggered"
               class="map-placeholder__button"
               @click="loadMapManually"
             >
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, onUnmounted, onBeforeUnmount } from 'vue'
+import { ref, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { fishData } from '../data/fishData'
 
@@ -50,10 +50,8 @@ const mapContainer = ref<HTMLDivElement | null>(null)
 const router = useRouter()
 const mapError = ref(false)
 const isMapLoaded = ref(false)
-const isIntersecting = ref(false)
 const loadingTriggered = ref(false)
 let map: any = null
-let observer: IntersectionObserver | null = null
 let ymapsScript: HTMLScriptElement | null = null
 
 // API ключ из переменных окружения
@@ -62,6 +60,7 @@ const YMAPS_API_KEY = import.meta.env.VITE_YMAPS_API_KEY
 // Функция для динамической загрузки скрипта Яндекс Карт
 const loadYmapsScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
+    if ((window as any).ymaps) { resolve(); return }
     // Если скрипт уже загружается или загружен
     if (document.querySelector('script[src*="api-maps.yandex.ru"]')) {
       // Ждем когда ymaps станет доступен
@@ -99,9 +98,10 @@ const loadMapManually = () => {
 }
 
 // Функция для повторной попытки загрузки
-const retryLoadMap = () => {
+const retryLoadMap = async () => {
   mapError.value = false
   isMapLoaded.value = false
+  await nextTick()
   initializeMap()
 }
 
@@ -201,12 +201,6 @@ const initializeMap = async () => {
     isMapLoaded.value = true
     mapContainer.value.classList.add('yandex-map')
 
-    // Оптимизация: загружаем тайлы только когда карта в области видимости
-    map.events.add('idle', () => {
-      if (isIntersecting.value) {
-        map.container.enterFullscreen()
-      }
-    })
 
   } catch (error) {
     console.error('Failed to load Yandex Maps:', error)
@@ -215,55 +209,7 @@ const initializeMap = async () => {
   }
 }
 
-// Создаем Intersection Observer для ленивой загрузки
-const setupIntersectionObserver = () => {
-  if (!mapContainer.value || !('IntersectionObserver' in window)) return
-
-  observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        isIntersecting.value = entry.isIntersecting
-        
-        if (entry.isIntersecting && !isMapLoaded.value && !loadingTriggered.value) {
-          // Загружаем карту когда она появляется в viewport
-          initializeMap()
-          if (observer) {
-            observer.disconnect()
-          }
-        }
-      })
-    },
-    {
-      root: null,
-      rootMargin: '200px', // Начинаем загрузку за 200px до появления в viewport
-      threshold: 0.1, // 10% видимости
-    }
-  )
-
-  observer.observe(mapContainer.value!)
-}
-
-onMounted(() => {
-  setupIntersectionObserver()
-  
-  // Загрузка по таймеру на случай если IntersectionObserver не сработал
-  const timeoutId = setTimeout(() => {
-    if (!isMapLoaded.value && !loadingTriggered.value && !mapError.value) {
-      initializeMap()
-    }
-  }, 3000)
-
-  // Очистка таймера при размонтировании
-  onBeforeUnmount(() => {
-    clearTimeout(timeoutId)
-  })
-})
-
 onUnmounted(() => {
-  // Отключаем observer
-  if (observer) {
-    observer.disconnect()
-  }
   
   // Уничтожаем карту
   if (map) {
