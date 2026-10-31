@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject } from 'vue';
+const t = inject<(text: string) => string>('genesis-translate', (text) => text);
 withDefaults(
   defineProps<{
     href?: string;
@@ -27,7 +29,7 @@ function activate(event: MouseEvent, unavailable: boolean) {
     class="g-action"
     :class="`g-action--${tone}`"
     :aria-disabled="unavailable || undefined"
-    :title="unavailable ? 'Раздел готовится к открытию' : undefined"
+    :title="unavailable ? t('Раздел готовится к открытию') : undefined"
     @click="activate($event, unavailable)"
   >
     <span><slot /></span>

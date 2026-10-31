@@ -224,7 +224,10 @@
   display: flex;
   align-items: center;
   gap: calc(8 * var(--u));
-  font-size: calc(16 * var(--u));
+  font-size: 14px;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
   margin-inline: calc(4 * var(--u));
 }
 .g-language img {
@@ -1326,26 +1329,6 @@ body:has(.g-dialog[open]) {
   overflow: hidden;
 }
 
-.genesis--contrast {
-  --g-ink: #090611;
-  --g-deep: #100b1e;
-  --g-panel: #181021;
-  --g-plum: #322040;
-  --g-purple: #4c2e63;
-  --g-muted: #eee8f6;
-  --g-white: #fff;
-  --g-line: #bdb2d4;
-}
-.genesis--contrast .g-theme-lavender,
-.genesis--contrast .g-theme-rose,
-.genesis--contrast .g-theme-soft {
-  --g-secondary: #23102f;
-}
-.genesis--contrast .g-contrast-button {
-  background: var(--g-plum);
-  outline: 1px solid var(--g-pink);
-}
-
 .g-motion-ready .g-reveal {
   opacity: 0;
   transform: translateY(20px);
@@ -1430,9 +1413,6 @@ body:has(.g-dialog[open]) {
   .g-header__tools {
     gap: 8px;
   }
-  .g-language {
-    display: none;
-  }
   .g-universes .g-eyebrow {
     font-size: 11px;
   }
@@ -1490,9 +1470,6 @@ body:has(.g-dialog[open]) {
     font-size: 13px;
     padding: 12px;
     gap: 12px;
-  }
-  .g-language {
-    display: none;
   }
   .g-hero-shell {
     margin-top: 24px;

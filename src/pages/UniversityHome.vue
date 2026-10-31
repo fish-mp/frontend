@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, provide } from 'vue';
 import GenesisAction from '../components/genesis/GenesisAction.vue';
 import GenesisGalaxy from '../components/genesis/GenesisGalaxy.vue';
 import {
-  universityContacts,
-  discoveries,
+  universityContacts as sourceUniversityContacts,
+  discoveries as sourceDiscoveries,
   feedbackEmail,
-  institutes,
-  news,
-  programs,
-  universes,
+  institutes as sourceInstitutes,
+  news as sourceNews,
+  programs as sourcePrograms,
+  universes as sourceUniverses,
 } from '../data/genesis';
 import { AQUARIUM_URL } from '../utils/site';
 import '../assets/css/genesis.css';
+import { english } from '../data/genesis.en';
 
 const page = ref<HTMLElement>();
 const dialog = ref<HTMLDialogElement>();
@@ -21,12 +22,49 @@ const dialogKind = ref<DialogKind>('menu');
 const dialogTitle = ref('');
 const dialogText = ref('');
 const query = ref('');
-const highContrast = ref(false);
+const language = ref<'ru' | 'en'>('ru');
+function t(text: string): string {
+  return language.value === 'en' ? english[text.trim().replace(/\s+/g, ' ')] || text : text;
+}
+function localize<T>(value: T): T {
+  if (typeof value === 'string') return t(value) as T;
+  if (Array.isArray(value)) return value.map(localize) as T;
+  if (value && typeof value === 'object')
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, localize(item)])
+    ) as T;
+  return value;
+}
+const universes = computed(() => localize(sourceUniverses));
+const programs = computed(() => localize(sourcePrograms));
+const institutes = computed(() => localize(sourceInstitutes));
+const discoveries = computed(() => localize(sourceDiscoveries));
+const news = computed(() => localize(sourceNews));
+const universityContacts = computed(() => localize(sourceUniversityContacts));
+provide('genesis-translate', t);
+const originalTitle = document.title;
+const originalLang = document.documentElement.lang;
+function toggleLanguage() {
+  language.value = language.value === 'ru' ? 'en' : 'ru';
+  try {
+    localStorage.setItem('genesis-language', language.value);
+  } catch {
+    /* Storage may be disabled. */
+  }
+}
+watch(language, (value) => {
+  document.documentElement.lang = value;
+  document.title =
+    value === 'en' ? 'Genesis — University of Continuing Digital Education' : originalTitle;
+});
 const compactHeader = ref(false);
 const isDocumentVisible = ref(true);
 let observer: IntersectionObserver | undefined;
 let motionObserver: IntersectionObserver | undefined;
-const feedbackHref = `mailto:${feedbackEmail}?subject=${encodeURIComponent('Обращение в университет «Генезис»')}`;
+const feedbackHref = computed(
+  () =>
+    `mailto:${feedbackEmail}?subject=${encodeURIComponent(language.value === 'en' ? 'Enquiry to Genesis University' : 'Обращение в университет «Генезис»')}`
+);
 
 function updateHeader() {
   compactHeader.value = window.scrollY > 80;
@@ -35,21 +73,21 @@ function updateDocumentVisibility() {
   isDocumentVisible.value = !document.hidden;
 }
 
-const searchItems: Array<{ title: string; id: string; aliases?: string }> = [
-  ...programs.map((p) => ({
+const searchItems = computed<Array<{ title: string; id: string; aliases?: string }>>(() => [
+  ...programs.value.map((p) => ({
     title: p.title.replace(/\n/g, ' '),
     id: p.id,
     aliases: p.id === 'dpo' ? 'ДПО' : '',
   })),
-  { title: 'Колледж', id: 'college' },
-  { title: 'Институты университета', id: 'institutes' },
-  ...discoveries.map((d) => ({ title: d.title, id: d.id })),
-  { title: 'Новости университета', id: 'university-news' },
-  { title: 'Контакты университета', id: 'contacts' },
-];
+  { title: t('Колледж'), id: 'college' },
+  { title: t('Институты университета'), id: 'institutes' },
+  ...discoveries.value.map((d) => ({ title: d.title, id: d.id })),
+  { title: t('Новости университета'), id: 'university-news' },
+  { title: t('Контакты университета'), id: 'contacts' },
+]);
 const searchResults = computed(() => {
   const value = query.value.trim().toLocaleLowerCase('ru');
-  return searchItems.filter((item) =>
+  return searchItems.value.filter((item) =>
     `${item.title} ${item.aliases || ''}`.toLocaleLowerCase('ru').includes(value)
   );
 });
@@ -88,15 +126,6 @@ async function jumpTo(id: string) {
   target?.focus({ preventScroll: true });
 }
 
-function toggleContrast() {
-  highContrast.value = !highContrast.value;
-  try {
-    localStorage.setItem('genesis-contrast', String(highContrast.value));
-  } catch {
-    /* Storage may be disabled. */
-  }
-}
-
 onMounted(() => {
   updateHeader();
   updateDocumentVisibility();
@@ -117,7 +146,7 @@ onMounted(() => {
     galaxies.forEach((galaxy) => galaxy.classList.add('g-galaxy--visible'));
   }
   try {
-    highContrast.value = localStorage.getItem('genesis-contrast') === 'true';
+    language.value = localStorage.getItem('genesis-language') === 'en' ? 'en' : 'ru';
   } catch {
     /* Use the default theme. */
   }
@@ -147,61 +176,55 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', updateHeader);
   document.removeEventListener('visibilitychange', updateDocumentVisibility);
   closeDialog();
+  document.documentElement.lang = originalLang;
+  document.title = originalTitle;
 });
 </script>
 
 <template>
-  <div
-    ref="page"
-    class="genesis"
-    :class="{ 'genesis--contrast': highContrast, 'genesis--inactive': !isDocumentVisible }"
-  >
-    <a class="g-skip" href="#university-main">Перейти к содержимому</a>
+  <div ref="page" class="genesis" :class="{ 'genesis--inactive': !isDocumentVisible }">
+    <a class="g-skip" href="#university-main"> {{ t('Перейти к содержимому') }} </a>
 
     <div class="g-shell g-top" :class="{ 'g-top--compact': compactHeader }">
-      <header class="g-header" aria-label="Шапка университета">
+      <header class="g-header" :aria-label="t('Шапка университета')">
         <div class="g-header__brand">
           <button
             class="g-icon-button g-menu-button"
             type="button"
-            aria-label="Открыть меню университета"
+            :aria-label="t('Открыть меню университета')"
             aria-haspopup="dialog"
             @click="openDialog('menu')"
           >
             <img src="/genesis/s1-imgMenu.svg" width="24" height="24" alt="" />
           </button>
-          <a class="g-brand" href="#" aria-label="Генезис — главная">
+          <a class="g-brand" href="#" :aria-label="t('Генезис — главная')">
             <img src="/genesis/s1-img.svg" width="48" height="48" alt="" />
-            <span>ГЕНЕЗИС</span>
+            <span> {{ t('ГЕНЕЗИС') }} </span>
           </a>
         </div>
-        <nav class="g-header__nav" aria-label="Основная навигация">
-          <a href="#admissions">Поступающим</a>
-          <a href="#student-life">Обучающимся</a>
-          <a href="#contacts">Контакты</a>
+        <nav class="g-header__nav" :aria-label="t('Основная навигация')">
+          <a href="#admissions"> {{ t('Поступающим') }} </a>
+          <a href="#student-life"> {{ t('Обучающимся') }} </a>
+          <a href="#contacts"> {{ t('Контакты') }} </a>
         </nav>
         <div class="g-header__tools">
           <button
             class="g-icon-button"
             type="button"
-            aria-label="Поиск по сайту"
+            :aria-label="t('Поиск по сайту')"
             aria-haspopup="dialog"
             @click="openDialog('search')"
           >
             <img src="/genesis/s1-imgSearch.svg" width="24" height="24" alt="" />
           </button>
           <button
-            class="g-icon-button g-contrast-button"
+            class="g-language"
             type="button"
-            aria-label="Повышенная контрастность"
-            :aria-pressed="highContrast"
-            @click="toggleContrast"
+            :aria-label="language === 'ru' ? 'Switch to English' : t('Переключить на русский')"
+            @click="toggleLanguage"
           >
-            <img src="/genesis/s1-imgEye.svg" width="24" height="24" alt="" />
+            {{ language.toUpperCase() }} <span aria-hidden="true">↔</span>
           </button>
-          <span class="g-language" aria-label="Язык сайта: русский"
-            >RU <img src="/genesis/s1-imgChevron.svg" width="16" height="16" alt=""
-          /></span>
           <GenesisAction
             class="g-login"
             tone="outline"
@@ -209,12 +232,13 @@ onBeforeUnmount(() => {
             @click="
               openDialog(
                 'info',
-                'Личный кабинет',
-                'Вход и регистрация в университете скоро станут доступны.'
+                t('Личный кабинет'),
+                t('Вход и регистрация в университете скоро станут доступны.')
               )
             "
-            >Вход / Регистрация</GenesisAction
           >
+            {{ t('Вход / Регистрация') }}
+          </GenesisAction>
         </div>
       </header>
     </div>
@@ -232,10 +256,10 @@ onBeforeUnmount(() => {
           />
           <div class="g-intro">
             <div class="g-intro__heading">
-              <p class="g-eyebrow">ОБРАЗОВАНИЕ ДЛИНОЮ В ЖИЗНЬ</p>
+              <p class="g-eyebrow">{{ t('ОБРАЗОВАНИЕ ДЛИНОЮ В ЖИЗНЬ') }}</p>
               <h1 id="university-title">
-                Университет непрерывного<br class="g-desktop-break" />
-                цифрового образования <strong>«Генезис»</strong>
+                {{ t('Университет непрерывного') }} <br class="g-desktop-break" />
+                {{ t('цифрового образования') }} <strong> {{ t('«Генезис»') }} </strong>
               </h1>
             </div>
             <div class="g-quick-institutes">
@@ -246,24 +270,25 @@ onBeforeUnmount(() => {
                 class="g-quick-institute"
               >
                 <div>
-                  <p class="g-eyebrow">ИНСТИТУТ / {{ institute.number }}</p>
+                  <p class="g-eyebrow">{{ t('ИНСТИТУТ /') }} {{ institute.number }}</p>
                   <h2>{{ institute.title }}</h2>
                 </div>
-                <span class="g-inline-link"
-                  >Об институте <img src="/genesis/s1-img2.svg" width="18" height="18" alt=""
+                <span class="g-inline-link">
+                  {{ t('Об институте') }}
+                  <img src="/genesis/s1-img2.svg" width="18" height="18" alt=""
                 /></span>
               </a>
             </div>
             <div class="g-intro__actions">
-              <GenesisAction href="#admissions" tone="pink">Поступить</GenesisAction>
-              <GenesisAction href="#directions" tone="text" icon="/genesis/s1-imgDiag.svg"
-                >Выбрать направление</GenesisAction
-              >
+              <GenesisAction href="#admissions" tone="pink"> {{ t('Поступить') }} </GenesisAction>
+              <GenesisAction href="#directions" tone="text" icon="/genesis/s1-imgDiag.svg">
+                {{ t('Выбрать направление') }}
+              </GenesisAction>
             </div>
           </div>
 
           <div class="g-universes">
-            <p class="g-eyebrow">ВСЕЛЕННАЯ ВАШИХ ВОЗМОЖНОСТЕЙ</p>
+            <p class="g-eyebrow">{{ t('ВСЕЛЕННАЯ ВАШИХ ВОЗМОЖНОСТЕЙ') }}</p>
             <div class="g-universes__grid">
               <component
                 :is="universe.id === 'aquarium' ? 'a' : 'button'"
@@ -274,8 +299,8 @@ onBeforeUnmount(() => {
                 :aria-disabled="universe.id !== 'aquarium' || undefined"
                 :title="
                   universe.id === 'aquarium'
-                    ? 'Открыть школу аквариумистики'
-                    : 'Направление готовится к открытию'
+                    ? t('Открыть школу аквариумистики')
+                    : t('Направление готовится к открытию')
                 "
                 class="g-galaxy"
                 :data-universe="universe.id"
@@ -337,8 +362,8 @@ onBeforeUnmount(() => {
         tabindex="-1"
       >
         <div class="g-section-heading g-reveal">
-          <p class="g-eyebrow">ОБРАЗОВАТЕЛЬНЫЕ НАПРАВЛЕНИЯ</p>
-          <h2 id="directions-title">Ваша следующая ступень</h2>
+          <p class="g-eyebrow">{{ t('ОБРАЗОВАТЕЛЬНЫЕ НАПРАВЛЕНИЯ') }}</p>
+          <h2 id="directions-title">{{ t('Ваша следующая ступень') }}</h2>
         </div>
         <div class="g-program-grid">
           <article
@@ -367,21 +392,21 @@ onBeforeUnmount(() => {
             <div class="g-program-card__bottom">
               <dl v-if="program.label" class="g-program-facts">
                 <div>
-                  <dt>Программы</dt>
+                  <dt>{{ t('Программы') }}</dt>
                   <dd>—</dd>
                 </div>
                 <div>
-                  <dt>Формат</dt>
-                  <dd>Уточняется</dd>
+                  <dt>{{ t('Формат') }}</dt>
+                  <dd>{{ t('Уточняется') }}</dd>
                 </div>
                 <div>
-                  <dt>Ближайший набор</dt>
-                  <dd>Даты уточняются</dd>
+                  <dt>{{ t('Ближайший набор') }}</dt>
+                  <dd>{{ t('Даты уточняются') }}</dd>
                 </div>
               </dl>
               <div v-else class="g-school-facts">
-                <p>Программы: — · Формат уточняется</p>
-                <p>Ближайший набор: даты уточняются</p>
+                <p>{{ t('Программы: — · Формат уточняется') }}</p>
+                <p>{{ t('Ближайший набор: даты уточняются') }}</p>
               </div>
               <GenesisAction
                 aria-haspopup="dialog"
@@ -392,8 +417,9 @@ onBeforeUnmount(() => {
                     ? '/genesis/s2-imgArrow1.svg'
                     : '/genesis/s2-imgArrow.svg'
                 "
-                >Подробнее</GenesisAction
               >
+                {{ t('Подробнее') }}
+              </GenesisAction>
             </div>
           </article>
 
@@ -405,20 +431,20 @@ onBeforeUnmount(() => {
           >
             <img src="/genesis/s2-img2.svg" width="160" height="160" alt="" loading="lazy" />
             <div>
-              <p class="g-eyebrow">ОБРАЗОВАТЕЛЬНОЕ НАПРАВЛЕНИЕ</p>
-              <h3 id="college-title">Колледж</h3>
-              <p>Экономическое направление</p>
+              <p class="g-eyebrow">{{ t('ОБРАЗОВАТЕЛЬНОЕ НАПРАВЛЕНИЕ') }}</p>
+              <h3 id="college-title">{{ t('Колледж') }}</h3>
+              <p>{{ t('Экономическое направление') }}</p>
             </div>
-            <GenesisAction tone="outline" aria-haspopup="dialog" @click="openDetails('Колледж')"
-              >Подробнее</GenesisAction
-            >
+            <GenesisAction tone="outline" aria-haspopup="dialog" @click="openDetails(t('Колледж'))">
+              {{ t('Подробнее') }}
+            </GenesisAction>
           </article>
         </div>
 
         <div id="institutes" class="g-institutes" tabindex="-1">
           <div class="g-institutes__heading g-reveal">
-            <p class="g-eyebrow">СТРУКТУРА УНИВЕРСИТЕТА</p>
-            <h2>Два института — общие возможности</h2>
+            <p class="g-eyebrow">{{ t('СТРУКТУРА УНИВЕРСИТЕТА') }}</p>
+            <h2>{{ t('Два института — общие возможности') }}</h2>
           </div>
           <div class="g-institutes__grid">
             <article
@@ -430,29 +456,30 @@ onBeforeUnmount(() => {
               tabindex="-1"
             >
               <div class="g-institute__intro">
-                <p class="g-eyebrow">ИНСТИТУТ / {{ institute.number }}</p>
+                <p class="g-eyebrow">{{ t('ИНСТИТУТ /') }} {{ institute.number }}</p>
                 <h3>{{ institute.title }}</h3>
                 <p>{{ institute.description }}</p>
               </div>
               <div class="g-institute__nav">
                 <div class="g-institute__links">
-                  <GenesisAction tone="text" icon="/genesis/s2-img3.svg" unavailable
-                    >Кафедры</GenesisAction
-                  ><GenesisAction tone="text" icon="/genesis/s2-img3.svg" unavailable
-                    >Лаборатории и центры</GenesisAction
-                  >
+                  <GenesisAction tone="text" icon="/genesis/s2-img3.svg" unavailable>
+                    {{ t('Кафедры') }} </GenesisAction
+                  ><GenesisAction tone="text" icon="/genesis/s2-img3.svg" unavailable>
+                    {{ t('Лаборатории и центры') }}
+                  </GenesisAction>
                 </div>
                 <GenesisAction
                   tone="outline"
                   @click="
                     openDialog(
                       'info',
-                      `Институт ${institute.title.replace(/\n/g, ' ')}`,
+                      `${t('Институт')} ${institute.title.replace(/\n/g, ' ')}`,
                       institute.description.replace(/\n/g, ' ')
                     )
                   "
-                  >Об институте</GenesisAction
                 >
+                  {{ t('Об институте') }}
+                </GenesisAction>
               </div>
               <img
                 class="g-institute__galaxy"
@@ -470,8 +497,8 @@ onBeforeUnmount(() => {
       <section class="g-discover" aria-labelledby="discover-title">
         <div class="g-shell">
           <div class="g-section-heading g-reveal">
-            <p class="g-eyebrow">ПОЛЕЗНЫЕ РАЗДЕЛЫ</p>
-            <h2 id="discover-title">Откройте «Генезис»</h2>
+            <p class="g-eyebrow">{{ t('ПОЛЕЗНЫЕ РАЗДЕЛЫ') }}</p>
+            <h2 id="discover-title">{{ t('Откройте «Генезис»') }}</h2>
           </div>
           <div class="g-discover__grid">
             <article
@@ -491,7 +518,7 @@ onBeforeUnmount(() => {
                 loading="lazy"
               />
               <div class="g-discovery__heading">
-                <h3>{{ item.title }}</h3>
+                <h3>{{ t(item.title) }}</h3>
                 <p>{{ item.description }}</p>
               </div>
               <div class="g-discovery__links">
@@ -513,8 +540,9 @@ onBeforeUnmount(() => {
                 "
                 aria-haspopup="dialog"
                 @click="openDetails(item.title)"
-                >Подробнее</GenesisAction
               >
+                {{ t('Подробнее') }}
+              </GenesisAction>
             </article>
           </div>
         </div>
@@ -528,16 +556,19 @@ onBeforeUnmount(() => {
       >
         <div class="g-news__heading g-reveal">
           <div class="g-section-heading">
-            <p class="g-eyebrow">НОВОСТИ И АНОНСЫ</p>
-            <h2 id="news-title">В орбите университета</h2>
+            <p class="g-eyebrow">{{ t('НОВОСТИ И АНОНСЫ') }}</p>
+            <h2 id="news-title">{{ t('В орбите университета') }}</h2>
           </div>
-          <GenesisAction href="#news-cards" tone="text" icon="/genesis/s4-imgDiag.svg"
-            >Все анонсы</GenesisAction
-          >
+          <GenesisAction href="#news-cards" tone="text" icon="/genesis/s4-imgDiag.svg">
+            {{ t('Все анонсы') }}
+          </GenesisAction>
         </div>
         <p class="g-news__intro">
-          Знакомство с университетом, образовательные траектории и научные открытия — темы наших
-          будущих публикаций.
+          {{
+            t(
+              'Знакомство с университетом, образовательные траектории и научные открытия — темы наших будущих публикаций.'
+            )
+          }}
         </p>
         <div id="news-cards" class="g-news__grid">
           <article v-for="item in news" :key="item.title" class="g-news-card g-reveal">
@@ -561,10 +592,10 @@ onBeforeUnmount(() => {
             </div>
             <div class="g-news-card__body">
               <div class="g-news-card__meta">
-                <span class="g-announcement-badge">Анонс</span>
+                <span class="g-announcement-badge"> {{ t('Анонс') }} </span>
                 <p class="g-eyebrow">{{ item.category }}</p>
               </div>
-              <h3>{{ item.title }}</h3>
+              <h3>{{ t(item.title) }}</h3>
               <p>{{ item.description }}</p>
               <GenesisAction
                 tone="text"
@@ -573,11 +604,12 @@ onBeforeUnmount(() => {
                   openDialog(
                     'info',
                     item.title,
-                    `${item.description} Материал готовится к публикации.`
+                    `${item.description} ${t('Материал готовится к публикации.')}`
                   )
                 "
-                >Об анонсе</GenesisAction
               >
+                {{ t('Об анонсе') }}
+              </GenesisAction>
             </div>
           </article>
         </div>
@@ -586,12 +618,15 @@ onBeforeUnmount(() => {
       <section class="g-shell g-cta-shell" aria-labelledby="next-step-title">
         <div class="g-cta g-reveal">
           <div>
-            <h2 id="next-step-title">Ваш следующий шаг<br />начинается здесь.</h2>
-            <p>Выберите направление и откройте свою вселенную знаний.</p>
+            <h2 id="next-step-title">
+              {{ t('Ваш следующий шаг') }} <br />
+              {{ t('начинается здесь.') }}
+            </h2>
+            <p>{{ t('Выберите направление и откройте свою вселенную знаний.') }}</p>
           </div>
-          <GenesisAction href="#admissions" icon="/genesis/s5-imgArrow.svg"
-            >Поступить</GenesisAction
-          >
+          <GenesisAction href="#admissions" icon="/genesis/s5-imgArrow.svg">
+            {{ t('Поступить') }}
+          </GenesisAction>
         </div>
       </section>
     </main>
@@ -601,61 +636,65 @@ onBeforeUnmount(() => {
         <div class="g-footer__grid">
           <div class="g-footer__about">
             <a href="#" class="g-brand"
-              ><img src="/genesis/s6-img.svg" width="48" height="48" alt="" loading="lazy" /><span
-                >ГЕНЕЗИС</span
-              ></a
+              ><img src="/genesis/s6-img.svg" width="48" height="48" alt="" loading="lazy" /><span>
+                {{ t('ГЕНЕЗИС') }}
+              </span></a
             >
-            <p>АНО «Университет непрерывного цифрового образования „Генезис“»</p>
-            <p>Образование длиною в жизнь.</p>
+            <p>{{ t('АНО «Университет непрерывного цифрового образования „Генезис“»') }}</p>
+            <p>{{ t('Образование длиною в жизнь.') }}</p>
           </div>
-          <nav class="g-footer__column" aria-label="Образование">
-            <h2>Образование</h2>
+          <nav class="g-footer__column" :aria-label="t('Образование')">
+            <h2>{{ t('Образование') }}</h2>
             <template v-for="universe in universes" :key="universe.id"
               ><a v-if="universe.id === 'aquarium'" :href="AQUARIUM_URL">{{ universe.name }}</a
               ><span v-else>{{ universe.name }}</span></template
-            ><a href="#institutes">Институты</a>
+            ><a href="#institutes"> {{ t('Институты') }} </a>
           </nav>
-          <nav class="g-footer__column" aria-label="Университет">
-            <h2>Университет</h2>
-            <a href="#admissions">Поступающим</a><a href="#student-life">Обучающимся</a
-            ><a href="#science">Наука</a><a href="#student-life">Студенческая жизнь</a
-            ><a href="#university-news">Новости</a>
+          <nav class="g-footer__column" :aria-label="t('Университет')">
+            <h2>{{ t('Университет') }}</h2>
+            <a href="#admissions"> {{ t('Поступающим') }} </a
+            ><a href="#student-life"> {{ t('Обучающимся') }} </a
+            ><a href="#science"> {{ t('Наука') }} </a
+            ><a href="#student-life"> {{ t('Студенческая жизнь') }} </a
+            ><a href="#university-news"> {{ t('Новости') }} </a>
             <button
               type="button"
               @click="
                 openDialog(
                   'info',
-                  'Личный кабинет',
-                  'Вход и регистрация в университете скоро станут доступны.'
+                  t('Личный кабинет'),
+                  t('Вход и регистрация в университете скоро станут доступны.')
                 )
               "
             >
-              Личный кабинет
+              {{ t('Личный кабинет') }}
             </button>
           </nav>
           <div id="contacts" class="g-footer__column g-footer__contacts" tabindex="-1">
-            <h2>Обратная связь</h2>
+            <h2>{{ t('Обратная связь') }}</h2>
             <a class="g-footer__email" :href="feedbackHref">{{ feedbackEmail }}</a>
             <a :href="universityContacts.phoneHref">{{ universityContacts.phone }}</a>
             <p>{{ universityContacts.hours }}</p>
-            <p class="g-footer__contact-note">По вопросам поступления и работы сайта</p>
+            <p class="g-footer__contact-note">{{ t('По вопросам поступления и работы сайта') }}</p>
           </div>
         </div>
         <div class="g-footer__legal">
-          <p>© 2026 «Генезис»</p>
+          <p>{{ t('© 2026 «Генезис»') }}</p>
           <button
             type="button"
             @click="
               openDialog(
                 'info',
-                'Сведения об образовательной организации',
-                'АНО «Университет непрерывного цифрового образования „Генезис“». Сведения и документы готовятся к публикации.'
+                t('Сведения об образовательной организации'),
+                t(
+                  'АНО «Университет непрерывного цифрового образования „Генезис“». Сведения и документы готовятся к публикации.'
+                )
               )
             "
           >
-            Сведения об образовательной организации</button
-          ><button type="button" aria-disabled="true" title="Документ готовится к публикации">
-            Политика конфиденциальности
+            {{ t('Сведения об образовательной организации') }}</button
+          ><button type="button" aria-disabled="true" :title="t('Документ готовится к публикации')">
+            {{ t('Политика конфиденциальности') }}
           </button>
         </div>
       </div>
@@ -676,60 +715,61 @@ onBeforeUnmount(() => {
         <button
           class="g-dialog__close g-icon-button"
           type="button"
-          aria-label="Закрыть окно"
+          :aria-label="t('Закрыть окно')"
           @click="closeDialog"
         >
           ×
         </button>
         <template v-if="dialogKind === 'menu'">
-          <p class="g-eyebrow">УНИВЕРСИТЕТ «ГЕНЕЗИС»</p>
-          <h2 id="genesis-dialog-title">Ваша вселенная знаний</h2>
-          <nav class="g-dialog__menu" aria-label="Меню университета">
+          <p class="g-eyebrow">{{ t('УНИВЕРСИТЕТ «ГЕНЕЗИС»') }}</p>
+          <h2 id="genesis-dialog-title">{{ t('Ваша вселенная знаний') }}</h2>
+          <nav class="g-dialog__menu" :aria-label="t('Меню университета')">
             <button
               v-for="item in [
-                { id: 'directions', title: 'Образование' },
-                { id: 'institutes', title: 'Институты' },
-                { id: 'admissions', title: 'Поступающим' },
-                { id: 'student-life', title: 'Обучающимся' },
-                { id: 'science', title: 'Наука' },
-                { id: 'university-news', title: 'Новости' },
-                { id: 'contacts', title: 'Контакты' },
+                { id: 'directions', title: t('Образование') },
+                { id: 'institutes', title: t('Институты') },
+                { id: 'admissions', title: t('Поступающим') },
+                { id: 'student-life', title: t('Обучающимся') },
+                { id: 'science', title: t('Наука') },
+                { id: 'university-news', title: t('Новости') },
+                { id: 'contacts', title: t('Контакты') },
               ]"
               :key="item.id"
               type="button"
               @click="jumpTo(item.id)"
             >
-              {{ item.title }}<span aria-hidden="true">↗</span>
+              {{ t(item.title) }}<span aria-hidden="true">↗</span>
             </button>
           </nav>
-          <a class="g-dialog__fish" :href="AQUARIUM_URL"
-            >Школа аквариумистики <span aria-hidden="true">↗</span></a
+          <a class="g-dialog__fish" :href="AQUARIUM_URL">
+            {{ t('Школа аквариумистики') }} <span aria-hidden="true">↗</span></a
           >
         </template>
         <template v-else-if="dialogKind === 'search'">
-          <p class="g-eyebrow">НАЙДИТЕ СВОЮ ТРАЕКТОРИЮ</p>
-          <h2 id="genesis-dialog-title">Поиск по университету</h2>
-          <label for="genesis-search" class="g-sr-only">Название направления или раздела</label
+          <p class="g-eyebrow">{{ t('НАЙДИТЕ СВОЮ ТРАЕКТОРИЮ') }}</p>
+          <h2 id="genesis-dialog-title">{{ t('Поиск по университету') }}</h2>
+          <label for="genesis-search" class="g-sr-only">
+            {{ t('Название направления или раздела') }} </label
           ><input
             id="genesis-search"
             v-model="query"
             class="g-search-input"
             type="search"
-            placeholder="Направление или раздел"
+            :placeholder="t('Направление или раздел')"
             autofocus
             autocomplete="off"
           />
           <p class="g-search-count" role="status">
             {{
               searchResults.length
-                ? `Найдено разделов: ${searchResults.length}`
-                : 'Ничего не найдено. Попробуйте другое название.'
+                ? `${t('Найдено разделов:')} ${searchResults.length}`
+                : t('Ничего не найдено. Попробуйте другое название.')
             }}
           </p>
           <ul class="g-search-results">
             <li v-for="item in searchResults" :key="item.id">
               <button type="button" @click="jumpTo(item.id)">
-                {{ item.title }}<span aria-hidden="true">↗</span>
+                {{ t(item.title) }}<span aria-hidden="true">↗</span>
               </button>
             </li>
           </ul>
@@ -739,23 +779,31 @@ onBeforeUnmount(() => {
             <img src="/genesis/s1-img.svg" width="64" height="64" alt="" />
           </div>
           <p class="g-eyebrow">
-            {{ dialogKind === 'aquarium' ? 'ВАША ВСЕЛЕННАЯ УЖЕ ОТКРЫТА' : 'СКОРО В «ГЕНЕЗИСЕ»' }}
+            {{
+              dialogKind === 'aquarium' ? t('ВАША ВСЕЛЕННАЯ УЖЕ ОТКРЫТА') : t('СКОРО В «ГЕНЕЗИСЕ»')
+            }}
           </p>
-          <h2 id="genesis-dialog-title">{{ dialogTitle }}</h2>
-          <p class="g-dialog__text">{{ dialogText }}</p>
+          <h2 id="genesis-dialog-title">{{ t(dialogTitle) }}</h2>
+          <p class="g-dialog__text">{{ t(dialogText) }}</p>
           <div class="g-coming-actions">
-            <GenesisAction v-if="dialogKind === 'aquarium'" :href="AQUARIUM_URL" tone="pink"
-              >Открыть школу</GenesisAction
-            >
-            <GenesisAction v-else tone="pink" @click="closeDialog">Буду ждать</GenesisAction>
+            <GenesisAction v-if="dialogKind === 'aquarium'" :href="AQUARIUM_URL" tone="pink">
+              {{ t('Открыть школу') }}
+            </GenesisAction>
+            <GenesisAction v-else tone="pink" @click="closeDialog">
+              {{ t('Буду ждать') }}
+            </GenesisAction>
           </div>
-          <p class="g-coming-note">Образование длиною в жизнь. Новые возможности — впереди.</p>
+          <p class="g-coming-note">
+            {{ t('Образование длиною в жизнь. Новые возможности — впереди.') }}
+          </p>
         </template>
         <template v-else
-          ><p class="g-eyebrow">УНИВЕРСИТЕТ «ГЕНЕЗИС»</p>
-          <h2 id="genesis-dialog-title">{{ dialogTitle }}</h2>
-          <p class="g-dialog__text">{{ dialogText }}</p>
-          <GenesisAction tone="pink" @click="closeDialog">Понятно</GenesisAction></template
+          ><p class="g-eyebrow">{{ t('УНИВЕРСИТЕТ «ГЕНЕЗИС»') }}</p>
+          <h2 id="genesis-dialog-title">{{ t(dialogTitle) }}</h2>
+          <p class="g-dialog__text">{{ t(dialogText) }}</p>
+          <GenesisAction tone="pink" @click="closeDialog">
+            {{ t('Понятно') }}
+          </GenesisAction></template
         >
       </div>
     </dialog>
