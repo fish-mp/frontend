@@ -19,7 +19,10 @@ function change(event: Event) {
   emit('update:modelValue', (event.target as HTMLInputElement).checked && document.value
     ? { accepted: true, version: document.value.version, sha256: document.value.sha256 } : undefined)
 }
-onMounted(loadLegal)
+onMounted(() => {
+  emit('update:modelValue', undefined)
+  void loadLegal()
+})
 </script>
 <style scoped>
 .privacy-consent { margin: 16px 0; font-size: 13px; line-height: 1.6; color: #516078; }
