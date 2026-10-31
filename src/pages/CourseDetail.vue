@@ -19,7 +19,9 @@
           <p v-if="!isAuth" class="course-access__msg course-access__msg--error">
             Чтобы записаться, нужно авторизоваться!
           </p>
-          <button v-else-if="course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
+          <PrivacyConsent v-if="isAuth && course.enrollment_state === null" v-model="privacyConsent" purpose="enrollment" />
+          <p v-if="courseStore.error" role="alert" class="course-access__msg course-access__msg--error">{{ courseStore.error }}</p>
+          <button v-if="isAuth && course.enrollment_state === null" class="btn btn--primary course-detail__enroll"
             @click="fetchNewCourse(course.id)">
             <span class="btn-text">Записаться на курс</span>
             <div class="btn-glow"></div>
@@ -132,6 +134,9 @@ import { useCourseStore } from '../stores/course'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../utils/api'
 import type { Course } from '../types/Course'
+import PrivacyConsent from '../components/PrivacyConsent.vue'
+import type { ConsentValue } from '../utils/legal'
+const privacyConsent = ref<ConsentValue>()
 
 const route = useRoute()
 const router = useRouter()
@@ -207,7 +212,7 @@ const fetchCourse = async () => {
 
 const fetchNewCourse = async (id: number) => {
   try {
-    const ok = await courseStore.enrollToCourse(id)
+    const ok = await courseStore.enrollToCourse(id, privacyConsent.value)
     if (ok) {
       course.value = null
       await fetchCourse()

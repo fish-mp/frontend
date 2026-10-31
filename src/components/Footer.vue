@@ -65,6 +65,7 @@
         <div class="footer__decorative-line"></div>
         <p class="footer__copyright">© 2025 Юношеская школа аквариумистики "АкваВселенная". Все права защищены.</p>
         <a
+          v-if="!legalState.config.ready"
           href="/fishkids_politika_konfidencialnosti.pdf"
           target="_blank"
           rel="noopener noreferrer"
@@ -72,15 +73,25 @@
         >
           Политика конфиденциальности
         </a>
+        <nav v-if="legalState.config.ready" aria-label="Правовые документы" class="footer__legal">
+          <router-link v-for="doc in footerDocuments" :key="doc.slug" :to="'/legal/' + doc.slug">{{ doc.title }}</router-link>
+          <button type="button" @click="cookieSettingsOpen = true">Настройки cookies</button>
+        </nav>
       </div>
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
-// Логика компонента, если потребуется
+import { computed, onMounted } from 'vue'
+import { legalState, loadLegal, cookieSettingsOpen } from '../utils/legal'
+const footerDocuments = computed(() => legalState.value.config.documents.filter(d => ['privacy-policy','cookies-policy','public-offer','returns-policy'].includes(d.slug)))
+onMounted(loadLegal)
 </script>
 
 <style lang="scss" scoped>
 @use '../assets/scss/Footer.scss';
+.footer__legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 24px; margin-top: 16px; font-size: 13px; }
+.footer__legal a, .footer__legal button { color: inherit; text-decoration: underline; }
+.footer__legal button { border: 0; padding: 0; background: transparent; font: inherit; cursor: pointer; }
 </style>

@@ -1,3 +1,4 @@
+import type { ConsentValue } from '../utils/legal'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useCartStore } from './cart'
@@ -33,7 +34,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     accessToken.value = null
     refreshToken.value = null
-    for (const key of ['accessToken', 'refreshToken', 'userData', 'last_order_id']) localStorage.removeItem(key)
+    for (const key of ['accessToken', 'refreshToken', 'userData', 'last_order_id', 'checkout_attempt']) localStorage.removeItem(key)
     useCartStore().resetCart()
     useFavoritesStore().resetFavorites()
   }
@@ -159,7 +160,7 @@ export const useAuthStore = defineStore('auth', () => {
     return data
   }
 
-  const register = async (payload: { email: string; password: string; first_name: string; city: string; age: number }) => {
+  const register = async (payload: { email: string; password: string; first_name: string; city: string; age: number; privacy_consent?: ConsentValue }) => {
     const response = await fetch(`${BACKEND_URL}/api/users/register/`, {
       method: 'POST', credentials: 'omit',
       headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),

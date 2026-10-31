@@ -112,3 +112,54 @@ test('a permission denial does not rotate tokens', async () => {
   assert.equal((await apiFetch('http://api.test/forbidden')).status, 403)
   assert.equal(calls, 1)
 })
+
+
+test('checkout retry keeps its idempotency key and preserves the basket until payment', async () => {
+  const auth = session()
+  auth.user = { email: 'buyer@example.com', first_name: 'Buyer', city: 'Moscow', age: 25 }
+  const cart = useCartStore()
+  cart.items = [{ id: 1, product: { id: 'plant', name: 'Plant', price: 100 }, quantity: 1 }]
+  const keys = []
+  globalThis.fetch = async (url, options) => {
+    if (url.includes('/api/legal/documents/')) return json({ ready: false, documents: [], consent_purposes: [] })
+    if (url.endsWith('/api/orders/')) {
+      keys.push(new Headers(options.headers).get('Idempotency-Key'))
+      return keys.length === 1 ? json({ error: 'Payment status is unknown', order_id: 7 }, 502)
+        : json({ order_id: 7, status: 'pending', confirmation_url: 'https://example.com/pay' }, 201)
+    }
+    throw new Error('Unexpected request: ' + url)
+  }
+  const payload = { email: 'buyer@example.com', phone: '+79991234567', delivery_method: 'pickup',
+    city: '', street: '', house: '', beyond_mkad: false, offer_accepted: true }
+  await assert.rejects(cart.createOrder(payload), /unknown/)
+  assert.equal(localStorage.getItem('last_order_id'), '7')
+  assert.equal(cart.items.length, 1)
+  await cart.createOrder(payload)
+  assert.equal(keys[0], keys[1])
+  assert(keys[0])
+  assert.equal(cart.items.length, 1)
+  assert(!localStorage.getItem('checkout_attempt').includes(payload.phone))
+})
+
+test('a late checkout response after logout cannot restore another account order', async () => {
+  const auth = session()
+  auth.user = { email: 'buyer@example.com', first_name: 'Buyer', city: 'Moscow', age: 25 }
+  const cart = useCartStore()
+  cart.items = [{ id: 1, product: { id: 'plant', name: 'Plant', price: 100 }, quantity: 1 }]
+  let started
+  const requestStarted = new Promise(resolve => { started = resolve })
+  globalThis.fetch = async (url) => {
+    if (url.includes('/api/legal/documents/')) return json({ ready: false, documents: [], consent_purposes: [] })
+    if (url.endsWith('/api/orders/')) { started(); await pause(50); return json({ order_id: 9, confirmation_url: 'https://example.com/pay' }, 201) }
+    if (url.endsWith('/logout/')) return new Response(null, { status: 204 })
+    throw new Error('Unexpected request: ' + url)
+  }
+  const creating = cart.createOrder({ email: 'buyer@example.com', phone: '+79991234567',
+    delivery_method: 'pickup', city: '', street: '', house: '', beyond_mkad: false, offer_accepted: true })
+  await requestStarted
+  await auth.logout()
+  await assert.rejects(creating)
+  assert.equal(localStorage.getItem('last_order_id'), null)
+  assert.equal(localStorage.getItem('checkout_attempt'), null)
+  assert.equal(auth.isAuthenticated, false)
+})
