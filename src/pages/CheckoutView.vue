@@ -114,9 +114,9 @@
             <input v-model="form.offer_accepted" type="checkbox" />
             <span>
               Я согласен с
-              <a :href="legalState.config.ready ? '/legal/public-offer' : '/fishkids_publichnaya_oferta.pdf'" target="_blank" rel="noopener noreferrer">публичной офертой</a>
+              <a :href="legalState.config.documents.some(d => d.slug === 'public-offer' && d.status === 'published') ? '/legal/public-offer' : '/fishkids_publichnaya_oferta.pdf'" target="_blank" rel="noopener noreferrer">публичной офертой</a>
               и
-              <a :href="legalState.config.ready ? '/legal/returns-policy' : '/fishkids_usloviya_vozvrata.pdf'" target="_blank" rel="noopener noreferrer">условиями возврата</a>
+              <a :href="legalState.config.documents.some(d => d.slug === 'returns-policy' && d.status === 'published') ? '/legal/returns-policy' : '/fishkids_usloviya_vozvrata.pdf'" target="_blank" rel="noopener noreferrer">условиями возврата</a>
             </span>
           </label>
           <span v-if="errors.offer_accepted" class="field__error">{{ errors.offer_accepted }}</span>

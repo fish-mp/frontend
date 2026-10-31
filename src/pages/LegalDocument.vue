@@ -5,6 +5,7 @@
       <p v-if="!legalState.config.ready" class="draft" role="status">Черновик для заполнения. Не является действующим документом.</p>
       <h1>{{ document.title }}</h1><p class="version">Редакция: {{ document.version }}</p>
       <dl><dt>Оператор</dt><dd>{{ document.operator.name }}</dd><dt>Адрес</dt><dd>{{ document.operator.legal_address }}</dd>
+        <dt>Электронная почта</dt><dd>{{ document.operator.contact_email }}</dd>
         <template v-if="document.operator.inn"><dt>ИНН</dt><dd>{{ document.operator.inn }}</dd></template>
         <template v-if="document.operator.ogrn"><dt>ОГРН / ОГРНИП</dt><dd>{{ document.operator.ogrn }}</dd></template>
       </dl>
@@ -14,6 +15,12 @@
       <p v-if="legalState.config.contact_email">По вопросам персональных данных:
         <a :href="'mailto:' + legalState.config.contact_email">{{ legalState.config.contact_email }}</a></p>
     </article>
+    <section v-else-if="route.params.slug === 'privacy-policy'">
+      <h1>Политика конфиденциальности</h1>
+      <p>Опубликованная редакция от 15 мая 2026 года.</p>
+      <a href="/legal-archive/privacy-policy-2026-05-15.pdf" target="_blank" rel="noopener noreferrer">Открыть или скачать PDF</a>
+      <iframe class="policy-pdf" src="/legal-archive/privacy-policy-2026-05-15.pdf" title="Политика конфиденциальности в PDF"></iframe>
+    </section>
     <section v-else><h1>Документ временно недоступен</h1><p>Свяжитесь с администрацией сайта, если вам нужна дополнительная информация.</p></section>
     <router-link to="/">На главную</router-link>
   </main>
@@ -30,5 +37,6 @@ onMounted(loadLegal)
 .legal-document { max-width: 900px; margin: 140px auto 64px; padding: 0 24px; color: #142745; overflow-wrap: anywhere; line-height: 1.8; }
 h1 { font-size: clamp(26px,5vw,38px); line-height: 1.25; } h2 { font-size: 22px; margin-top: 32px; }
 dt { font-weight: 600; } dd { margin: 0 0 12px; } a { color: #173ded; } .version { color: #65758e; }
+.policy-pdf { display: block; width: 100%; min-height: 75vh; border: 1px solid #dce3ef; border-radius: 12px; margin: 24px 0; }
 .draft { padding: 16px; background: #fff4d6; border-radius: 12px; }
 </style>

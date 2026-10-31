@@ -66,7 +66,7 @@
         <p class="footer__copyright">© 2025 Юношеская школа аквариумистики "АкваВселенная". Все права защищены.</p>
         <a
           v-if="!legalState.config.ready"
-          href="/fishkids_politika_konfidencialnosti.pdf"
+          href="/legal/privacy-policy"
           target="_blank"
           rel="noopener noreferrer"
           class="footer__policy-link"
