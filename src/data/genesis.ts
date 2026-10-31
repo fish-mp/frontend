@@ -16,12 +16,6 @@ export const universityContacts = {
   hours: 'Пн–пт, 09:30–18:30',
 };
 
-export const aquariumDocuments = [
-  { title: 'Политика конфиденциальности', path: '/fishkids_politika_konfidencialnosti.pdf' },
-  { title: 'Публичная оферта', path: '/fishkids_publichnaya_oferta.pdf' },
-  { title: 'Условия возврата', path: '/fishkids_usloviya_vozvrata.pdf' },
-];
-
 export const programs = [
   {
     id: 'masters',

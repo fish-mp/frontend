@@ -4,7 +4,6 @@ import GenesisAction from '../components/genesis/GenesisAction.vue';
 import GenesisGalaxy from '../components/genesis/GenesisGalaxy.vue';
 import {
   universityContacts,
-  aquariumDocuments,
   discoveries,
   feedbackEmail,
   institutes,
@@ -659,17 +658,6 @@ onBeforeUnmount(() => {
             Политика конфиденциальности
           </button>
         </div>
-        <nav class="g-footer__documents" aria-label="Документы FishKids">
-          <span>Документы FishKids</span>
-          <a
-            v-for="document in aquariumDocuments"
-            :key="document.path"
-            :href="`${AQUARIUM_URL}${document.path}`"
-            target="_blank"
-            rel="noopener noreferrer"
-            >{{ document.title }} <span aria-hidden="true">↗</span></a
-          >
-        </nav>
       </div>
     </footer>
 
