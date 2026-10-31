@@ -3,7 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import GenesisAction from '../components/genesis/GenesisAction.vue';
 import GenesisGalaxy from '../components/genesis/GenesisGalaxy.vue';
 import {
-  aquariumContacts,
+  universityContacts,
   aquariumDocuments,
   discoveries,
   feedbackEmail,
@@ -606,19 +606,8 @@ onBeforeUnmount(() => {
                 >ГЕНЕЗИС</span
               ></a
             >
-            <p>АНО «Университет непрерывного<br />цифрового образования „Генезис“»</p>
+            <p>АНО «Университет непрерывного цифрового образования „Генезис“»</p>
             <p>Образование длиною в жизнь.</p>
-            <nav class="g-footer__documents" aria-label="Документы школы аквариумистики">
-              <h2>Документы школы аквариумистики</h2>
-              <a
-                v-for="document in aquariumDocuments"
-                :key="document.path"
-                :href="`${AQUARIUM_URL}${document.path}`"
-                target="_blank"
-                rel="noopener noreferrer"
-                >{{ document.title }} <span aria-hidden="true">↗</span></a
-              >
-            </nav>
           </div>
           <nav class="g-footer__column" aria-label="Образование">
             <h2>Образование</h2>
@@ -632,20 +621,6 @@ onBeforeUnmount(() => {
             <a href="#admissions">Поступающим</a><a href="#student-life">Обучающимся</a
             ><a href="#science">Наука</a><a href="#student-life">Студенческая жизнь</a
             ><a href="#university-news">Новости</a>
-          </nav>
-          <div id="contacts" class="g-footer__column g-footer__contacts" tabindex="-1">
-            <h2>Связаться с нами</h2>
-            <div class="g-footer__contact-group">
-              <h3>Обратная связь</h3>
-              <a :href="feedbackHref">{{ feedbackEmail }}</a>
-              <p>По вопросам поступления и работы сайта</p>
-            </div>
-            <div class="g-footer__contact-group">
-              <h3>Школа аквариумистики</h3>
-              <a :href="aquariumContacts.phoneHref">{{ aquariumContacts.phone }}</a>
-              <a :href="`mailto:${aquariumContacts.email}`">{{ aquariumContacts.email }}</a>
-              <p>{{ aquariumContacts.hours }}</p>
-            </div>
             <button
               type="button"
               @click="
@@ -658,6 +633,13 @@ onBeforeUnmount(() => {
             >
               Личный кабинет
             </button>
+          </nav>
+          <div id="contacts" class="g-footer__column g-footer__contacts" tabindex="-1">
+            <h2>Обратная связь</h2>
+            <a class="g-footer__email" :href="feedbackHref">{{ feedbackEmail }}</a>
+            <a :href="universityContacts.phoneHref">{{ universityContacts.phone }}</a>
+            <p>{{ universityContacts.hours }}</p>
+            <p class="g-footer__contact-note">По вопросам поступления и работы сайта</p>
           </div>
         </div>
         <div class="g-footer__legal">
@@ -677,6 +659,17 @@ onBeforeUnmount(() => {
             Политика конфиденциальности
           </button>
         </div>
+        <nav class="g-footer__documents" aria-label="Документы FishKids">
+          <span>Документы FishKids</span>
+          <a
+            v-for="document in aquariumDocuments"
+            :key="document.path"
+            :href="`${AQUARIUM_URL}${document.path}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            >{{ document.title }} <span aria-hidden="true">↗</span></a
+          >
+        </nav>
       </div>
     </footer>
 

@@ -9,11 +9,10 @@ export const universes = [
 
 export const feedbackEmail = 'support@inco-edu.ru';
 
-// Public school contacts already displayed in components/Footer.vue.
-export const aquariumContacts = {
+// Shared phone and opening hours, kept at the owner's request.
+export const universityContacts = {
   phone: '+7 (916) 435-40-10',
   phoneHref: 'tel:+79164354010',
-  email: 'Saaturn2015@mail.ru',
   hours: 'Пн–пт, 09:30–18:30',
 };
 
