@@ -125,7 +125,7 @@ export const router = createRouter({
     if (savedPosition) {
       return savedPosition;
     }
-    if (to.hash) return { el: to.hash, top: 32 };
+    if (to.hash) return { el: to.hash, top: to.meta.university ? 104 : 32 };
     return { left: 0, top: 0 };
   },
 });

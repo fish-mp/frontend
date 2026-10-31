@@ -7,6 +7,22 @@ export const universes = [
   { id: 'aquarium', name: 'Школа аквариумистики', image: '/genesis/s1-img8.svg' },
 ];
 
+export const feedbackEmail = 'support@inco-edu.ru';
+
+// Public school contacts already displayed in components/Footer.vue.
+export const aquariumContacts = {
+  phone: '+7 (916) 435-40-10',
+  phoneHref: 'tel:+79164354010',
+  email: 'Saaturn2015@mail.ru',
+  hours: 'Пн–пт, 09:30–18:30',
+};
+
+export const aquariumDocuments = [
+  { title: 'Политика конфиденциальности', path: '/fishkids_politika_konfidencialnosti.pdf' },
+  { title: 'Публичная оферта', path: '/fishkids_publichnaya_oferta.pdf' },
+  { title: 'Условия возврата', path: '/fishkids_usloviya_vozvrata.pdf' },
+];
+
 export const programs = [
   {
     id: 'masters',

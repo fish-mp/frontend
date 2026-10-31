@@ -61,11 +61,12 @@
   outline: 2px solid var(--g-pink);
   outline-offset: 6px;
 }
-.genesis :where(article, section, footer, main, #institutes)[tabindex='-1']:focus {
+.genesis
+  :where(article, section, footer, main, #institutes, .g-footer__contacts)[tabindex='-1']:focus {
   outline: none;
 }
 .genesis :where([id]) {
-  scroll-margin-top: 32px;
+  scroll-margin-top: 104px;
 }
 .genesis ::selection {
   background: var(--g-pink);
@@ -77,7 +78,13 @@
   margin-inline: auto;
 }
 .g-top {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: calc(136 * var(--u));
   padding-top: calc(32 * var(--u));
+  pointer-events: none;
+  transition: padding-top 200ms ease;
 }
 .g-eyebrow {
   font-size: calc(14 * var(--u));
@@ -117,6 +124,12 @@
 }
 
 .g-header {
+  pointer-events: auto;
+  transition:
+    height 200ms ease,
+    padding 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
   height: calc(104 * var(--u));
   padding: calc(24 * var(--u));
   display: flex;
@@ -125,6 +138,28 @@
   gap: calc(32 * var(--u));
   background: var(--g-panel);
   border-radius: calc(28 * var(--u));
+}
+.g-top--compact {
+  padding-top: calc(12 * var(--u));
+}
+.g-top--compact .g-header {
+  height: clamp(58px, calc(72 * var(--u)), 72px);
+  padding-block: calc(12 * var(--u));
+  background: rgb(35 24 63 / 94%);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 40px rgb(9 6 24 / 25%);
+}
+.g-top--compact .g-brand img {
+  width: 36px;
+  height: 36px;
+}
+.g-top--compact .g-brand span {
+  font-size: clamp(16px, calc(22 * var(--u)), 22px);
+}
+.genesis .g-top--compact .g-login {
+  height: 44px;
+  min-height: 44px;
+  padding-block: 8px;
 }
 .g-header__brand {
   display: flex;
@@ -443,6 +478,11 @@
   transform-origin: center;
   animation: var(--galaxy-twinkle) var(--star-period) ease-in-out infinite;
   animation-delay: var(--star-delay);
+  animation-play-state: var(--galaxy-state);
+}
+.genesis--inactive .g-galaxy__art,
+.g-galaxy:not(.g-galaxy--visible) .g-galaxy__art {
+  --galaxy-state: paused !important;
 }
 .g-galaxy:focus-visible .g-galaxy__art {
   --galaxy-state: running;
@@ -1808,6 +1848,7 @@ body:has(.g-dialog[open]) {
     font-size: 9px;
   }
   .g-universes__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px 8px;
   }
   .genesis .g-galaxy {
@@ -2156,6 +2197,241 @@ body:has(.g-dialog[open]) {
   }
   .g-dialog__text {
     font-size: 15px;
+  }
+}
+
+.g-news__heading {
+  margin-bottom: calc(16 * var(--u));
+}
+.g-news__intro {
+  max-width: 800px;
+  margin-bottom: calc(32 * var(--u)) !important;
+  color: var(--g-muted);
+  font-size: clamp(14px, calc(18 * var(--u)), 18px);
+  line-height: 1.65;
+}
+.g-news-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.g-news-card__meta .g-eyebrow {
+  font-size: clamp(11px, calc(12 * var(--u)), 12px);
+  line-height: 1.5;
+}
+.g-announcement-badge {
+  padding: 4px 10px;
+  border: 1px solid rgb(232 185 232 / 30%);
+  border-radius: 999px;
+  color: var(--g-pink);
+  background: rgb(232 185 232 / 7%);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.g-footer__documents {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 28px;
+}
+.g-footer__documents h2 {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--g-lavender);
+}
+.g-footer__documents a {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--g-muted);
+}
+.g-footer__contact-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.g-footer__contact-group h3 {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--g-lavender);
+}
+.g-footer__contact-group a {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--g-white);
+  overflow-wrap: anywhere;
+}
+.g-footer__contact-group p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--g-muted);
+}
+.g-footer__contacts {
+  gap: 24px;
+}
+@media (max-width: 1200px) {
+  .g-top {
+    height: 104px;
+  }
+  .g-top--compact {
+    padding-top: 10px;
+  }
+  .g-top--compact .g-header {
+    height: 64px;
+    padding-block: 10px;
+  }
+  .g-footer__contacts {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .g-footer__contacts > h2,
+  .g-footer__contacts > button {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 600px) {
+  .g-top {
+    height: 88px;
+  }
+  .g-top--compact {
+    padding-top: 8px;
+  }
+  .g-top--compact .g-header {
+    height: 60px;
+    padding: 8px 12px;
+    border-radius: 18px;
+  }
+  .g-top--compact .g-brand img {
+    width: 30px;
+    height: 30px;
+  }
+  .g-top--compact .g-brand span {
+    font-size: 16px;
+  }
+  .g-galaxy__name {
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .g-galaxy__space,
+  .g-galaxy__art {
+    width: clamp(108px, 30vw, 144px);
+    height: clamp(108px, 30vw, 144px);
+  }
+  .genesis .g-galaxy {
+    gap: 12px;
+    min-height: 144px;
+  }
+  .g-universes__grid {
+    gap: 24px 8px;
+  }
+  .g-universes > .g-eyebrow {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .g-quick-institute .g-eyebrow,
+  .g-program-card .g-eyebrow,
+  .g-institute .g-eyebrow,
+  .g-college .g-eyebrow {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .g-quick-institute h2 {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .g-quick-institutes {
+    grid-template-columns: 1fr;
+  }
+  .g-quick-institute {
+    min-height: 156px;
+  }
+  .g-inline-link {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .g-program-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .g-program-facts > :last-child {
+    grid-column: 1 / -1;
+  }
+  .g-program-facts dt {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .g-program-facts dd {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .g-school-facts {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .g-school-facts p + p {
+    margin-top: 8px;
+  }
+  .g-school-facts,
+  .g-program-card__description {
+    overflow-wrap: anywhere;
+  }
+  .g-program-card--digital-school,
+  .g-program-card--aquarium {
+    min-height: 380px;
+  }
+  .genesis .g-discovery__links .g-action,
+  .genesis .g-action--text {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .g-discovery {
+    min-height: 380px;
+  }
+  .g-footer__column > :not(h2),
+  .g-footer__column h2 {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .g-footer__legal {
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .g-footer__documents h2,
+  .g-footer__documents a {
+    font-size: 14px;
+  }
+  .g-news__intro {
+    margin-bottom: 24px !important;
+  }
+  .g-news-card__meta .g-eyebrow {
+    font-size: 12px;
+  }
+}
+@media (max-width: 380px) {
+  .g-intro h1 strong {
+    font-size: clamp(36px, 12vw, 66px);
+  }
+  .g-program-card--dpo h3,
+  .g-institute h3 {
+    font-size: 22px;
+  }
+  .g-program-card--aquarium h3 {
+    font-size: 26px;
+  }
+  .g-footer__contacts {
+    grid-template-columns: 1fr;
+  }
+  .g-quick-institutes {
+    grid-template-columns: 1fr;
+  }
+  .g-quick-institute {
+    min-height: 156px;
   }
 }
 

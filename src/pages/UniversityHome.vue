@@ -2,7 +2,16 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import GenesisAction from '../components/genesis/GenesisAction.vue';
 import GenesisGalaxy from '../components/genesis/GenesisGalaxy.vue';
-import { discoveries, institutes, news, programs, universes } from '../data/genesis';
+import {
+  aquariumContacts,
+  aquariumDocuments,
+  discoveries,
+  feedbackEmail,
+  institutes,
+  news,
+  programs,
+  universes,
+} from '../data/genesis';
 import { AQUARIUM_URL } from '../utils/site';
 import '../assets/css/genesis.css';
 
@@ -14,7 +23,18 @@ const dialogTitle = ref('');
 const dialogText = ref('');
 const query = ref('');
 const highContrast = ref(false);
+const compactHeader = ref(false);
+const isDocumentVisible = ref(true);
 let observer: IntersectionObserver | undefined;
+let motionObserver: IntersectionObserver | undefined;
+const feedbackHref = `mailto:${feedbackEmail}?subject=${encodeURIComponent('Обращение в университет «Генезис»')}`;
+
+function updateHeader() {
+  compactHeader.value = window.scrollY > 80;
+}
+function updateDocumentVisibility() {
+  isDocumentVisible.value = !document.hidden;
+}
 
 const searchItems: Array<{ title: string; id: string; aliases?: string }> = [
   ...programs.map((p) => ({
@@ -79,6 +99,24 @@ function toggleContrast() {
 }
 
 onMounted(() => {
+  updateHeader();
+  updateDocumentVisibility();
+  window.addEventListener('scroll', updateHeader, { passive: true });
+  document.addEventListener('visibilitychange', updateDocumentVisibility);
+  const galaxies = page.value?.querySelectorAll('.g-galaxy') || [];
+  if ('IntersectionObserver' in window) {
+    motionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) =>
+          entry.target.classList.toggle('g-galaxy--visible', entry.isIntersecting)
+        );
+      },
+      { threshold: 0 }
+    );
+    galaxies.forEach((galaxy) => motionObserver?.observe(galaxy));
+  } else {
+    galaxies.forEach((galaxy) => galaxy.classList.add('g-galaxy--visible'));
+  }
   try {
     highContrast.value = localStorage.getItem('genesis-contrast') === 'true';
   } catch {
@@ -106,15 +144,22 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   observer?.disconnect();
+  motionObserver?.disconnect();
+  window.removeEventListener('scroll', updateHeader);
+  document.removeEventListener('visibilitychange', updateDocumentVisibility);
   closeDialog();
 });
 </script>
 
 <template>
-  <div ref="page" class="genesis" :class="{ 'genesis--contrast': highContrast }">
+  <div
+    ref="page"
+    class="genesis"
+    :class="{ 'genesis--contrast': highContrast, 'genesis--inactive': !isDocumentVisible }"
+  >
     <a class="g-skip" href="#university-main">Перейти к содержимому</a>
 
-    <div class="g-shell g-top">
+    <div class="g-shell g-top" :class="{ 'g-top--compact': compactHeader }">
       <header class="g-header" aria-label="Шапка университета">
         <div class="g-header__brand">
           <button
@@ -484,13 +529,17 @@ onBeforeUnmount(() => {
       >
         <div class="g-news__heading g-reveal">
           <div class="g-section-heading">
-            <p class="g-eyebrow">НОВОСТИ И СОБЫТИЯ</p>
+            <p class="g-eyebrow">НОВОСТИ И АНОНСЫ</p>
             <h2 id="news-title">В орбите университета</h2>
           </div>
           <GenesisAction href="#news-cards" tone="text" icon="/genesis/s4-imgDiag.svg"
-            >Все новости</GenesisAction
+            >Все анонсы</GenesisAction
           >
         </div>
+        <p class="g-news__intro">
+          Знакомство с университетом, образовательные траектории и научные открытия — темы наших
+          будущих публикаций.
+        </p>
         <div id="news-cards" class="g-news__grid">
           <article v-for="item in news" :key="item.title" class="g-news-card g-reveal">
             <div class="g-news-card__cover" :class="`g-theme-${item.theme}`">
@@ -512,7 +561,10 @@ onBeforeUnmount(() => {
               />
             </div>
             <div class="g-news-card__body">
-              <p class="g-eyebrow">{{ item.category }} / ДАТА УТОЧНЯЕТСЯ</p>
+              <div class="g-news-card__meta">
+                <span class="g-announcement-badge">Анонс</span>
+                <p class="g-eyebrow">{{ item.category }}</p>
+              </div>
               <h3>{{ item.title }}</h3>
               <p>{{ item.description }}</p>
               <GenesisAction
@@ -525,7 +577,7 @@ onBeforeUnmount(() => {
                     `${item.description} Материал готовится к публикации.`
                   )
                 "
-                >Читать</GenesisAction
+                >Об анонсе</GenesisAction
               >
             </div>
           </article>
@@ -545,7 +597,7 @@ onBeforeUnmount(() => {
       </section>
     </main>
 
-    <footer id="contacts" class="g-footer" tabindex="-1">
+    <footer class="g-footer">
       <div class="g-shell">
         <div class="g-footer__grid">
           <div class="g-footer__about">
@@ -556,6 +608,17 @@ onBeforeUnmount(() => {
             >
             <p>АНО «Университет непрерывного<br />цифрового образования „Генезис“»</p>
             <p>Образование длиною в жизнь.</p>
+            <nav class="g-footer__documents" aria-label="Документы школы аквариумистики">
+              <h2>Документы школы аквариумистики</h2>
+              <a
+                v-for="document in aquariumDocuments"
+                :key="document.path"
+                :href="`${AQUARIUM_URL}${document.path}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                >{{ document.title }} <span aria-hidden="true">↗</span></a
+              >
+            </nav>
           </div>
           <nav class="g-footer__column" aria-label="Образование">
             <h2>Образование</h2>
@@ -570,27 +633,20 @@ onBeforeUnmount(() => {
             ><a href="#science">Наука</a><a href="#student-life">Студенческая жизнь</a
             ><a href="#university-news">Новости</a>
           </nav>
-          <div class="g-footer__column">
+          <div id="contacts" class="g-footer__column g-footer__contacts" tabindex="-1">
             <h2>Связаться с нами</h2>
+            <div class="g-footer__contact-group">
+              <h3>Обратная связь</h3>
+              <a :href="feedbackHref">{{ feedbackEmail }}</a>
+              <p>По вопросам поступления и работы сайта</p>
+            </div>
+            <div class="g-footer__contact-group">
+              <h3>Школа аквариумистики</h3>
+              <a :href="aquariumContacts.phoneHref">{{ aquariumContacts.phone }}</a>
+              <a :href="`mailto:${aquariumContacts.email}`">{{ aquariumContacts.email }}</a>
+              <p>{{ aquariumContacts.hours }}</p>
+            </div>
             <button
-              type="button"
-              @click="
-                openDialog(
-                  'info',
-                  'Контакты университета',
-                  'Контактная информация университета будет опубликована здесь.'
-                )
-              "
-            >
-              Контакты университета</button
-            ><button
-              type="button"
-              @click="
-                openDialog('info', 'Обратная связь', 'Сервис обратной связи скоро станет доступен.')
-              "
-            >
-              Обратная связь</button
-            ><button
               type="button"
               @click="
                 openDialog(
