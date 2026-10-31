@@ -15,5 +15,6 @@ jobs:
       - run: npm ci
       - run: bash -n scripts/deploy-aquarium.sh
       - run: npm run test:aquarium
+      - run: npm run test:site
       - run: npm run test:auth
       - run: npm run build

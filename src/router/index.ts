@@ -1,17 +1,24 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../pages/Home.vue";
-import CardDetail from "../pages/CardDetail.vue";
-import News from "../pages/News.vue";
-import Courses from "../pages/Courses.vue";
-import CourseDetail from "../pages/CourseDetail.vue";
-import FishDetail from "../pages/FishDetail.vue";
-import NotFound from "../pages/NotFound.vue";
+import { currentSite } from "../utils/site";
+
+const CardDetail = () => import("../pages/CardDetail.vue");
+const News = () => import("../pages/News.vue");
+const Courses = () => import("../pages/Courses.vue");
+const CourseDetail = () => import("../pages/CourseDetail.vue");
+const FishDetail = () => import("../pages/FishDetail.vue");
+const NotFound = () => import("../pages/NotFound.vue");
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/verify-email', name: 'VerifyEmail', component: () => import('../pages/VerifyEmail.vue') },
-    { path: "/", name: "Home", component: Home },
+    {
+      path: "/", name: "Home",
+      component: currentSite === 'aquarium'
+        ? () => import('../pages/Home.vue')
+        : () => import('../pages/UniversityHome.vue'),
+      meta: { university: currentSite === 'university' },
+    },
     {
       path: "/card/:id",
       name: "CardDetail",
@@ -114,10 +121,11 @@ export const router = createRouter({
   props: (route) => ({ id: Number(route.params.id) }),
 }
   ],
-  scrollBehavior(_to, _from, savedPosition) {
+  scrollBehavior(to, _from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
     }
+    if (to.hash) return { el: to.hash, top: 32 };
     return { left: 0, top: 0 };
   },
 });
