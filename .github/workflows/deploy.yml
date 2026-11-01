@@ -26,13 +26,24 @@ jobs:
     if: inputs.target == 'inspect'
     runs-on: ubuntu-latest
     steps:
+      - name: Normalize existing SSH key formatting
+        env:
+          DEPLOY_KEY: ${{ secrets.PROD_SSH_KEY }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          let key = process.env.DEPLOY_KEY.trim().replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n').replace(/\r/g, '');
+          if (!key.includes('-----BEGIN ')) key = Buffer.from(key, 'base64').toString('utf8');
+          fs.writeFileSync('.deploy-key', key.trim() + '\n', { mode: 0o600 });
+          NODE
+          ssh-keygen -y -P '' -f .deploy-key >/dev/null
       - name: Inspect domain routing
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PROD_SSH_HOST }}
           username: ${{ secrets.PROD_SSH_USER }}
           port: ${{ secrets.PROD_SSH_PORT }}
-          key: ${{ secrets.PROD_SSH_KEY }}
+          key_path: /github/workspace/.deploy-key
           script_stop: true
           script: |
             set -eu
@@ -41,3 +52,6 @@ jobs:
             docker exec deploy_nginx_1 nginx -T 2>&1
             printf '\nDEPLOY DIRECTORY\n'
             find /home/desai/deploy -maxdepth 2 -type f -not -name '.env*' -not -path '*/.git/*' -printf '%P\n'
+      - name: Remove temporary key
+        if: always()
+        run: rm -f .deploy-key
