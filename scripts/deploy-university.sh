@@ -40,9 +40,13 @@ EOF
   printf 'UNIVERSITY_STAGED revision=%s\n' "$revision"
 elif [[ "$phase" == activate ]]; then
   [[ -f "$release/compose.yaml" && -f "$config" ]]
-  [[ ! -e "$base/docker-compose.yaml" ]]
+  if [[ -e "$base/docker-compose.yaml" ]]; then cmp "$release/compose.yaml" "$base/docker-compose.yaml"; fi
   docker inspect deploy_frontend_1 --format '{{.Id}} {{.Image}}' > "$release/fishkids-container.before"
-  cp -p "$config" "$release/nginx.before.conf"
+  if [[ -e "$release/nginx.before.conf" ]]; then
+    cmp "$config" "$release/nginx.before.conf"
+  else
+    cp -p "$config" "$release/nginx.before.conf"
+  fi
   cp "$release/compose.yaml" "$base/docker-compose.yaml"
   changed=false
   rollback() {
@@ -92,7 +96,12 @@ PY
   docker exec deploy_nginx_1 nginx -t
   docker exec deploy_nginx_1 nginx -s reload
   for host in inco-edu.ru www.inco-edu.ru; do
-    curl -fsS --retry 3 --retry-delay 1 --max-time 15 --resolve "$host:443:127.0.0.1" "https://$host/university-release.json" | grep -F "$revision"
+    ready=false
+    for attempt in $(seq 1 15); do
+      if curl -fsS --max-time 10 --resolve "$host:443:127.0.0.1" "https://$host/university-release.json" | grep -F "$revision"; then ready=true; break; fi
+      sleep 1
+    done
+    [[ "$ready" == true ]]
   done
   curl -fsS --max-time 15 --resolve fishkids.ru:443:127.0.0.1 https://fishkids.ru/api/products/ >/dev/null
   docker inspect deploy_frontend_1 --format '{{.Id}} {{.Image}}' > "$release/fishkids-container.after"
