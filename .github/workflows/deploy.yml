@@ -5,8 +5,8 @@ on:
       target:
         description: Deployment target (inspect does not change the server)
         type: choice
-        default: inspect
-        options: [inspect, university, aquarium]
+        default: aquarium
+        options: [inspect, aquarium]
 jobs:
   deploy:
     if: inputs.target == 'aquarium'
