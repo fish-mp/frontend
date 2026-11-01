@@ -1,8 +1,15 @@
 name: Deploy
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: Deployment target (inspect does not change the server)
+        type: choice
+        default: inspect
+        options: [inspect, university, aquarium]
 jobs:
   deploy:
+    if: inputs.target == 'aquarium'
     runs-on: ubuntu-latest
     steps:
       - name: SSH deploy
@@ -15,3 +22,22 @@ jobs:
           script_stop: true
           command_timeout: 20m
           script: /home/desai/deploy/deploy.sh
+  inspect:
+    if: inputs.target == 'inspect'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect domain routing
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          port: ${{ secrets.PROD_SSH_PORT }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -eu
+            docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'
+            docker inspect deploy_nginx_1 --format '{{json .Mounts}}'
+            docker exec deploy_nginx_1 nginx -T 2>&1
+            printf '\nDEPLOY DIRECTORY\n'
+            find /home/desai/deploy -maxdepth 2 -type f -not -name '.env*' -not -path '*/.git/*' -printf '%P\n'
